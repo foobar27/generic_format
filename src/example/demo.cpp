@@ -31,12 +31,12 @@ std::ostream& operator<<(std::ostream& os, const demo::Packet & p) {
 }
 
 int main() {
-    std::string fileName {"/tmp/foo.out" };
-
     using namespace format::binary;
     using namespace format::scalars;
     using namespace std;
     using namespace demo;
+
+    string fileName {"foo.out" };
 
     auto f = uint16_le << uint32_le;
     {
