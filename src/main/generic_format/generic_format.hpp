@@ -124,39 +124,38 @@ struct io<tags::adapted_struct, F> {
 
     using C = typename F::native_type;
     using fields_tuple = typename F::fields_tuple;
-    static constexpr std::size_t number_of_fields = std::tuple_size<fields_tuple>();
-    static constexpr fields_tuple* fields_tuple_ptr = nullptr; // TODO this is an ugly hack, but currently I don't see a way around
+    static constexpr auto number_of_fields = std::tuple_size<fields_tuple>();
 
     void write(std::ostream & os, const C & c) {
-        write_fields(os, c, fields_tuple_ptr);
+        write_fields(os, c);
     }
 
     void read(std::istream & is, C & c) {
-        read_fields(is, c, fields_tuple_ptr);
+        read_fields(is, c);
     }
 
 private:
 
-    template<std::size_t I = 0, class... FIELDS>
+    template<std::size_t I = 0>
     inline typename std::enable_if<I == number_of_fields, void>::type
-    write_fields(std::ostream & os, const C & c, const std::tuple<FIELDS...>* ptr) {}
+    write_fields(std::ostream & os, const C & c) {}
 
-    template<std::size_t I = 0, class... FIELDS>
+    template<std::size_t I = 0>
     inline typename std::enable_if<I < number_of_fields, void>::type
-    write_fields(std::ostream & os, const C & c, const std::tuple<FIELDS...> * ptr) {
+    write_fields(std::ostream & os, const C & c) {
         write_field<typename std::tuple_element<I, fields_tuple>::type>(os, c);
-        write_fields<I + 1>(os, c, ptr);
+        write_fields<I + 1>(os, c);
     }
 
-    template<std::size_t I = 0, class... FIELDS>
+    template<std::size_t I = 0>
     inline typename std::enable_if<I == number_of_fields, void>::type
-    read_fields(std::istream & is, C & c, const std::tuple<FIELDS...>* ptr) {}
+    read_fields(std::istream & is, C & c) {}
 
-    template<std::size_t I = 0, class... FIELDS>
+    template<std::size_t I = 0>
     inline typename std::enable_if<I < number_of_fields, void>::type
-    read_fields(std::istream & is, C & c, const std::tuple<FIELDS...> * ptr) {
+    read_fields(std::istream & is, C & c) {
         read_field<typename std::tuple_element<I, fields_tuple>::type>(is, c);
-        read_fields<I + 1>(is, c, ptr);
+        read_fields<I + 1>(is, c);
     }
 
     template<class FIELD>
