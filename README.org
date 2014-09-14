@@ -19,31 +19,37 @@ This is an early prototype, i.e.
 The project requires =C++11=, it compiles at least with gcc 4.9.1.
 
 * Various Ideas
+** Organizational
+- define a license: MPL, BSL?
 ** Features
-- [ ] strings
-- [ ] repeated fields
-- [ ] refine syntax for struct-wrapping
-- [ ] function to determine the size of a format at compile-time
-- [ ] support nested structs
-- [ ] have a look at the [[https://github.com/ztellman/gloss/wiki/Introduction][gloss]] features
-- [ ] Seriously support endianness. Currently we support it in the naming
-  scheme, but then again uint8_le and uint8_be will certainly be the same.
-- [ ] what contract do we need for async i/o?
-- [ ] Allow the format to be saved in a file. This could integrate a flag which
+- strings
+- repeated fields
+- refine syntax for struct-wrapping
+- function to determine the size of a format at compile-time
+- support nested structs
+- have a look at the [[https://github.com/ztellman/gloss/wiki/Introduction][gloss]] features
+- Seriously support endianness. Currently we support it in the naming
+  scheme, but then again =uint8_le= and =uint8_be= will certainly be the same.
+- what contract do we need for async i/o?
+- Allow the format to be saved in a file. This could integrate a flag which
   endiannes has been used, such that files created on a machine are
   automatically created in the native endian format, but files copied from
   another machine can still be loaded.
-- [ ] Versioning of formats?
-- [ ] Automatically fill-in serialized types based on the types of the fields,
+- Versioning of formats?
+- Automatically fill-in serialized types based on the types of the fields,
   if not provided. This is a dangerous feature, and I would only implement it if
   the formats are stored in the header of each file.
 ** Code Cleanup
-- [ ] use more type inference
-- [ ] naming (especially remove single-letter names)
-- [ ] use =size_t= when appropriate
+- use more type inference
+- naming (especially remove single-letter names)
+- use =size_t= when appropriate
+- clean up the build system. For example I don't like that we force C++11
+  upon other people, even on those who are using C++14. Also check if
+  installation of the header files works correctly, and other projects can use
+  it correcly via =find_package=.
+- remove pointer-hack to store parameter-pack
 ** Optimizations
-- [ ] verify how gcc and clang compile the code
-- [ ] perhaps play with inlining
-- [ ] maybe don't use references for primitive types
-- [ ] optimization: =adapted_struct=: if no padding and pod, copy memory
-
+- verify how gcc and clang compile the code
+- perhaps play with inlining
+- maybe don't use references for primitive types
+- optimization: =adapted_struct=: if no padding and pod, copy memory
