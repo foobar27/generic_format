@@ -21,8 +21,13 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
 * Various Ideas
 ** Organizational
 - define a license: MPL, BSL?
+- rewrite the introduction of this file
+- write a paragraph: why not use boost::spirit/karma?
 ** Features
-- strings
+- floating point primitives
+- strings. Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
+- enums
+- sequences: be variadic
 - repeated fields
 - refine syntax for struct-wrapping
 - function to determine the size of a format at compile-time
