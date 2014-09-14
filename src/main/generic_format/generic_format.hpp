@@ -82,12 +82,12 @@ void read(std::istream & is, typename F::native_type & v) {
 }
 
 template<class F>
-void write(F f, std::ostream & os, const typename F::native_type & v) {
+void write(F, std::ostream & os, const typename F::native_type & v) {
     write<F>(os, v);
 }
 
 template<class F>
-void read(F f, std::istream & is, typename F::native_type & v) {
+void read(F, std::istream & is, typename F::native_type & v) {
     read<F>(is, v);
 }
 
@@ -138,7 +138,7 @@ private:
 
     template<std::size_t I = 0>
     inline typename std::enable_if<I == number_of_fields, void>::type
-    write_fields(std::ostream & os, const C & c) {}
+    write_fields(std::ostream &, const C &) {}
 
     template<std::size_t I = 0>
     inline typename std::enable_if<I < number_of_fields, void>::type
@@ -149,7 +149,7 @@ private:
 
     template<std::size_t I = 0>
     inline typename std::enable_if<I == number_of_fields, void>::type
-    read_fields(std::istream & is, C & c) {}
+    read_fields(std::istream &, C &) {}
 
     template<std::size_t I = 0>
     inline typename std::enable_if<I < number_of_fields, void>::type
