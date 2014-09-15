@@ -10,20 +10,20 @@ struct Packet {
     std::uint16_t port;
 };
 
-format::ast::adapted_struct<
+generic_format::ast::adapted_struct<
     Packet,
-    format::ast::accessor<Packet, std::uint32_t, &Packet::source, format::scalars::uint32_le_t>,
-    format::ast::accessor<Packet, std::uint32_t, &Packet::target, format::scalars::uint32_le_t>,
-    format::ast::accessor<Packet, std::uint16_t, &Packet::port, format::scalars::uint16_le_t>> Packet_format;
+    generic_format::ast::accessor<Packet, std::uint32_t, &Packet::source, generic_format::scalars::uint32_le_t>,
+    generic_format::ast::accessor<Packet, std::uint32_t, &Packet::target, generic_format::scalars::uint32_le_t>,
+    generic_format::ast::accessor<Packet, std::uint16_t, &Packet::port,   generic_format::scalars::uint16_le_t>> Packet_format;
 
 }
 
 // TODO create macro like:
-//FORMAT_ADJUST_STRUCT(
+//GENERIC_FORMAT_ADJUST_STRUCT(
 //    demo::Packet,
-//    (source, std::uint32_t, format::scalars::uint32_le_t)
-//    (target, std::uint32_t, format::scalars::uint32_le_t)
-//    (port,   std::uint16_t, format::scalars::uint16_le_t))
+//    (source, std::uint32_t, scalars::uint32_le_t)
+//    (target, std::uint32_t, scalars::uint32_le_t)
+//    (port,   std::uint16_t, scalars::uint16_le_t))
 
 std::ostream& operator<<(std::ostream& os, const demo::Packet & p) {
     os << "Packet[source=" << p.source << ", target=" << p.target << ", port=" << p.port << "]";
@@ -31,8 +31,8 @@ std::ostream& operator<<(std::ostream& os, const demo::Packet & p) {
 }
 
 int main() {
-    using namespace format::binary;
-    using namespace format::scalars;
+    using namespace generic_format::binary;
+    using namespace generic_format::scalars;
     using namespace std;
     using namespace demo;
 

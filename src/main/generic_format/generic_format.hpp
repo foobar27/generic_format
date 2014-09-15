@@ -4,7 +4,7 @@
 #include <tuple>
 #include <type_traits>
 
-namespace format {
+namespace generic_format {
 
 namespace tags {
 struct raw {};
@@ -53,15 +53,15 @@ struct adapted_struct : base<tags::adapted_struct> {
 
 namespace scalars {
 
-#define __FORMAT_PRIMITIVE_TYPE(name, type) struct name##_t : ast::raw<type> {}; name##_t name;
-__FORMAT_PRIMITIVE_TYPE(int8_le, std::int8_t)
-__FORMAT_PRIMITIVE_TYPE(int16_le, std::int16_t)
-__FORMAT_PRIMITIVE_TYPE(int32_le, std::int32_t)
-__FORMAT_PRIMITIVE_TYPE(int64_le, std::int64_t)
-__FORMAT_PRIMITIVE_TYPE(uint8_le, std::uint8_t)
-__FORMAT_PRIMITIVE_TYPE(uint16_le, std::uint16_t)
-__FORMAT_PRIMITIVE_TYPE(uint32_le, std::uint32_t)
-__FORMAT_PRIMITIVE_TYPE(uint64_le, std::uint64_t)
+#define __GENERIC_FORMAT_PRIMITIVE_TYPE(name, type) struct name##_t : ast::raw<type> {}; name##_t name;
+__GENERIC_FORMAT_PRIMITIVE_TYPE(int8_le, std::int8_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(int16_le, std::int16_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(int32_le, std::int32_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(int64_le, std::int64_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(uint8_le, std::uint8_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(uint16_le, std::uint16_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(uint32_le, std::uint32_t)
+__GENERIC_FORMAT_PRIMITIVE_TYPE(uint64_le, std::uint64_t)
 }
 
 namespace binary {
@@ -175,7 +175,7 @@ private:
 }
 
 template<class F1, class F2>
-format::ast::sequence<F1, F2> operator<<(const F1 &, const F2 &) {
-    return format::ast::sequence<F1, F2>();
+generic_format::ast::sequence<F1, F2> operator<<(const F1 &, const F2 &) {
+    return generic_format::ast::sequence<F1, F2>();
 }
 
