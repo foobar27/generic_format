@@ -56,6 +56,9 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   upon other people, even on those who are using C++14. Also check if
   installation of the header files works correctly, and other projects can use
   it correcly via =find_package=.
+- factor out foreach to iterate over all the fields
+- use initializer initialization
+- json de/serialization
 ** Optimizations
 - verify how gcc and clang compile the code
 - perhaps play with inlining
