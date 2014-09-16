@@ -18,6 +18,10 @@ This is an early prototype, i.e.
 
 The project requires =C++11=, it compiles at least with gcc 4.9.1.
 
+* License
+
+=generic_format= is licensed under [[LICENSE_1_0.txt][BSL 1.0 (Boost Software License 1.0)]]
+
 * Various Ideas
 ** Organizational
 - define a license: MPL, BSL?
