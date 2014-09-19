@@ -39,14 +39,14 @@ struct sequence : base<tags::sequence> {
     using native_type = std::tuple<typename F1::native_type, typename F2::native_type>;
 };
 
-// TODO move out of io package (into adaptor::structs namespace?)
+// TODO move into adaptor::structs namespace?
 // TODO alternative syntax if we only have getters/setters?
 // TODO can we also nest accessors?
-// TODO do we need the type T?
 template<class C, class T, T C::* A, class S>
 struct accessor {
     static constexpr auto attribute = A;
     using serialized_type = S;
+    using class_type = C;
 };
 
 
@@ -60,11 +60,20 @@ struct adapted_struct : base<tags::adapted_struct> {
 
 namespace dsl {
 
-template<class C, class... FIELDS>
-ast::adapted_struct<C, FIELDS...> adapt_struct(FIELDS...) {
-    return ast::adapted_struct<C, FIELDS...>();
+namespace{
+    template<class... FIELDS>
+    struct first_class {
+        using type = typename std::tuple_element<0, std::tuple<FIELDS...>>::type::class_type;
+    };
 }
 
+template<class... FIELDS>
+ast::adapted_struct<typename first_class<FIELDS...>::type, FIELDS...> adapt_struct(FIELDS...) {
+    // TODO enforce concept: always same class
+    return ast::adapted_struct<typename first_class<FIELDS...>::type, FIELDS...>();
+}
+
+// TODO can we somehow deduce template arguments here by some clever arguments?
 template<class C, class T, T C::* A, class S>
 ast::accessor<C, T, A, S> accessor() {
     return ast::accessor<C, T, A, S>();
