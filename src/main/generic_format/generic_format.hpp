@@ -50,12 +50,25 @@ struct accessor {
 };
 
 
-// TODO use a parameter pack here!
 template<class T, class... FIELDS>
 struct adapted_struct : base<tags::adapted_struct> {
     using native_type = T;
     using fields_tuple = std::tuple<FIELDS...>;
 };
+
+}
+
+namespace dsl {
+
+template<class C, class... FIELDS>
+ast::adapted_struct<C, FIELDS...> adapt_struct(FIELDS...) {
+    return ast::adapted_struct<C, FIELDS...>();
+}
+
+template<class C, class T, T C::* A, class S>
+ast::accessor<C, T, A, S> accessor() {
+    return ast::accessor<C, T, A, S>();
+}
 
 }
 
