@@ -10,20 +10,7 @@
 
 #include <fstream>
 #include <fstream>
-
-namespace demo {
-
-struct Packet {
-    std::uint32_t source, target;
-    std::uint16_t port;
-};
-
-}
-
-std::ostream& operator<<(std::ostream& os, const demo::Packet & p) {
-    os << "Packet[source=" << p.source << ", target=" << p.target << ", port=" << p.port << "]";
-    return os;
-}
+#include "packet.hpp"
 
 int main() {
     using namespace generic_format::binary;
@@ -38,7 +25,7 @@ int main() {
     auto Packet_format = adapt_struct(
                 accessor<Packet, std::uint32_t, &Packet::source, uint32_le_t>(),
                 accessor<Packet, std::uint32_t, &Packet::target, uint32_le_t>(),
-                accessor<Packet, std::uint16_t, &Packet::port, uint16_le_t>());
+                accessor<Packet, std::uint16_t, &Packet::port,   uint16_le_t>());
 
 
     {
