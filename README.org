@@ -41,7 +41,7 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   scheme, but then again =uint8_le= and =uint8_be= will certainly be the same.
 - what contract do we need for async i/o?
 - Allow the format to be saved in a file. This could integrate a flag which
-  endiannes has been used, such that files created on a machine are
+  byte-order has been used, such that files created on a machine are
   automatically created in the native endian format, but files copied from
   another machine can still be loaded.
 - Versioning of formats?
@@ -49,8 +49,13 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   if not provided. This is a dangerous feature, and I would only implement it if
   the formats are stored in the header of each file.
 ** Code Cleanup
+- =adapt_struct= -> =struct_format=
+- =attribute= => =member_ptr=
+- clean up benchmark (especially timing part)
 - use more type inference
 - naming (especially remove single-letter names)
+- remove template argument from adapt_struct
+- remove std::tuple dependency
 - use =size_t= when appropriate
 - clean up the build system. For example I don't like that we force C++11
   upon other people, even on those who are using C++14. Also check if
@@ -59,6 +64,7 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
 - factor out foreach to iterate over all the fields
 - use initializer initialization
 - json de/serialization
+- add doxygen and a proper documentation
 ** Optimizations
 - verify how gcc and clang compile the code
 - perhaps play with inlining
