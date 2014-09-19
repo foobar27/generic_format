@@ -23,9 +23,9 @@ int main() {
 
     auto f = uint16_le << uint32_le;
     auto Packet_format = adapt_struct(
-                accessor<Packet, std::uint32_t, &Packet::source, uint32_le_t>(),
-                accessor<Packet, std::uint32_t, &Packet::target, uint32_le_t>(),
-                accessor<Packet, std::uint16_t, &Packet::port,   uint16_le_t>());
+                GENERIC_FORMAT_ACCESSOR(Packet, source, uint32_le_t),
+                GENERIC_FORMAT_ACCESSOR(Packet, target, uint32_le_t),
+                GENERIC_FORMAT_ACCESSOR(Packet, port,   uint16_le_t));
 
 
     {

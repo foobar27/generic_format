@@ -209,3 +209,4 @@ generic_format::ast::sequence<F1, F2> operator<<(const F1 &, const F2 &) {
     return generic_format::ast::sequence<F1, F2>();
 }
 
+#define GENERIC_FORMAT_ACCESSOR(c, m, s) generic_format::dsl::accessor<c, decltype(c::m), &c::m, s>()
