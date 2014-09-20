@@ -42,12 +42,14 @@ struct sequence : base<F1::size_in_bytes + F2::size_in_bytes> {
 
     template<class RW>
     void write(RW & raw_writer, const native_type & t) {
-        raw_writer(t);
+        raw_writer(std::get<0>(t));
+        raw_writer(std::get<1>(t));
     }
 
     template<class RR>
     void read(RR & raw_reader, native_type & t) {
-        raw_reader(t);
+        raw_reader(std::get<0>(t));
+        raw_reader(std::get<1>(t));
     }
 };
 
