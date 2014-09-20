@@ -35,7 +35,7 @@ int main() {
 
     {
         ofstream os {fileName, std::ios_base::out | std::ios_base::binary};
-        auto writer = iostream_target::writer(&os);
+        auto writer = iostream_target::writer {&os};
         std::tuple<std::uint16_t, std::uint32_t> v {42, 99};
         writer(v, f);
 
@@ -44,7 +44,7 @@ int main() {
     }
     {
         ifstream is {fileName, std::ios_base::in | std::ios_base::binary};
-        auto reader = iostream_target::reader(&is);
+        auto reader = iostream_target::reader {&is};
         std::tuple<std::uint16_t, std::uint32_t> v;
         reader(v, f);
         std::cout << "read: " << std::get<0>(v) << " " << std::get<1>(v) << std::endl;
