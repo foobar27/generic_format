@@ -11,9 +11,9 @@ using namespace generic_format::scalars;
 using namespace generic_format::dsl;
 
 auto Packet_format = adapt_struct(
-            GENERIC_FORMAT_ACCESSOR(Packet, source, uint32_le_t),
-            GENERIC_FORMAT_ACCESSOR(Packet, target, uint32_le_t),
-            GENERIC_FORMAT_ACCESSOR(Packet, port,   uint16_le_t));
+            GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
+            GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
+            GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
 
 int main() {
     unsigned int number_of_iterations = 10000;

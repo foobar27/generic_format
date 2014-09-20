@@ -41,10 +41,10 @@ struct sequence : base<tags::sequence> {
 
 // TODO move into adaptor::structs namespace?
 // TODO alternative syntax if we only have getters/setters?
-// TODO can we also nest accessors?
-template<class C, class T, T C::* A, class S>
-struct accessor {
-    static constexpr auto attribute = A;
+// TODO can we also nest members?
+template<class C, class T, T C::* M, class S>
+struct member {
+    static constexpr auto member_ptr = M;
     using serialized_type = S;
     using class_type = C;
 };
@@ -74,9 +74,9 @@ ast::adapted_struct<typename first_class<FIELDS...>::type, FIELDS...> adapt_stru
 }
 
 // TODO can we somehow deduce template arguments here by some clever arguments?
-template<class C, class T, T C::* A, class S>
-ast::accessor<C, T, A, S> accessor() {
-    return ast::accessor<C, T, A, S>();
+template<class C, class T, T C::* M, class S>
+ast::member<C, T, M, S> member() {
+    return ast::member<C, T, M, S>();
 }
 
 }
@@ -191,13 +191,13 @@ private:
     template<class FIELD>
     void write_field(std::ostream & os, const typename F::native_type & c) {
         using serialized_type = typename FIELD::serialized_type;
-        binary::write<serialized_type>(os, c.*(FIELD::attribute));
+        binary::write<serialized_type>(os, c.*(FIELD::member_ptr));
     }
 
     template<class FIELD>
     void read_field(std::istream & is, typename F::native_type & c) {
         using serialized_type = typename FIELD::serialized_type;
-        binary::read<serialized_type>(is, c.*(FIELD::attribute));
+        binary::read<serialized_type>(is, c.*(FIELD::member_ptr));
     }
 };
 
@@ -209,4 +209,4 @@ generic_format::ast::sequence<F1, F2> operator<<(const F1 &, const F2 &) {
     return generic_format::ast::sequence<F1, F2>();
 }
 
-#define GENERIC_FORMAT_ACCESSOR(c, m, s) generic_format::dsl::accessor<c, decltype(c::m), &c::m, s>()
+#define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::member<c, decltype(c::m), &c::m, s>()
