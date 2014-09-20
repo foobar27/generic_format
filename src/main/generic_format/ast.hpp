@@ -14,13 +14,15 @@
 namespace generic_format {
 namespace ast {
 
+struct base {};
+
 template<std::size_t SIZE>
-struct base {
+struct base_fixed_length : base {
     static constexpr std::size_t size_in_bytes = SIZE;
 };
 
 template<class T>
-struct raw : base<sizeof(T)> {
+struct raw : base_fixed_length<sizeof(T)> {
     using native_type = T;
 
     template<class RW>
@@ -35,7 +37,7 @@ struct raw : base<sizeof(T)> {
 };
 
 template<class F1, class F2>
-struct sequence : base<F1::size_in_bytes + F2::size_in_bytes> {
+struct sequence : base_fixed_length<F1::size_in_bytes + F2::size_in_bytes> {
     using left = F1;
     using right = F2;
     using native_type = std::tuple<typename F1::native_type, typename F2::native_type>;
@@ -83,7 +85,7 @@ namespace {
 }
 
 template<class T, class... MEMBERS>
-struct adapted_struct : base<sizes_sum<MEMBERS...>::value> {
+struct adapted_struct : base_fixed_length<sizes_sum<MEMBERS...>::value> {
     using native_type = T;
     using members_tuple = std::tuple<MEMBERS...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
