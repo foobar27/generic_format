@@ -6,16 +6,19 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#include "generic_format/generic_format.hpp"
-
 #include <fstream>
 #include <fstream>
 #include "packet.hpp"
 
+#include "generic_format/generic_format.hpp"
+#include "generic_format/targets/iostream.hpp"
+#include "generic_format/dsl.hpp"
+
+
 int main() {
-    using namespace generic_format::binary;
-    using namespace generic_format::scalars;
+    using namespace generic_format::primitives;
     using namespace generic_format::dsl;
+    using namespace generic_format::targets::iostream;
     using namespace std;
     using namespace demo;
 
@@ -27,22 +30,23 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
 
-
     {
         ofstream os {fileName, std::ios_base::out | std::ios_base::binary};
+        auto writer = iostream_target::writer(&os);
         std::tuple<std::uint16_t, std::uint32_t> v {42, 99};
-        write(f, os, v);
+        writer(v, f);
 
         Packet packet { 1, 2, 3 };
-        write(Packet_format, os, packet);
+        writer(packet, Packet_format);
     }
     {
         ifstream is {fileName, std::ios_base::in | std::ios_base::binary};
+        auto reader = iostream_target::reader(&is);
         std::tuple<std::uint16_t, std::uint32_t> v;
-        read(f, is, v);
+        reader(v, f);
         std::cout << "read: " << std::get<0>(v) << " " << std::get<1>(v) << std::endl;
         Packet packet;
-        read(Packet_format, is, packet);
+        reader(packet, Packet_format);
         std::cout << "read: " << packet << std::endl;
     }
 }

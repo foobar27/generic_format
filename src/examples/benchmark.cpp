@@ -1,14 +1,17 @@
-#include "generic_format/generic_format.hpp"
-#include "packet.hpp"
 #include <sstream>
 #include <cassert>
 #include <chrono>
 
+#include "packet.hpp"
+#include "generic_format/generic_format.hpp"
+#include "generic_format/dsl.hpp"
+#include "generic_format/targets/iostream.hpp"
+
 using namespace std;
 using namespace demo;
-using namespace generic_format::binary;
-using namespace generic_format::scalars;
+using namespace generic_format::primitives;
 using namespace generic_format::dsl;
+using namespace generic_format::targets::iostream;
 
 auto Packet_format = adapt_struct(
             GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
@@ -23,14 +26,17 @@ int main() {
     for (unsigned int i=0; i<number_of_iterations; ++i)
     {
         stringstream ss;
+        auto writer = iostream_target::writer(&ss);
+        auto reader = iostream_target::reader(&ss);
         for (unsigned int p=0; p<number_of_packets; ++p) {
             packet.source = i;
             packet.target = p;
             packet.port = p;
-            write(Packet_format, ss, packet);
+            // TODO we should be able to register the mapping Packet -> Packet_format as a default format, somehow? At some intermediate layer?
+            writer(packet, Packet_format);
         }
         for (unsigned int p=0; p<number_of_packets; ++p) {
-            read(Packet_format, ss, packet);
+            reader(packet, Packet_format);
             assert(packet.source == i);
         }
     }

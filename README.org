@@ -27,7 +27,10 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
 - define a license: MPL, BSL?
 - rewrite the introduction of this file
 - write a paragraph: why not use boost::spirit/karma?
+** Philosophical Questions
+- or return value, or pass reference, to fill result?
 ** Features
+- provide more serialization options: iostream, asio buffer, array, vector, ...
 - floating point primitives
 - strings. Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
 - enums
@@ -49,12 +52,13 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   if not provided. This is a dangerous feature, and I would only implement it if
   the formats are stored in the header of each file.
 ** Code Cleanup
+- factor out foreach
 - =adapt_struct= -> =struct_format=
-- =attribute= => =member_ptr=
+- unit tests!
+- named members
+- use more initializer syntax
 - clean up benchmark (especially timing part)
 - use more type inference
-- naming (especially remove single-letter names)
-- remove template argument from adapt_struct
 - remove std::tuple dependency
 - use =size_t= when appropriate
 - clean up the build system. For example I don't like that we force C++11
