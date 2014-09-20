@@ -30,6 +30,9 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
 
+    constexpr std::size_t serialized_packet_size = decltype(Packet_format)::size_in_bytes;
+    std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
+
     {
         ofstream os {fileName, std::ios_base::out | std::ios_base::binary};
         auto writer = iostream_target::writer(&os);

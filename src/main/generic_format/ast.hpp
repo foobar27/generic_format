@@ -14,10 +14,13 @@
 namespace generic_format {
 namespace ast {
 
-struct base {};
+template<std::size_t SIZE>
+struct base {
+    static constexpr std::size_t size_in_bytes = SIZE;
+};
 
 template<class T>
-struct raw : base {
+struct raw : base<sizeof(T)> {
     using native_type = T;
 
     template<class RW>
@@ -32,7 +35,7 @@ struct raw : base {
 };
 
 template<class F1, class F2>
-struct sequence : base {
+struct sequence : base<F1::size_in_bytes + F2::size_in_bytes> {
     using left = F1;
     using right = F2;
     using native_type = std::tuple<typename F1::native_type, typename F2::native_type>;
@@ -57,10 +60,28 @@ struct member {
     using serialized_type = S;
     using native_type = T;
     using class_type = C;
+    static constexpr std::size_t size_in_bytes = serialized_type::size_in_bytes;
 };
 
+namespace {
+
+    template<class... TS>
+    struct sizes_sum;
+
+    template<>
+    struct sizes_sum<> {
+        static constexpr std::size_t value = 0;
+    };
+
+    template<class T, class... TS>
+    struct sizes_sum<T, TS...> {
+        static constexpr std::size_t value = T::size_in_bytes + sizes_sum<TS...>::value;
+    };
+
+}
+
 template<class T, class... MEMBERS>
-struct adapted_struct : base {
+struct adapted_struct : base<sizes_sum<MEMBERS...>::value> {
     using native_type = T;
     using members_tuple = std::tuple<MEMBERS...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
