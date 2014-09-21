@@ -223,8 +223,15 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(primitives_test, TARGET, all_targets) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(strings_test, TARGET, all_targets) {
-    check_round_trip(1+5+2+5,
+    check_round_trip((1+5)+(2+5),
                      TARGET(),
                      chunk(string_format(uint8_le), "hello"),
                      chunk(string_format(uint16_le), "world"));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test, TARGET, all_targets) {
+    check_round_trip((1+5)+(2+5)+(1+1),
+                     TARGET(),
+                     chunk(string_format(uint8_le) << string_format(uint16_le), std::make_tuple("hello", "world")),
+                     chunk(string_format(uint8_le), "!"));
 }
