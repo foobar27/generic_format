@@ -20,7 +20,7 @@ auto Packet_format = adapt_struct(
             GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
 
 int main() {
-    constexpr unsigned int number_of_iterations = 10000;
+    constexpr unsigned int number_of_iterations = 100000;
     constexpr unsigned int number_of_packets = 10000;
     Packet packet;
     auto start = chrono::high_resolution_clock::now();
@@ -29,6 +29,7 @@ int main() {
     std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer;
     void* data = static_cast<void*>(buffer.data());
 
+    int tmp = 0;
     for (unsigned int i=0; i<number_of_iterations; ++i)
     {
         auto writer = unbounded_memory_target::writer {data};
@@ -42,10 +43,12 @@ int main() {
         }
         for (unsigned int p=0; p<number_of_packets; ++p) {
             reader(packet, Packet_format);
+            tmp += packet.source + packet.target + packet.port;
             assert(packet.source == i);
         }
     }
     auto stop = chrono::high_resolution_clock::now();
     auto microseconds = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+    std::cout << "computed " << tmp << std::endl;
     std::cout << microseconds.count() << std::endl;
 }
