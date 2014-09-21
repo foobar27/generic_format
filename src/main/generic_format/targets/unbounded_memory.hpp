@@ -23,6 +23,7 @@ struct unbounded_memory_raw_writer : base_raw_writer {
 
     void operator()(const void * p, std::size_t size) {
         std::memcpy(data, p, size);
+        data += size;
     }
 
     template<class T>
@@ -41,6 +42,7 @@ struct unbounded_memory_raw_reader : base_raw_reader {
 
     void operator()(void * p, std::size_t size) {
         std::memcpy(p, data, size);
+        data += size;
     }
 
     template<class T>
