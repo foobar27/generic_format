@@ -22,7 +22,7 @@ using namespace generic_format::primitives;
 using namespace generic_format::dsl;
 using namespace generic_format::targets::unbounded_memory;
 
-auto Packet_format = adapt_struct(
+static constexpr auto Packet_format = adapt_struct(
             GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
             GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
             GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
@@ -33,8 +33,8 @@ int main() {
     Packet packet;
     auto start = chrono::high_resolution_clock::now();
 
-    constexpr auto size_container = decltype(Packet_format)::size;
-    constexpr std::size_t serialized_packet_size = size_container.size;
+    static constexpr auto size_container = decltype(Packet_format)::size;
+    static constexpr std::size_t serialized_packet_size = size_container.size;
     std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer;
     void* data = static_cast<void*>(buffer.data());
 

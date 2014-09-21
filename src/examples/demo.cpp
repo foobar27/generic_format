@@ -24,9 +24,9 @@ int main() {
 
     string fileName {"foo.out" };
 
-    auto f = uint16_le << uint32_le;
-    auto words_format = string_format(uint16_le) << string_format(uint32_le);
-    auto Packet_format = adapt_struct(
+    static constexpr auto f = uint16_le << uint32_le;
+    static constexpr auto words_format = string_format(uint16_le) << string_format(uint32_le);
+    static constexpr auto Packet_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
