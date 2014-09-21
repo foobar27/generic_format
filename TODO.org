@@ -1,0 +1,78 @@
+* Various Ideas
+** Organizational
+- define a license: MPL, BSL?
+- rewrite the introduction of this file
+- write a paragraph: why not use boost::spirit/karma?
+** Write Documentation
+- general overview (list the various aspects of the library)
+- how to wrap own types
+** Philosophical Questions
+- or return value, or pass reference, to fill result?
+  - or even reduce the data with some function?
+** Features
+- strings.
+  - prototype
+  - examples for both targets
+  - Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
+- allow serialization to asio buffers
+- repeated fields,
+  - even when number of repetitions depends on several fields (e.g. width*height)
+    #+BEGIN_SRC cpp
+    auto width = reference(uint32_le_t);
+    auto height = reference(uint32_le_t);
+    auto data = repeated(width*height, int8_le);
+    Image_format = GENERIC_FORMAT_ADJUST_STRUCT(Image, width, height, data);
+    #+END_SRC
+  - who takes care of the allocation of 'data'
+  - or when the data is simply serialized into a vector
+- more meaningful error messages
+- floating point primitives
+- enums
+- iterator-like interface
+- array-like interface for fixed-length types
+- sequences: be variadic
+- refine syntax for struct-wrapping
+- mapping from one type to the other without intermediate data structure
+- support nested structs
+- keep state, e.g. checksums
+- verify header fields, e.g. via integral_constant
+- have a look at the [[https://github.com/ztellman/gloss/wiki/Introduction][gloss]] features
+- Seriously support endianness. Currently we support it in the naming
+  scheme, but then again =uint8_le= and =uint8_be= will certainly be the same.
+- what contract do we need for async i/o?
+- Allow the format to be saved in a file. This could integrate a flag which
+  byte-order has been used, such that files created on a machine are
+  automatically created in the native endian format, but files copied from
+  another machine can still be loaded.
+- Versioning of formats?
+- Automatically fill-in serialized types based on the types of the fields,
+  if not provided. This is a dangerous feature, and I would only implement it if
+  the formats are stored in the header of each file.
+- lookup-indices to seek to position
+- json de/serialization
+- merge of two files
+** Code Cleanup
+- split up ast.hpp
+- fill in doxygen @author & co
+- introduce some kind of size_container(optional<size>)
+- factor out foreach
+- remove type-specific operator() from =raw_reader= and =raw_writer=
+- =adapt_struct= -> =struct_format=
+- unit tests!
+- named members
+- use more initializer syntax
+- clean up benchmark (especially timing part)
+- use more type inference
+- remove std::tuple dependency
+- use =size_t= when appropriate
+- clean up the build system. For example I don't like that we force C++11
+  upon other people, even on those who are using C++14. Also check if
+  installation of the header files works correctly, and other projects can use
+  it correcly via =find_package=.
+- factor out foreach to iterate over all the fields
+- add doxygen and a proper documentation
+** Optimizations
+- verify how gcc and clang compile the code
+- perhaps play with inlining
+- maybe don't use references for primitive types
+- optimization: =adapted_struct=: if no padding and pod, copy memory
