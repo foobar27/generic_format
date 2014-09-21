@@ -25,6 +25,7 @@ int main() {
     string fileName {"foo.out" };
 
     auto f = uint16_le << uint32_le;
+    auto words_format = string_format(uint16_le) << string_format(uint32_le);
     auto Packet_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
@@ -41,15 +42,23 @@ int main() {
 
         Packet packet { 1, 2, 3 };
         writer(packet, Packet_format);
+        std::tuple<std::string, std::string> words {"hello", "world"};
+        writer(words, words_format);
     }
     {
         ifstream is {fileName, std::ios_base::in | std::ios_base::binary};
         auto reader = iostream_target::reader {&is};
+
         std::tuple<std::uint16_t, std::uint32_t> v;
         reader(v, f);
         std::cout << "read: " << std::get<0>(v) << " " << std::get<1>(v) << std::endl;
+
         Packet packet;
         reader(packet, Packet_format);
         std::cout << "read: " << packet << std::endl;
+
+        std::tuple<std::string, std::string> words;
+        reader(words, words_format);
+        std::cout << std::get<0>(words) << " " << std::get<1>(words) << std::endl;
     }
 }

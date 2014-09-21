@@ -23,6 +23,10 @@ struct iostream_raw_writer : base_raw_writer {
         os->write(reinterpret_cast<const char*>(&v), sizeof(v));
     }
 
+    void operator()(const void * p, std::size_t size) {
+        os->write(reinterpret_cast<const char*>(p), size);
+    }
+
 private:
     std::ostream *const os;
 };
@@ -34,6 +38,10 @@ struct iostream_raw_reader : base_raw_reader {
     template<class T>
     void operator()(T& v) {
         is->read(reinterpret_cast<char*>(&v), sizeof(v));
+    }
+
+    void operator()(void * p, std::size_t size) {
+        is->read(reinterpret_cast<char*>(p), size);
     }
 
 private:

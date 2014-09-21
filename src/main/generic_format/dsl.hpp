@@ -34,6 +34,11 @@ generic_format::ast::member<C, T, M, S> member() {
     return generic_format::ast::member<C, T, M, S>();
 }
 
+template<class LENGTH_TYPE>
+generic_format::ast::string<LENGTH_TYPE> string_format(LENGTH_TYPE) {
+    return generic_format::ast::string<LENGTH_TYPE>();
+}
+
 }
 }
 

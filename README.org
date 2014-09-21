@@ -14,6 +14,10 @@ This is an early prototype, i.e.
 - it almost hasn't been tested
 - expect the API to change
 
+Things which are probably going to break: (this list is *not* exhaustive)
+- primitive type, especially byte-order
+- api for strings
+
 * Requirements
 
 The project requires =C++11=, it compiles at least with gcc 4.9.1.
@@ -27,16 +31,18 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
 - define a license: MPL, BSL?
 - rewrite the introduction of this file
 - write a paragraph: why not use boost::spirit/karma?
+** Write Documentation
+- general overview (list the various aspects of the library)
+- how to wrap own types
 ** Philosophical Questions
 - or return value, or pass reference, to fill result?
   - or even reduce the data with some function?
 ** Features
-- provide more serialization options: iostream, asio buffer, array, vector, ...
-- change benchmark to write into std::array (in order to avoid reallocs)
-- floating point primitives
-- strings. Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
-- enums
-- sequences: be variadic
+- strings.
+  - prototype
+  - examples for both targets
+  - Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
+- allow serialization to asio buffers
 - repeated fields,
   - even when number of repetitions depends on several fields (e.g. width*height)
     #+BEGIN_SRC cpp
@@ -45,7 +51,14 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
     auto data = repeated(width*height, int8_le);
     Image_format = GENERIC_FORMAT_ADJUST_STRUCT(Image, width, height, data);
     #+END_SRC
+  - who takes care of the allocation of 'data'
   - or when the data is simply serialized into a vector
+- more meaningful error messages
+- floating point primitives
+- enums
+- iterator-like interface
+- array-like interface for fixed-length types
+- sequences: be variadic
 - refine syntax for struct-wrapping
 - mapping from one type to the other without intermediate data structure
 - support nested structs
@@ -64,8 +77,14 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   if not provided. This is a dangerous feature, and I would only implement it if
   the formats are stored in the header of each file.
 - lookup-indices to seek to position
+- json de/serialization
+- merge of two files
 ** Code Cleanup
+- split up ast.hpp
+- fill in doxygen @author & co
+- introduce some kind of size_container(optional<size>)
 - factor out foreach
+- remove type-specific operator() from =raw_reader= and =raw_writer=
 - =adapt_struct= -> =struct_format=
 - unit tests!
 - named members
@@ -79,8 +98,6 @@ The project requires =C++11=, it compiles at least with gcc 4.9.1.
   installation of the header files works correctly, and other projects can use
   it correcly via =find_package=.
 - factor out foreach to iterate over all the fields
-- use initializer initialization
-- json de/serialization
 - add doxygen and a proper documentation
 ** Optimizations
 - verify how gcc and clang compile the code

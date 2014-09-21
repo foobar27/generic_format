@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstring>
 
 #include "generic_format/targets/base.hpp"
 
@@ -18,10 +19,14 @@ namespace unbounded_memory {
 
 struct unbounded_memory_raw_writer : base_raw_writer {
 
-    explicit unbounded_memory_raw_writer(unsigned char * data) : data{data} {}
+    explicit unbounded_memory_raw_writer(void * data) : data{reinterpret_cast<unsigned char*>(data)} {}
+
+    void operator()(const void * p, std::size_t size) {
+        std::memcpy(data, p, size);
+    }
 
     template<class T>
-    void operator()(const T& v) {
+    void operator()(const T & v) {
         *reinterpret_cast<T*>(data) = v;
         data += sizeof(T);
     }
@@ -32,7 +37,11 @@ private:
 
 struct unbounded_memory_raw_reader : base_raw_reader {
 
-    explicit unbounded_memory_raw_reader(const unsigned char * data) : data{data} {}
+    explicit unbounded_memory_raw_reader(const void * data) : data{reinterpret_cast<const unsigned char*>(data)} {}
+
+    void operator()(void * p, std::size_t size) {
+        std::memcpy(p, data, size);
+    }
 
     template<class T>
     void operator()(T& v) {

@@ -27,7 +27,7 @@ int main() {
 
     constexpr std::size_t serialized_packet_size = decltype(Packet_format)::size_in_bytes;
     std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer;
-    unsigned char* data = static_cast<unsigned char*>(buffer.data());
+    void* data = static_cast<void*>(buffer.data());
 
     for (unsigned int i=0; i<number_of_iterations; ++i)
     {
