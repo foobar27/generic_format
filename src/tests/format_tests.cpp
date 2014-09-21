@@ -235,3 +235,44 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test, TARGET, all_targets) {
                      chunk(string_format(uint8_le) << string_format(uint16_le), std::make_tuple("hello", "world")),
                      chunk(string_format(uint8_le), "!"));
 }
+
+struct Person {
+    std::string first_name {}, last_name {};
+    std::uint8_t age {};
+
+    Person()
+    {}
+
+    Person(const std::string & first_name, const std::string & last_name, std::uint8_t age)
+        : first_name(first_name)
+        , last_name(last_name)
+        , age(age)
+    {}
+
+};
+
+bool operator==(const Person & p1, const Person & p2) {
+    return p1.first_name == p2.first_name
+            && p1.last_name == p2.last_name
+            && p1.age == p2.age;
+}
+
+static constexpr auto Person_format = adapt_struct(
+            GENERIC_FORMAT_MEMBER(Person, first_name, generic_format::ast::string<uint8_le_t>),
+            GENERIC_FORMAT_MEMBER(Person, last_name,  generic_format::ast::string<uint8_le_t>),
+            GENERIC_FORMAT_MEMBER(Person, age,        uint8_le_t));
+
+std::ostream& operator<<(std::ostream& os, const Person & p) {
+    os << "Person[first_name=" << p.first_name << ", last_name=" << p.last_name << ", age=" << p.age << "]";
+    return os;
+}
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(struct_test, TARGET, all_targets) {
+    check_round_trip((1+4)+(1+4)+1
+                     +(1+4)+(1+4)+1,
+                     TARGET(),
+                     chunk(Person_format, {"foo1", "bar1", 42}),
+                     chunk(Person_format, {"foo2", "bar2", 24}));
+}
+
