@@ -22,6 +22,9 @@ Things which are probably going to break: (this list is *not* exhaustive)
 
 The project requires =C++11=, it compiles at least with gcc 4.9.1.
 
+For more features, and to compile the test suite and some examples, you need boost
+1.56.0.
+
 * License
 
 =generic_format= is licensed under [[LICENSE_1_0.txt][BSL 1.0 (Boost Software License 1.0)]]

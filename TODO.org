@@ -1,9 +1,7 @@
 * Various Ideas
-** Organizational
-- define a license: MPL, BSL?
-- rewrite the introduction of this file
+** Documentation
+- rewrite the introduction of the README file
 - write a paragraph: why not use boost::spirit/karma?
-** Write Documentation
 - general overview (list the various aspects of the library)
 - how to wrap own types
 ** Philosophical Questions
@@ -18,8 +16,8 @@
 - repeated fields,
   - even when number of repetitions depends on several fields (e.g. width*height)
     #+BEGIN_SRC cpp
-    auto width = reference(uint32_le_t);
-    auto height = reference(uint32_le_t);
+    auto width = reference(placeholder<0>(), uint32_le_t);
+    auto height = reference<1>(uint32_le_t);
     auto data = repeated(width*height, int8_le);
     Image_format = GENERIC_FORMAT_ADJUST_STRUCT(Image, width, height, data);
     #+END_SRC
@@ -52,13 +50,17 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- unit tests!
+  - also fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
+- be less sloppy about move ctors in tests (especially assignments)
+- refactor size computation
 - split up ast.hpp
 - fill in doxygen @author & co
 - introduce some kind of size_container(optional<size>)
 - factor out foreach
 - remove type-specific operator() from =raw_reader= and =raw_writer=
 - =adapt_struct= -> =struct_format=
-- unit tests!
+- use 'explicit' where appropriate
 - named members
 - use more initializer syntax
 - clean up benchmark (especially timing part)
