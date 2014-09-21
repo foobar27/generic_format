@@ -8,21 +8,21 @@
 - or return value, or pass reference, to fill result?
   - or even reduce the data with some function?
 ** Features
-- strings.
-  - prototype
-  - examples for both targets
-  - Provide various alternatives: fixed-length, zero-terminated, length-data-format, ...
-- allow serialization to asio buffers
 - repeated fields,
+  - we need another argument for read/write methods, a state object
+    - thie struct can be accessed by placeholders
   - even when number of repetitions depends on several fields (e.g. width*height)
     #+BEGIN_SRC cpp
-    auto width = reference(placeholder<0>(), uint32_le_t);
-    auto height = reference<1>(uint32_le_t);
+    auto width = reference(std::placeholder::_1, uint32_le);
+    auto height = reference(std::placeholder::_2, uint32_le_t);
     auto data = repeated(width*height, int8_le);
-    Image_format = GENERIC_FORMAT_ADJUST_STRUCT(Image, width, height, data);
+    Image_format = GENERIC_FORMAT_ADAPT_STRUCT(Image, width, height, data);
     #+END_SRC
   - who takes care of the allocation of 'data'
   - or when the data is simply serialized into a vector
+- can we somehow wrap private fields?
+- allow serialization to asio buffers
+- strings: provide alternatives: fixed-length, zero-terminated, length-data-format, ...
 - more meaningful error messages
 - floating point primitives
 - enums
@@ -50,11 +50,9 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
-- unit tests!
-  - also fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
+- in DEBUG builds: fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
 - be less sloppy about move ctors in tests (especially assignments)
 - default values via initializer lists
-- refactor size computation
 - split up ast.hpp
 - fill in doxygen @author & co
 - introduce some kind of size_container(optional<size>)
