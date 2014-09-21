@@ -53,6 +53,7 @@
 - unit tests!
   - also fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
 - be less sloppy about move ctors in tests (especially assignments)
+- default values via initializer lists
 - refactor size computation
 - split up ast.hpp
 - fill in doxygen @author & co

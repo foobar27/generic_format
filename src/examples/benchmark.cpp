@@ -33,7 +33,8 @@ int main() {
     Packet packet;
     auto start = chrono::high_resolution_clock::now();
 
-    constexpr std::size_t serialized_packet_size = decltype(Packet_format)::size_in_bytes;
+    constexpr auto size_container = decltype(Packet_format)::size;
+    constexpr std::size_t serialized_packet_size = size_container.size;
     std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer;
     void* data = static_cast<void*>(buffer.data());
 

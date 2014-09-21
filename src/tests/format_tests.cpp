@@ -171,35 +171,19 @@ void read_chunks(R& reader, C & c, CS... cs) {
 }
 
 namespace {
-template<class... CS>
-struct all_fixed_length;
-
-template<>
-struct all_fixed_length<> {
-    static constexpr bool value = true;
-};
-
-template<class C, class... CS>
-struct all_fixed_length<C, CS...> {
-    using _current_format = typename C::format;
-    static constexpr auto _current_value = _current_format::size_in_bytes >= 0;
-    static constexpr auto _remaining_value = all_fixed_length<CS...>::value;
-    static constexpr auto value = _current_value && _remaining_value;
-};
-
 
 template<class... CS>
 struct sizes_sum;
 
 template<>
 struct sizes_sum<> {
-    static constexpr std::size_t value = 0;
+    static constexpr generic_format::ast::size_container value {};
 };
 
 template<class C, class... CS>
 struct sizes_sum<C, CS...> {
     using _current_format = typename C::format;
-    static constexpr auto _current_value = _current_format::size_in_bytes;
+    static constexpr auto _current_value = _current_format::size;
     static constexpr auto _remaining_value = sizes_sum<CS...>::value;
     static constexpr auto value = _current_value + _remaining_value;
 };
@@ -223,9 +207,9 @@ void check_round_trip(std::size_t expected_size, TARGET && target, C c, CS... cs
 template<class TARGET, class C, class... CS>
 auto check_round_trip(TARGET && target, C c, CS... cs)
 -> typename std::enable_if<!std::is_integral<TARGET>::value, void>::type {
-    static_assert(all_fixed_length<C, CS...>::value, "You need to provide expected_size for dynamic formats!");
     constexpr auto total_size = sizes_sum<C, CS...>::value;
-    check_round_trip(total_size, std::move(target), c, cs...);
+    static_assert(total_size.is_fixed, "You need to provide expected_size for dynamic formats!");
+    check_round_trip(total_size.size, std::move(target), c, cs...);
 }
 
 using namespace generic_format::dsl;
@@ -238,3 +222,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(primitives_test, TARGET, all_targets) {
                 chunk(int8_le,   -1));
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(strings_test, TARGET, all_targets) {
+    check_round_trip(1+5+2+5,
+                     TARGET(),
+                     chunk(string_format(uint8_le), "hello"),
+                     chunk(string_format(uint16_le), "world"));
+}

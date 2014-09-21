@@ -18,14 +18,41 @@
 namespace generic_format {
 namespace ast {
 
-template<std::size_t SIZE>
-struct base {
-    static constexpr auto size_in_bytes = SIZE;
+struct size_container {
+    bool is_fixed;
+    std::size_t size;
+
+    constexpr size_container()
+        : is_fixed(true)
+        , size(0)
+    {}
+
+    constexpr size_container(bool is_fixed, std::size_t size)
+        : is_fixed(is_fixed)
+        , size(size)
+    {}
+
+    constexpr size_container operator+(size_container other) const {
+        return this->is_fixed && other.is_fixed
+                ? size_container(true,  this->size + other.size)
+                : size_container(false, 0);
+    }
 };
 
+constexpr size_container fixed_size(std::size_t size) {
+    return {true, size};
+}
+
+constexpr size_container dynamic_size() {
+    return {false, 0};
+}
+
+struct base {};
+
 template<class T>
-struct raw : base<sizeof(T)> {
+struct raw : base {
     using native_type = T;
+    static constexpr auto size = fixed_size(sizeof(T));
 
     template<class RW>
     void write(RW & raw_writer, const native_type & t) const {
@@ -39,10 +66,11 @@ struct raw : base<sizeof(T)> {
 };
 
 template<class F1, class F2>
-struct sequence : base<F1::size_in_bytes >= 0 && F2::size_in_bytes >= 0 ? F1::size_in_bytes + F2::size_in_bytes : 0> {
+struct sequence : base {
     using left = F1;
     using right = F2;
     using native_type = std::tuple<typename F1::native_type, typename F2::native_type>;
+    static constexpr auto size = F1::size + F2::size;
 
     template<class RW>
     void write(RW & raw_writer, const native_type & t) const {
@@ -58,10 +86,11 @@ struct sequence : base<F1::size_in_bytes >= 0 && F2::size_in_bytes >= 0 ? F1::si
 };
 
 template<class LENGTH_TYPE>
-struct string : base<-1> {
+struct string : base {
     using native_type = std::string;
     using length_type = LENGTH_TYPE;
     using native_length_type = typename length_type::native_type;
+    static constexpr auto size = dynamic_size();
 
     static_assert(std::is_integral<native_length_type>::value, "string length must be an integral type!");
 
@@ -94,7 +123,7 @@ struct member {
     using serialized_type = S;
     using native_type = T;
     using class_type = C;
-    static constexpr std::size_t size_in_bytes = serialized_type::size_in_bytes;
+    static constexpr auto size = serialized_type::size;
 };
 
 namespace {
@@ -104,26 +133,24 @@ namespace {
 
     template<>
     struct sizes_sum<> {
-        static constexpr std::size_t value = 0;
+        static constexpr size_container value {};
     };
 
     template<class T, class... TS>
     struct sizes_sum<T, TS...> {
-        static constexpr auto T_size = T::size_in_bytes;
-        static constexpr auto TS_size = sizes_sum<TS...>::value;
-        static constexpr auto fixed_length = T::size_in_bytes >= 0 && sizes_sum<TS...>::value >= 0;
-        static constexpr auto value = fixed_length
-                ? T_size + TS_size
-                : -1;
+        static constexpr auto _T_size = T::size;
+        static constexpr auto _TS_size = sizes_sum<TS...>::value;
+        static constexpr auto value = _T_size + _TS_size;
     };
 
 }
 
 template<class T, class... MEMBERS>
-struct adapted_struct : base<sizes_sum<MEMBERS...>::value> {
+struct adapted_struct : base {
     using native_type = T;
     using members_tuple = std::tuple<MEMBERS...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
+    static constexpr auto size = sizes_sum<MEMBERS...>::value;
 
     template<class RW>
     void write(RW & raw_writer, const native_type & t) const {

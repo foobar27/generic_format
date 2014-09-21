@@ -31,7 +31,8 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
 
-    constexpr std::size_t serialized_packet_size = decltype(Packet_format)::size_in_bytes;
+    constexpr auto size_container = decltype(Packet_format)::size;
+    constexpr std::size_t serialized_packet_size = size_container.size;
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
     {
