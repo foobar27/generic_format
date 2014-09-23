@@ -20,6 +20,7 @@
     #+END_SRC
   - who takes care of the allocation of 'data'
   - or when the data is simply serialized into a vector
+  - check that placeholder are well-formed (unique, and references only to previously defined values)
 - can we somehow wrap private fields?
 - allow serialization to asio buffers
 - strings: provide alternatives: fixed-length, zero-terminated, length-data-format, ...
@@ -50,12 +51,22 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- refactor placeholders.hpp
+- think about strategy of what belongs into 'impl' namespaces
+- somehow reuse the same code (via visitor pattern?) for
+  - write
+  - read
+  - seek
+  - size
+  - ...
+- change template argument name convention (no more all-caps)
+- more "concepts" and "archetypes"
+- completely factor out size computation
+- where to put operator<<? Same namespace? Global namespace?
 - in DEBUG builds: fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
 - be less sloppy about move ctors in tests (especially assignments)
 - default values via initializer lists
-- split up ast.hpp
 - fill in doxygen @author & co
-- introduce some kind of size_container(optional<size>)
 - factor out foreach
 - remove type-specific operator() from =raw_reader= and =raw_writer=
 - =adapt_struct= -> =struct_format=

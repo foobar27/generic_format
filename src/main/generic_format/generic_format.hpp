@@ -12,5 +12,5 @@
 #include <tuple>
 #include <type_traits>
 
-#include "generic_format/ast.hpp"
+#include "generic_format/ast/ast.hpp"
 #include "generic_format/primitives.hpp"

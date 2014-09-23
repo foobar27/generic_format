@@ -10,7 +10,7 @@
 
 #include <tuple>
 
-#include "generic_format/ast.hpp"
+#include "generic_format/ast/ast.hpp"
 
 namespace generic_format{
 namespace dsl {
@@ -36,6 +36,19 @@ constexpr generic_format::ast::member<C, T, M, S> member() {
 
 template<class LENGTH_TYPE>
 constexpr generic_format::ast::string<LENGTH_TYPE> string_format(LENGTH_TYPE) {
+    return {};
+}
+
+template<unsigned int ID>
+struct placeholder {};
+
+template<unsigned int id, class T>
+constexpr ast::reference<id, T> reference(placeholder<id>, T) {
+    return {};
+}
+
+template<class R, class T>
+constexpr ast::repeated<R, T> repeated(R, T) {
     return {};
 }
 
