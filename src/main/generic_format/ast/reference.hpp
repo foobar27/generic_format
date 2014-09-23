@@ -13,47 +13,47 @@
 namespace generic_format {
 namespace ast {
 
-template<class R1, class R2>
+template<class Reference1, class Reference2>
 struct binary_operator :base {
-    using left_type = R1;
-    using right_type = R2;
+    using left_type = Reference1;
+    using right_type = Reference2;
 };
 
 
-template<class R1, class R2>
-struct sum : binary_operator<R1, R2> {
+template<class Reference1, class Reference2>
+struct sum : binary_operator<Reference1, Reference2> {
 };
 
-template<class R1, class R2>
-struct product : binary_operator<R1, R2> {};
+template<class Reference1, class Reference2>
+struct product : binary_operator<Reference1, Reference2> {};
 
-template<unsigned int ID, class T>
+template<unsigned int Id, class ElementType>
 struct reference : base {
-    static constexpr auto id = ID;
-    using referenced_type = T;
-    using native_type = typename referenced_type::native_type;
-    using type = reference<id, referenced_type>;
-    static constexpr auto size = referenced_type::size;
+    static constexpr auto id = Id;
+    using element_type = ElementType;
+    using native_type = typename element_type::native_type;
+    using type = reference<id, element_type>;
+    static constexpr auto size = element_type::size;
 
-    template<class R2>
-    constexpr sum<type, R2> operator+(R2) const {
+    template<class OtherReference>
+    constexpr sum<type, OtherReference> operator+(OtherReference) const {
         return {};
     }
 
-    template<class R2>
-    constexpr product<type, R2> operator*(R2) const {
+    template<class OtherReference>
+    constexpr product<type, OtherReference> operator*(OtherReference) const {
         return {};
     }
 
-    template<class RW>
-    void write(RW & raw_writer, const native_type & t) const {
-        referenced_type().write(raw_writer, t);
+    template<class RawWriter>
+    void write(RawWriter & raw_writer, const native_type & t) const {
+        element_type().write(raw_writer, t);
         // TODO state.set<id>(t);
     }
 
-    template<class RR>
-    void read(RR & raw_reader, native_type & t) const {
-        referenced_type().read(raw_reader, t);
+    template<class RawReader>
+    void read(RawReader & raw_reader, native_type & t) const {
+        element_type().read(raw_reader, t);
         // TODO state.set<id>(t); // TODO do not pass by reference, but by copy!
     }
 

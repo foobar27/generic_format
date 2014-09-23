@@ -11,15 +11,18 @@
 namespace generic_format {
 namespace targets {
 
-struct base_raw_writer {};
+/** @brief An operation to write a type according to a specific format.
+ *
+ * Usually you don't inherit from this class, but from raw_writer.
+ *
+ * @tparam RawWriter the raw_writer sub-class which is delegated to
+ */
+template<class RawWriter>
+struct writer {
 
-struct base_raw_reader {};
-
-template<class RW>
-struct _writer {
-
+    /// Constructor which delegates all its arguments to the RawWriter.
     template<class... ARGS>
-    _writer(ARGS... args)
+    writer(ARGS... args)
         : raw_writer{args...}
     {}
 
@@ -29,14 +32,20 @@ struct _writer {
     }
 
 private:
-    RW raw_writer;
+    RawWriter raw_writer;
 };
 
-template<class RR>
-struct _reader {
+/** @brief An operation to read a type according to a specific format.
+ *
+ * Usually you don't need to inherit from this class, but from raw_reader.
+ *
+ * @tparam RawReader the raw_reader sub-class which is delegated to
+ */
+template<class RawReader>
+struct reader {
 
-    template<class... ARGS>
-    _reader(ARGS... args)
+    template<class... Args>
+    reader(Args... args)
         : raw_reader{args...}
     {}
 
@@ -46,13 +55,33 @@ struct _reader {
     }
 
 private:
-    RR raw_reader;
+    RawReader raw_reader;
 };
 
-template<class raw_writer, class raw_reader>
+/**
+ * @brief Base class for a type-agnostic writer.
+ *
+ * If you implement your own target, use this class as a public base class for the writer-specific part.
+ */
+struct base_raw_writer {};
+
+/**
+ * @brief Base class for a type-agnostic reader.
+ *
+ * If you implement your own target, use this class as a public base class for the reader-specific part.
+ */
+struct base_raw_reader {};
+
+/** @brief Base class for a target.
+ *
+ * Use this as a public base class for writing an own target.
+ * @tparam RawWriter a child class of raw_writer
+ * @tparam RawReader a child class of raw_reader
+ */
+template<class RawWriter, class RawReader>
 struct base_target {
-    using writer = _writer<raw_writer>;
-    using reader = _reader<raw_reader>;
+    using writer = targets::writer<RawWriter>;
+    using reader = targets::reader<RawReader>;
 };
 
 }

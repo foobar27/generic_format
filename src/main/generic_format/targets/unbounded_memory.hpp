@@ -46,7 +46,7 @@ struct unbounded_memory_raw_reader : base_raw_reader {
     }
 
     template<class T>
-    void operator()(T& v) {
+    void operator()(T & v) {
         v = *reinterpret_cast<const T*>(data);
         data += sizeof(T);
     }
@@ -56,6 +56,11 @@ private:
 };
 
 
+/**
+ * @brief A target which reads from and writes to a memory region identified by a void-pointer.
+ *
+ * No buffer size is performed!
+ */
 struct unbounded_memory_target : base_target<unbounded_memory_raw_writer, unbounded_memory_raw_reader>
 {};
 

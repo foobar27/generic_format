@@ -17,7 +17,8 @@ namespace generic_format {
 namespace ast {
 
 /** @brief A container for the values of placeholders.
- * @tparam Map a #placeholder_map
+ *
+ * @tparam Map a placeholder_map
  */
 template<class Map>
 class placeholder_container {

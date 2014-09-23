@@ -20,13 +20,13 @@ struct raw : base {
     using native_type = T;
     static constexpr auto size = fixed_size(sizeof(T));
 
-    template<class RW>
-    void write(RW & raw_writer, const native_type & t) const {
+    template<class RawWriter>
+    void write(RawWriter & raw_writer, const native_type & t) const {
         raw_writer(t);
     }
 
-    template<class RR>
-    void read(RR & raw_reader, T & t) const {
+    template<class RawReader>
+    void read(RawReader & raw_reader, T & t) const {
         raw_reader(t);
     }
 };

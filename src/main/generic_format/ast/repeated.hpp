@@ -13,10 +13,10 @@
 namespace generic_format {
 namespace ast {
 
-template<class R, class T>
+template<class Reference, class Format>
 struct repeated : base {
-    using referenced_type = R;
-    using element_type = T;
+    using count_reference = Reference;
+    using format = Format;
     static constexpr auto size = dynamic_size(); // TODO if element_type is integral: fixed
 };
 

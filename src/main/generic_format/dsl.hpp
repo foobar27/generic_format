@@ -16,47 +16,67 @@ namespace generic_format{
 namespace dsl {
 
 namespace {
-    template<class... FIELDS>
-    struct first_class {
-        using type = typename std::tuple_element<0, std::tuple<FIELDS...>>::type::class_type;
-    };
+template<class... Members>
+struct first_class;
+
+template<class Member, class... Members>
+struct first_class<Member, Members...> {
+    using type = typename Member::class_type;
+};
+
 }
 
-template<class... FIELDS>
-constexpr generic_format::ast::adapted_struct<typename first_class<FIELDS...>::type, FIELDS...> adapt_struct(FIELDS...) {
-    // TODO enforce concept: always same class
+/**
+ * @brief Adapts a struct to be serialized/deserialized.
+ *
+ * You need to provide the adapted members as arguments.
+ * All arguments must adapt members of the same class.
+ */
+template<class... Fields>
+constexpr generic_format::ast::adapted_struct<typename first_class<Fields...>::type, Fields...> adapt_struct(Fields...) {
+    // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO
     return {};
 }
 
-// TODO can we somehow deduce template arguments here by some clever arguments?
-template<class C, class T, T C::* M, class S>
-constexpr generic_format::ast::member<C, T, M, S> member() {
+/**
+ * @brief Adapts a member of a struct.
+ *
+ * To be used as an argument for #adapt_struct.
+ */
+template<class Class, class Type, Type Class::* Member, class Format>
+constexpr generic_format::ast::member<Class, Type, Member, Format> member() {
     return {};
 }
 
-template<class LENGTH_TYPE>
-constexpr generic_format::ast::string<LENGTH_TYPE> string_format(LENGTH_TYPE) {
+/**
+ * @brief Serializer for a string.
+ *
+ * The string will be encoded as the length and the data of the string as UTF-8.
+ * @param LengthType the type which is used to serialize the length.
+ */
+template<class LengthFormat>
+constexpr generic_format::ast::string<LengthFormat> string_format(LengthFormat) {
     return {};
 }
 
-template<unsigned int ID>
+template<unsigned int Id>
 struct placeholder {};
 
-template<unsigned int id, class T>
-constexpr ast::reference<id, T> reference(placeholder<id>, T) {
+template<unsigned int Id, class Format>
+constexpr ast::reference<Id, Format> reference(placeholder<Id>, Format) {
     return {};
 }
 
-template<class R, class T>
-constexpr ast::repeated<R, T> repeated(R, T) {
+template<class Reference, class Format>
+constexpr ast::repeated<Reference, Format> repeated(Reference, Format) {
     return {};
 }
 
 }
 }
 
-template<class F1, class F2>
-constexpr generic_format::ast::sequence<F1, F2> operator<<(const F1 &, const F2 &) {
+template<class Format1, class Format2>
+constexpr generic_format::ast::sequence<Format1, Format2> operator<<(const Format1, const Format2) {
     return {};
 }
 

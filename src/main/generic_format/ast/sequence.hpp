@@ -13,23 +13,23 @@
 namespace generic_format {
 namespace ast {
 
-template<class F1, class F2>
+template<class Format1, class Format2>
 struct sequence : base {
-    using left = F1;
-    using right = F2;
-    using native_type = std::tuple<typename F1::native_type, typename F2::native_type>;
-    static constexpr auto size = F1::size + F2::size;
+    using left = Format1;
+    using right = Format2;
+    using native_type = std::tuple<typename Format1::native_type, typename Format2::native_type>;
+    static constexpr auto size = Format1::size + Format2::size;
 
-    template<class RW>
-    void write(RW & raw_writer, const native_type & t) const {
-        F1().write(raw_writer, std::get<0>(t));
-        F2().write(raw_writer, std::get<1>(t));
+    template<class RawWriter>
+    void write(RawWriter & raw_writer, const native_type & t) const {
+        Format1().write(raw_writer, std::get<0>(t));
+        Format2().write(raw_writer, std::get<1>(t));
     }
 
-    template<class RR>
-    void read(RR & raw_reader, native_type & t) const {
-        F1().read(raw_reader, std::get<0>(t));
-        F2().read(raw_reader, std::get<1>(t));
+    template<class RawReader>
+    void read(RawReader & raw_reader, native_type & t) const {
+        Format1().read(raw_reader, std::get<0>(t));
+        Format2().read(raw_reader, std::get<1>(t));
     }
 };
 

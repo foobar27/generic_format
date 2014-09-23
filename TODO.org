@@ -9,6 +9,7 @@
   - or even reduce the data with some function?
 ** Features
 - repeated fields,
+  - Denkfehler: should placeholders contain native types or formats, or both?
   - we need another argument for read/write methods, a state object
     - thie struct can be accessed by placeholders
   - even when number of repetitions depends on several fields (e.g. width*height)
@@ -61,6 +62,8 @@
   - ...
 - change template argument name convention (no more all-caps)
 - more "concepts" and "archetypes"
+  - e.g. you can't add a reference and something else (except products and sums)
+  - flatten references to references? or disallow them?
 - completely factor out size computation
 - where to put operator<<? Same namespace? Global namespace?
 - in DEBUG builds: fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
@@ -83,6 +86,8 @@
   it correcly via =find_package=.
 - factor out foreach to iterate over all the fields
 - add doxygen and a proper documentation
+** Missing Documentation
+- contract for =raw_reader= and =raw_writer=
 ** Optimizations
 - verify how gcc and clang compile the code
 - perhaps play with inlining
