@@ -13,6 +13,11 @@
 namespace generic_format {
 namespace ast {
 
+
+/** @brief A format representing a string which is serialized via its length followed by its data.
+ *
+ * @tparam LengthFormat the format used to serialize the length.
+ */
 template<class LengthFormat>
 struct string : base {
     using native_type = std::string;
@@ -22,18 +27,18 @@ struct string : base {
 
     static_assert(std::is_integral<native_length_type>::value, "string length must be an integral type!");
 
-    template<class RawWriter>
-    void write(RawWriter & raw_writer, const std::string & s) const {
+    template<class RawWriter, class State>
+    void write(RawWriter & raw_writer, State & state, const std::string & s) const {
         if (s.length() > std::numeric_limits<native_length_type>::max())
             throw serialization_exception();
-        length_format().write(raw_writer, static_cast<native_length_type>(s.length()));
+        length_format().write(raw_writer, state, static_cast<native_length_type>(s.length()));
         raw_writer(reinterpret_cast<const void*>(s.data()), s.length());
     }
 
-    template<class RawReader>
-    void read(RawReader & raw_reader, std::string & s) const {
+    template<class RawReader, class State>
+    void read(RawReader & raw_reader, State & state, std::string & s) const {
         native_length_type length;
-        length_format().read(raw_reader, length);
+        length_format().read(raw_reader, state, length);
         if (length > std::numeric_limits<std::size_t>::max())
             throw deserialization_exception();
         s = std::string(static_cast<std::size_t>(length), 0); // TODO we don't need to fill the string

@@ -25,18 +25,23 @@ class placeholder_container {
     using tuple_type  = typename placeholder_map_tuple_type<Map>::type;
 
     template<int Id>
-    std::tuple_element<Id, tuple_type> get() const {
+    const std::tuple_element<Id, tuple_type> & get() const {
         return std::get<typename placeholder_map_get_index<Map, Id>::value>(_tuple);
     }
 
     template<int Id>
-    void set(const std::tuple_element<Id, tuple_type> & v) const {
-        std::get<typename placeholder_map_get_index<Map, Id>::value>(_tuple) = v;
+    std::tuple_element<Id, tuple_type> & get() {
+        return std::get<typename placeholder_map_get_index<Map, Id>::value>(_tuple);
     }
 
 private:
     tuple_type _tuple;
 };
+
+template<class Format>
+placeholder_container<placeholder_map<>> placeholder_container_for_format(Format) {
+    return {}; // TODO do a serious computation here!
+}
 
 }
 }

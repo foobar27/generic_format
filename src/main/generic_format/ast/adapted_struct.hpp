@@ -13,8 +13,6 @@
 namespace generic_format {
 namespace ast {
 
-using namespace impl;
-
 // TODO move into adaptor::structs namespace?
 // TODO alternative syntax if we only have getters/setters?
 // TODO can we also nest members?
@@ -48,41 +46,41 @@ struct adapted_struct : base {
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
     static constexpr auto size = sizes_sum<Members...>::value;
 
-    template<class RawWriter>
-    void write(RawWriter & raw_writer, const native_type & t) const {
-        write_members(raw_writer, t);
+    template<class RawWriter, class State>
+    void write(RawWriter & raw_writer, State & state, const native_type & t) const {
+        write_members(raw_writer, state, t);
     }
 
-    template<class RawReader>
-    void read(RawReader & raw_reader, native_type & t) const {
-        read_members(raw_reader, t);
+    template<class RawReader, class State>
+    void read(RawReader & raw_reader, State & state, native_type & t) const {
+        read_members(raw_reader, state, t);
     }
 private:
 
-    template<class RawWriter, std::size_t I = 0>
+    template<class RawWriter, class State, std::size_t I = 0>
     inline typename std::enable_if<I == number_of_members, void>::type
-    write_members(RawWriter &, const native_type &) const {}
+    write_members(RawWriter &, State &, const native_type &) const {}
 
-    template<class RawWriter, std::size_t I = 0>
+    template<class RawWriter, class State, std::size_t I = 0>
     inline typename std::enable_if<I < number_of_members, void>::type
-    write_members(RawWriter & raw_writer, const native_type & t) const {
+    write_members(RawWriter & raw_writer, State & state, const native_type & t) const {
         using member_type = typename std::tuple_element<I, members_tuple>::type;
         using member_format = typename member_type::format;
-        member_format().write(raw_writer, t.*(member_type::member_ptr));
-        write_members<RawWriter, I + 1>(raw_writer, t);
+        member_format().write(raw_writer, state, t.*(member_type::member_ptr));
+        write_members<RawWriter, State, I + 1>(raw_writer, state, t);
     }
 
-    template<class RawReader, std::size_t I = 0>
+    template<class RawReader, class State, std::size_t I = 0>
     inline typename std::enable_if<I == number_of_members, void>::type
-    read_members(RawReader &, native_type &) const {}
+    read_members(RawReader &, State &, native_type &) const {}
 
-    template<class RawReader, std::size_t I = 0>
+    template<class RawReader, class State, std::size_t I = 0>
     inline typename std::enable_if<I < number_of_members, void>::type
-    read_members(RawReader & raw_reader, native_type & t) const {
+    read_members(RawReader & raw_reader, State & state, native_type & t) const {
         using member_type = typename std::tuple_element<I, members_tuple>::type;
         using member_format = typename member_type::format;
-        member_format().read(raw_reader, t.*(member_type::member_ptr));
-        read_members<RawReader, I + 1>(raw_reader, t);
+        member_format().read(raw_reader, state, t.*(member_type::member_ptr));
+        read_members<RawReader, State, I + 1>(raw_reader, state, t);
     }
 
 };

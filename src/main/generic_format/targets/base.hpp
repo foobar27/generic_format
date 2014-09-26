@@ -8,6 +8,8 @@
 */
 #pragma once
 
+#include "generic_format/ast/placeholder_map.hpp"
+
 namespace generic_format {
 namespace targets {
 
@@ -21,14 +23,15 @@ template<class RawWriter>
 struct writer {
 
     /// Constructor which delegates all its arguments to the RawWriter.
-    template<class... ARGS>
-    writer(ARGS... args)
+    template<class... Args>
+    writer(Args... args)
         : raw_writer{args...}
     {}
 
     template<class T, class F>
     void operator()(const T & t, F f) {
-        f.write(raw_writer, t);
+        auto state = placeholder_container_for_format(f);
+        f.write(raw_writer, state, t);
     }
 
 private:
@@ -51,7 +54,8 @@ struct reader {
 
     template<class T, class F>
     void operator()(T & t, F f) {
-        f.read(raw_reader, t);
+        auto state = ast::placeholder_container_for_format(f);
+        f.read(raw_reader, state, t);
     }
 
 private:

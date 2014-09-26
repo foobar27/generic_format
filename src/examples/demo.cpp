@@ -35,14 +35,14 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
-    static constexpr auto width_ref  = reference(placeholder<0>(), uint32_le);
-    static constexpr auto height_ref = reference(placeholder<1>(), uint32_le);
-//    static constexpr auto data_ref   = reference(placeholder<2>(), repeated(width_ref*height_ref, int8_le));
-    static constexpr auto Image_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
-                GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref))
-                //GENERIC_FORMAT_MEMBER(Image, data,   decltype(data_ref))
-                );
+//    static constexpr auto width_ref  = reference(placeholder<0>(), uint32_le);
+//    static constexpr auto height_ref = reference(placeholder<1>(), uint32_le);
+////    static constexpr auto data_ref   = reference(placeholder<2>(), repeated(width_ref*height_ref, int8_le));
+//    static constexpr auto Image_format = adapt_struct(
+//                GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
+//                GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref))
+//                //GENERIC_FORMAT_MEMBER(Image, data,   decltype(data_ref))
+//                );
 
     constexpr auto size_container = decltype(Packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size;
@@ -59,10 +59,10 @@ int main() {
         std::tuple<std::string, std::string> words {"hello", "world"};
         writer(words, words_format);
 
-        Image image {2, 3,
-                     {1, 2, 3,
-                      4, 5, 6}};
-        writer(image, Image_format);
+//        Image image {2, 3,
+//                     {1, 2, 3,
+//                      4, 5, 6}};
+//        writer(image, Image_format);
     }
     {
         ifstream is {fileName, std::ios_base::in | std::ios_base::binary};
@@ -80,7 +80,7 @@ int main() {
         reader(words, words_format);
         std::cout << std::get<0>(words) << " " << std::get<1>(words) << std::endl;
 
-        Image image;
-        reader(image, Image_format);
+//        Image image;
+//        reader(image, Image_format);
     }
 }

@@ -13,6 +13,13 @@
 namespace generic_format {
 namespace ast {
 
+/** @brief Two formats concatenated sequentially.
+ *
+ * The native type for this format is a std::tuple of size 2.
+ *
+ * @tparam Format1 the format for the first element of the tuple
+ * @tparam Format2 the format for the second element of the tuple
+ */
 template<class Format1, class Format2>
 struct sequence : base {
     using left = Format1;
@@ -20,16 +27,16 @@ struct sequence : base {
     using native_type = std::tuple<typename Format1::native_type, typename Format2::native_type>;
     static constexpr auto size = Format1::size + Format2::size;
 
-    template<class RawWriter>
-    void write(RawWriter & raw_writer, const native_type & t) const {
-        Format1().write(raw_writer, std::get<0>(t));
-        Format2().write(raw_writer, std::get<1>(t));
+    template<class RawWriter, class State>
+    void write(RawWriter & raw_writer, State & state, const native_type & t) const {
+        Format1().write(raw_writer, state, std::get<0>(t));
+        Format2().write(raw_writer, state, std::get<1>(t));
     }
 
-    template<class RawReader>
-    void read(RawReader & raw_reader, native_type & t) const {
-        Format1().read(raw_reader, std::get<0>(t));
-        Format2().read(raw_reader, std::get<1>(t));
+    template<class RawReader, class State>
+    void read(RawReader & raw_reader, State & state, native_type & t) const {
+        Format1().read(raw_reader, state, std::get<0>(t));
+        Format2().read(raw_reader, state, std::get<1>(t));
     }
 };
 

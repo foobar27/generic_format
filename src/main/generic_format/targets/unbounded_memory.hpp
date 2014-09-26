@@ -59,7 +59,7 @@ private:
 /**
  * @brief A target which reads from and writes to a memory region identified by a void-pointer.
  *
- * No buffer size is performed!
+ * No buffer size check is performed!
  */
 struct unbounded_memory_target : base_target<unbounded_memory_raw_writer, unbounded_memory_raw_reader>
 {};

@@ -9,9 +9,10 @@
   - or even reduce the data with some function?
 ** Features
 - repeated fields,
-  - Denkfehler: should placeholders contain native types or formats, or both?
+  - disable copy ctor for state
+  - think hard: should placeholders contain native types or formats, or both?
   - we need another argument for read/write methods, a state object
-    - thie struct can be accessed by placeholders
+    - the struct can be accessed by placeholders
   - even when number of repetitions depends on several fields (e.g. width*height)
     #+BEGIN_SRC cpp
     auto width = reference(std::placeholder::_1, uint32_le);
@@ -19,9 +20,13 @@
     auto data = repeated(width*height, int8_le);
     Image_format = GENERIC_FORMAT_ADAPT_STRUCT(Image, width, height, data);
     #+END_SRC
-  - who takes care of the allocation of 'data'
+  - remove coupling to vector, use visitors instead?
+  - test for overflows!
+  - who takes care of the allocation of 'data'?
   - or when the data is simply serialized into a vector
   - check that placeholder are well-formed (unique, and references only to previously defined values)
+  - port strings to this infrastructure
+  - also allow std::placeholders
 - can we somehow wrap private fields?
 - allow serialization to asio buffers
 - strings: provide alternatives: fixed-length, zero-terminated, length-data-format, ...

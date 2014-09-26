@@ -22,6 +22,11 @@ struct binary_operator :base {
 
 template<class Reference1, class Reference2>
 struct sum : binary_operator<Reference1, Reference2> {
+    using left = Reference1;
+    using right = Reference2;
+    using left_native_type = typename Reference1::native;
+    using right_native_type = typename Reference2::native;
+    using native_type = decltype((*(left_native_type*)0) + (*(right_native_type*)0)); // TODO this looks really ugly
 };
 
 template<class Reference1, class Reference2>
@@ -45,16 +50,16 @@ struct reference : base {
         return {};
     }
 
-    template<class RawWriter>
-    void write(RawWriter & raw_writer, const native_type & t) const {
-        element_type().write(raw_writer, t);
-        // TODO state.set<id>(t);
+    template<class RawWriter, class State>
+    void write(RawWriter & raw_writer, State & state, const native_type & t) const {
+        element_type().write(raw_writer, state, t);
+        state.template get<id>() = t;
     }
 
-    template<class RawReader>
-    void read(RawReader & raw_reader, native_type & t) const {
-        element_type().read(raw_reader, t);
-        // TODO state.set<id>(t); // TODO do not pass by reference, but by copy!
+    template<class RawReader, class State>
+    void read(RawReader & raw_reader, State & state, native_type & t) const {
+        element_type().read(raw_reader, state, t);
+        state.template get<id>() = t;
     }
 
 };
