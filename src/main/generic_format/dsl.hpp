@@ -92,7 +92,7 @@ constexpr generic_format::ast::sequence<Format1, Format2> operator<<(const Forma
     return {};
 }
 
-#define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::member<c, decltype(c::m), &c::m, s>()
+#define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::member<c, decltype(c::m), &c::m, decltype(s)>()
 #define GENERIC_FORMAT_PLACEHOLDER(parent, id) decltype(parent)::create<id> {}
 
 

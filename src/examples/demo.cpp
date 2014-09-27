@@ -32,9 +32,9 @@ int main() {
     static constexpr auto f = uint16_le << uint32_le;
     static constexpr auto words_format = string_format(uint16_le) << string_format(uint32_le);
     static constexpr auto Packet_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
-                GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
-                GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
+                GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
+                GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
+                GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le));
 
     placeholder<0> _;
 
@@ -42,9 +42,9 @@ int main() {
     static constexpr auto height_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
     //static constexpr auto data_ref   = ref(GENERIC_FORMAT_PLACEHOLDER(_, 2), );
     static constexpr auto Image_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
-                GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref)),
-                GENERIC_FORMAT_MEMBER(Image, data,   decltype(repeated(width_ref*height_ref, uint8_le)))
+                GENERIC_FORMAT_MEMBER(Image, width,  width_ref),
+                GENERIC_FORMAT_MEMBER(Image, height, height_ref),
+                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_ref*height_ref, uint8_le))
                 );
 
     constexpr auto size_container = decltype(Packet_format)::size;

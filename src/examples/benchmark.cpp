@@ -23,9 +23,9 @@ using namespace generic_format::dsl;
 using namespace generic_format::targets::unbounded_memory;
 
 static constexpr auto Packet_format = adapt_struct(
-            GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
-            GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
-            GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
+            GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
+            GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
+            GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le));
 
 int main() {
     constexpr unsigned int number_of_iterations = 100000;

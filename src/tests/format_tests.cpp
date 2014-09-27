@@ -258,9 +258,9 @@ bool operator==(const Person & p1, const Person & p2) {
 }
 
 static constexpr auto Person_format = adapt_struct(
-            GENERIC_FORMAT_MEMBER(Person, first_name, generic_format::ast::string<uint8_le_t>),
-            GENERIC_FORMAT_MEMBER(Person, last_name,  generic_format::ast::string<uint8_le_t>),
-            GENERIC_FORMAT_MEMBER(Person, age,        uint8_le_t));
+            GENERIC_FORMAT_MEMBER(Person, first_name, string_format(uint8_le)),
+            GENERIC_FORMAT_MEMBER(Person, last_name,  string_format(uint8_le)),
+            GENERIC_FORMAT_MEMBER(Person, age,        uint8_le));
 
 std::ostream& operator<<(std::ostream& os, const Person & p) {
     os << "Person[first_name=" << p.first_name << ", last_name=" << p.last_name << ", age=" << p.age << "]";
