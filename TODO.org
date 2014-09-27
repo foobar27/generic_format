@@ -10,27 +10,16 @@
 ** Features
 - repeated fields,
   - deref operator
-    - binary operators should automatically dereference
-    - not taken into account when constructing reference tree
-    - normal references should not have a native_type, only a
-      native_referenced_type, deref then wraps that to native_type
-    - we need type traits for references/unreferenced types
     - verify reference has been defined before in the format
-  - placeholder_map via is_same, no more via numbers
-  - get =is_format= to work
-    - we will need the same partial specialization for the traversal to compute the placeholder_map!
+  - how to "nest" references (e.g. nested structs, all have references)
+    - make a variadic kind of generator, which is given as a template argument?
+  - disable copy ctor for state
+  - also allow reference+constant arithmetic
   - generic ast traversal (via ::children)
     - to compute size
     - to compute placeholder_map
   - move more into base class of ast?
     - e.g. native_type
-  - how to "nest" references (e.g. nested structs, all have references)
-    - make a variadic kind of generator, which is given as a template argument?
-  - separate interface and implementation
-  - disable copy ctor for state
-  - also allow reference+constant arithmetic
-  - reuse std::plus for operators
-  - use integral_constant for type checks, and false_type and true_type
   - try out with map<int, map<int, int>>
   - we need another argument for read/write methods, a state object
     - the struct can be accessed by placeholders
@@ -80,6 +69,8 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- use integral_constant for type checks, and false_type and true_type
+- separate interface and implementation (e.g. helper.hpp)
 - search for '...' and check if it can be simplified
 - refactor placeholders.hpp
 - think about strategy of what belongs into 'impl' namespaces

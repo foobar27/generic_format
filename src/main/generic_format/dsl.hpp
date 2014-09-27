@@ -59,8 +59,15 @@ constexpr generic_format::ast::string<LengthFormat> string_format(LengthFormat) 
     return {};
 }
 
-template<std::size_t Id>
-struct placeholder {};
+/** @brief A placeholder which is a also a factory for new placeholders.
+ *
+ * This can be quite handy if you need to nest or reuse formats.
+ */
+template<std::size_t... Ids>
+struct placeholder {
+    template<std::size_t Id>
+    using create = placeholder<Id, Ids...>;
+};
 
 template<class Placeholder, class Format>
 constexpr ast::reference<Placeholder, Format> ref(Placeholder, Format) {
@@ -86,3 +93,6 @@ constexpr generic_format::ast::sequence<Format1, Format2> operator<<(const Forma
 }
 
 #define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::member<c, decltype(c::m), &c::m, s>()
+#define GENERIC_FORMAT_PLACEHOLDER(parent, id) decltype(parent)::create<id> {}
+
+

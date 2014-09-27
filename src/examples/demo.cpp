@@ -35,9 +35,12 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
-    static constexpr auto width_ref  = ref(placeholder<1>(), uint32_le);
-    static constexpr auto height_ref = ref(placeholder<0>(), uint32_le);
-    //static constexpr auto data_ref   = ref(placeholder<2>(), );
+
+    placeholder<0> _;
+
+    static constexpr auto width_ref  = ref(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
+    static constexpr auto height_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
+    //static constexpr auto data_ref   = ref(GENERIC_FORMAT_PLACEHOLDER(_, 2), );
     static constexpr auto Image_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
                 GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref)),
