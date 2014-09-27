@@ -50,7 +50,7 @@ struct helper<Format, typename std::enable_if<!is_reference<Format>::value, void
 
 template<class Reference>
 struct helper<Reference, typename std::enable_if<is_reference<Reference>::value, void>::type> {
-    using type = placeholder_map<placeholder_map_entry<typename Reference::native_type, Reference::id>>;
+    using type = placeholder_map<placeholder_map_entry<typename Reference::native_type, typename Reference::placeholder>>;
 };
 
 template<class Format>

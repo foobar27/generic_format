@@ -59,11 +59,11 @@ constexpr generic_format::ast::string<LengthFormat> string_format(LengthFormat) 
     return {};
 }
 
-template<unsigned int Id>
+template<std::size_t Id>
 struct placeholder {};
 
-template<unsigned int Id, class Format>
-constexpr ast::reference<Id, Format> ref(placeholder<Id>, Format) {
+template<class Placeholder, class Format>
+constexpr ast::reference<Placeholder, Format> ref(Placeholder, Format) {
     return {};
 }
 

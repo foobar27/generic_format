@@ -17,7 +17,7 @@ namespace ast {
 
 struct reference_base {};
 
-template<std::size_t Id, class ElementType>
+template<typename Placeholder, class ElementType>
 struct reference;
 
 template<class T>
@@ -32,8 +32,8 @@ template<class T>
 struct is_reference : std::integral_constant<bool, std::is_base_of<reference_base, T>::value>
 {};
 
-template<std::size_t Id, class ElementType>
-struct is_reference<reference<Id, ElementType>> {
+template<typename Placeholder, class ElementType>
+struct is_reference<reference<Placeholder, ElementType>> {
     static constexpr bool value = true;
 };
 
@@ -87,14 +87,14 @@ template<class Reference1, class Reference2>
 struct product : public binary_operator<Reference1, Reference2, product_operator<typename Reference1::native_type, typename Reference2::native_type>>
 {};
 
-template<std::size_t Id, class ElementType>
+template<typename Placeholder, class ElementType>
 struct reference : base<children_list<ElementType>>, reference_base {
     static_assert(is_format<ElementType>::value, "Can only take references from formats!");
     static_assert(!is_reference<ElementType>::value, "Cannot take references of references!");
-    static constexpr auto id = Id;
+    using placeholder = Placeholder;
     using element_type = ElementType;
     using native_type = typename ElementType::native_type;
-    using type = reference<id, element_type>;
+    using type = reference<placeholder, element_type>;
     static constexpr auto size = element_type::size;
 
     template<class OtherReference>
@@ -111,18 +111,18 @@ struct reference : base<children_list<ElementType>>, reference_base {
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
         element_type().write(raw_writer, state, t);
 
-        state.template get<id>() = t;
+        state.template get<placeholder>() = t;
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
         element_type().read(raw_reader, state, t);
-        state.template get<id>() = t;
+        state.template get<placeholder>() = t;
     }
 
     template<class State>
     native_type operator()(State & state) const {
-        return state.template get<id>();
+        return state.template get<placeholder>();
     }
 
 };
@@ -141,9 +141,9 @@ struct dereference : base<children_list<>> {
 };
 
 /// partial specialization to make dereferencing idempotent
-template<std::size_t Id, class ElementType>
-struct dereference<reference<Id, ElementType>> : base<children_list<>> {
-    using type = reference<Id, ElementType>;
+template<typename Placeholder, class ElementType>
+struct dereference<reference<Placeholder, ElementType>> : base<children_list<>> {
+    using type = reference<Placeholder, ElementType>;
     using native_type = typename type::native_type;
 
     template<class State>
