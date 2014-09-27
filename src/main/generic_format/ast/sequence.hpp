@@ -21,7 +21,10 @@ namespace ast {
  * @tparam Format2 the format for the second element of the tuple
  */
 template<class Format1, class Format2>
-struct sequence : base {
+struct sequence : base<children_list<Format1, Format2>> {
+    static_assert(is_format<Format1>::value, "Format1 must be a format!");
+    static_assert(is_format<Format2>::value, "Format2 must be a format!");
+
     using left = Format1;
     using right = Format2;
     using native_type = std::tuple<typename Format1::native_type, typename Format2::native_type>;

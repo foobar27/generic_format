@@ -35,52 +35,57 @@ int main() {
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le_t),
                 GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le_t));
-//    static constexpr auto width_ref  = reference(placeholder<0>(), uint32_le);
-//    static constexpr auto height_ref = reference(placeholder<1>(), uint32_le);
-////    static constexpr auto data_ref   = reference(placeholder<2>(), repeated(width_ref*height_ref, int8_le));
-//    static constexpr auto Image_format = adapt_struct(
-//                GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
-//                GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref))
-//                //GENERIC_FORMAT_MEMBER(Image, data,   decltype(data_ref))
-//                );
+    static constexpr auto width_ref  = ref(placeholder<0>(), uint32_le);
+    static constexpr auto height_ref = ref(placeholder<1>(), uint32_le);
+    //static constexpr auto data_ref   = ref(placeholder<2>(), );
+    static constexpr auto Image_format = adapt_struct(
+                GENERIC_FORMAT_MEMBER(Image, width,  decltype(width_ref)),
+                GENERIC_FORMAT_MEMBER(Image, height, decltype(height_ref)),
+                GENERIC_FORMAT_MEMBER(Image, data,   decltype(repeated(width_ref*height_ref, uint8_le)))
+                );
 
     constexpr auto size_container = decltype(Packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size;
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
     {
-        ofstream os {fileName, std::ios_base::out | std::ios_base::binary};
+        ofstream os {fileName, ios_base::out | ios_base::binary};
         auto writer = iostream_target::writer {&os};
-        std::tuple<std::uint16_t, std::uint32_t> v {42, 99};
+        tuple<uint16_t, uint32_t> v {42, 99};
         writer(v, f);
 
         Packet packet { 1, 2, 3 };
         writer(packet, Packet_format);
-        std::tuple<std::string, std::string> words {"hello", "world"};
+        tuple<string, string> words {"hello", "world"};
         writer(words, words_format);
 
-//        Image image {2, 3,
-//                     {1, 2, 3,
-//                      4, 5, 6}};
-//        writer(image, Image_format);
+        Image image {2, 3,
+                     {1, 2, 3,
+                      4, 5, 6}};
+        writer(image, Image_format);
     }
     {
-        ifstream is {fileName, std::ios_base::in | std::ios_base::binary};
+        ifstream is {fileName, ios_base::in | ios_base::binary};
         auto reader = iostream_target::reader {&is};
 
-        std::tuple<std::uint16_t, std::uint32_t> v;
+        tuple<uint16_t, uint32_t> v;
         reader(v, f);
-        std::cout << "read: " << std::get<0>(v) << " " << std::get<1>(v) << std::endl;
+        cout << "read: " << get<0>(v) << " " << get<1>(v) << endl;
 
         Packet packet;
         reader(packet, Packet_format);
-        std::cout << "read: " << packet << std::endl;
+        cout << "read: " << packet << endl;
 
-        std::tuple<std::string, std::string> words;
+        tuple<string, string> words;
         reader(words, words_format);
-        std::cout << std::get<0>(words) << " " << std::get<1>(words) << std::endl;
+        cout << get<0>(words) << " " << get<1>(words) << endl;
 
-//        Image image;
-//        reader(image, Image_format);
+        Image image;
+        reader(image, Image_format);
+        cout << "Image: width=" << image.width << " height=" << image.height << " data=";
+        for (auto v : image.data) {
+            cout << " " << static_cast<int>(v);
+        }
+        cout << endl;
     }
 }

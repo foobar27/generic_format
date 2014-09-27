@@ -63,12 +63,17 @@ template<unsigned int Id>
 struct placeholder {};
 
 template<unsigned int Id, class Format>
-constexpr ast::reference<Id, Format> reference(placeholder<Id>, Format) {
+constexpr ast::reference<Id, Format> ref(placeholder<Id>, Format) {
+    return {};
+}
+
+template<class Reference>
+constexpr ast::dereference<Reference> deref(Reference) {
     return {};
 }
 
 template<class Reference, class Format>
-constexpr ast::repeated<Reference, Format> repeated(Reference, Format) {
+constexpr ast::repeated<ast::dereference<Reference>, Format> repeated(Reference, Format) {
     return {};
 }
 

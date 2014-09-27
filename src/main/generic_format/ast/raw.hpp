@@ -16,7 +16,7 @@ namespace ast {
 using namespace impl;
 
 template<class T>
-struct raw : base {
+struct raw : base<children_list<>> {
     using native_type = T;
     static constexpr auto size = fixed_size(sizeof(T));
 

@@ -11,6 +11,8 @@
 #include <tuple>
 #include <type_traits>
 
+#include "generic_format/helper.hpp"
+
 namespace generic_format {
 namespace ast {
 
@@ -65,6 +67,12 @@ struct placeholder_map_get_index;
 template<class Map, class Entry>
 struct placeholder_map_put;
 
+/** @brief Operation to merge two placeholder maps.
+ *
+ */
+template<class Map1, class Map2>
+struct merge_placeholder_maps;
+
 /** @brief Operation to compute the corresponding tuple type.
  *
  * Creates a tuple, with the types taken from the entries, in the same order.
@@ -76,17 +84,6 @@ struct placeholder_map_tuple_type;
 
 // Helper functions
 namespace {
-
-/// @brief Depending on the value of the bool, return T1 or T2.
-template<bool b, typename T1, typename T2>
-struct conditional_type {
-    using type = T1;
-};
-
-template<typename T1, typename T2>
-struct conditional_type<false, T1, T2> {
-    using type = T2;
-};
 
 /** @brief Concatenate the types of two tuples.
  *
@@ -152,17 +149,14 @@ struct placeholder_map_contains<Id, Entry, Entries...> {
 
 /// Helper operation for placeholder_map_tuple_type
 template<class... Entries>
-struct placeholder_map_tuple_type_helper;
-
-template<>
-struct placeholder_map_tuple_type_helper<> {
+struct placeholder_map_tuple_type_helper {
     using type = std::tuple<>;
 };
 
 template<class Entry, class... Entries>
-struct placeholder_map_tuple_type_helper<placeholder_map<Entry, Entries...>> {
-    using _tuple1 = std::tuple<Entry>;
-    using _tuple2 = placeholder_map_tuple_type_helper<Entries...>();
+struct placeholder_map_tuple_type_helper<Entry, Entries...> {
+    using _tuple1 = std::tuple<typename Entry::type>;
+    using _tuple2 = typename placeholder_map_tuple_type_helper<Entries...>::type;
     using type = typename concat_tuples<_tuple1, _tuple2>::type;
 };
 
@@ -192,7 +186,7 @@ struct placeholder_map_get<placeholder_map_get<Entries...>, Id> {
 };
 
 template<std::size_t Id, class... Entries>
-struct placeholder_map_get_index<placeholder_map_get_index<Entries...>, Id> {
+struct placeholder_map_get_index<placeholder_map<Entries...>, Id> {
     static constexpr auto value = placeholder_map_get_index_helper<0, Id, Entries...>::value;
     static_assert(value != -1, "id not found in placeholder map!");
 };
@@ -204,7 +198,17 @@ struct placeholder_map_tuple_type<placeholder_map<Entries...>> {
 
 template<class Entry, class... Entries>
 struct placeholder_map_put<placeholder_map<Entries...>, Entry> {
-    using type = typename placeholder_map_put_helper<Entries...>::type;
+    using type = typename placeholder_map_put_helper<Entry, Entries...>::type;
+};
+
+template<class Map2>
+struct merge_placeholder_maps<placeholder_map<>, Map2> {
+    using type = Map2;
+};
+
+template<class Map2, class Entry, class... Entries>
+struct merge_placeholder_maps<placeholder_map<Entry, Entries...>, Map2> {
+    using type = typename merge_placeholder_maps<placeholder_map<Entries...>, typename placeholder_map_put<Map2, Entry>::type>::type;
 };
 
 }

@@ -22,26 +22,23 @@ namespace ast {
  */
 template<class Map>
 class placeholder_container {
+public:
     using tuple_type  = typename placeholder_map_tuple_type<Map>::type;
 
     template<int Id>
-    const std::tuple_element<Id, tuple_type> & get() const {
-        return std::get<typename placeholder_map_get_index<Map, Id>::value>(_tuple);
+    const typename std::tuple_element<Id, tuple_type>::type & get() const {
+        return std::get<placeholder_map_get_index<Map, Id>::value>(_tuple);
     }
 
     template<int Id>
-    std::tuple_element<Id, tuple_type> & get() {
-        return std::get<typename placeholder_map_get_index<Map, Id>::value>(_tuple);
+    typename std::tuple_element<Id, tuple_type>::type & get() {
+        return std::get<placeholder_map_get_index<Map, Id>::value>(_tuple);
     }
+
 
 private:
     tuple_type _tuple;
 };
-
-template<class Format>
-placeholder_container<placeholder_map<>> placeholder_container_for_format(Format) {
-    return {}; // TODO do a serious computation here!
-}
 
 }
 }

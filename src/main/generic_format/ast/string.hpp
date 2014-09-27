@@ -19,7 +19,7 @@ namespace ast {
  * @tparam LengthFormat the format used to serialize the length.
  */
 template<class LengthFormat>
-struct string : base {
+struct string : base<children_list<LengthFormat>> {
     using native_type = std::string;
     using length_format = LengthFormat;
     using native_length_type = typename length_format::native_type;

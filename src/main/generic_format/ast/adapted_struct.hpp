@@ -18,6 +18,7 @@ namespace ast {
 // TODO can we also nest members?
 template<class Class, class Type, Type Class::* Member, class Format>
 struct member {
+    static_assert(is_format<Format>::value, "Format must be a format!");
     static constexpr auto member_ptr = Member;
     using format = Format;
     using native_type = Type;
@@ -28,7 +29,7 @@ struct member {
 namespace {
 
     template<class... Formats>
-    struct sizes_sum{
+    struct sizes_sum {
         static constexpr size_container value {};
     };
 
@@ -37,10 +38,20 @@ namespace {
         static constexpr auto value = Format::size + sizes_sum<Formats...>::value;
     };
 
+    template<class... Members>
+    struct members_to_children_list {
+        using type = children_list<>;
+    };
+
+    template<class Member, class... Members>
+    struct members_to_children_list<Member, Members...> {
+        using type = typename concat_children_lists<children_list<typename Member::format>, typename members_to_children_list<Members...>::type>::type;
+    };
+
 }
 
 template<class T, class... Members>
-struct adapted_struct : base {
+struct adapted_struct : public base<typename members_to_children_list<Members...>::type> {
     using native_type = T;
     using members_tuple = std::tuple<Members...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();

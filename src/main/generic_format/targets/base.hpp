@@ -9,9 +9,58 @@
 #pragma once
 
 #include "generic_format/ast/placeholder_map.hpp"
+#include "generic_format/ast/placeholder_container.hpp"
+#include "generic_format/ast/base.hpp"
 
 namespace generic_format {
 namespace targets {
+
+namespace {
+
+using namespace ast;
+
+template<class Format>
+struct map_for_format;
+
+template<class... Children>
+struct map_for_children {
+    using type = placeholder_map<>;
+};
+
+template<class Child, class... Children>
+struct map_for_children<Child, Children...> {
+    using type = typename merge_placeholder_maps<typename map_for_format<Child>::type, typename map_for_children<Children...>::type>::type;
+};
+
+template<class Format>
+struct map_for_children_list;
+
+template<class... Children>
+struct map_for_children_list<children_list<Children...>> {
+    using type = typename map_for_children<Children...>::type;
+};
+
+template<class Format, class Enabled = void>
+struct helper;
+
+template<class Format>
+struct helper<Format, typename std::enable_if<!is_reference<Format>::value, void>::type> {
+    using type = placeholder_map<>;
+};
+
+template<class Reference>
+struct helper<Reference, typename std::enable_if<is_reference<Reference>::value, void>::type> {
+    using type = placeholder_map<placeholder_map_entry<typename Reference::native_type, Reference::id>>;
+};
+
+template<class Format>
+struct map_for_format {
+    using _current_map = typename helper<Format>::type;
+    using _children_map = typename map_for_children_list<typename Format::children>::type;
+    using type = typename merge_placeholder_maps<_current_map, _children_map>::type;
+};
+
+}
 
 /** @brief An operation to write a type according to a specific format.
  *
@@ -30,7 +79,9 @@ struct writer {
 
     template<class T, class F>
     void operator()(const T & t, F f) {
-        auto state = placeholder_container_for_format(f);
+        using namespace ast;
+        static_assert(is_format<F>::value, "F must be a format!");
+        placeholder_container<typename map_for_format<F>::type> state;
         f.write(raw_writer, state, t);
     }
 
@@ -47,6 +98,7 @@ private:
 template<class RawReader>
 struct reader {
 
+    /// Constructor which delegates all its arguments to the RawReader.
     template<class... Args>
     reader(Args... args)
         : raw_reader{args...}
@@ -54,7 +106,9 @@ struct reader {
 
     template<class T, class F>
     void operator()(T & t, F f) {
-        auto state = ast::placeholder_container_for_format(f);
+        using namespace ast;
+        static_assert(is_format<F>::value, "F must be a format!");
+        placeholder_container<typename map_for_format<F>::type> state;
         f.read(raw_reader, state, t);
     }
 

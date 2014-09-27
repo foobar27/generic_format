@@ -10,6 +10,7 @@
 
 #include <cstddef>
 #include <tuple>
+#include <type_traits>
 #include <string>
 #include <limits>
 
@@ -20,6 +21,62 @@
 namespace generic_format {
 namespace ast {
 
-struct base {};
+template<class... Children>
+struct children_list {};
+
+template<class T>
+struct is_children_list {
+    static constexpr auto value = false;
+};
+
+template<class... Children>
+struct is_children_list<children_list<Children...>> {
+    static constexpr auto value = true;
+};
+
+template<class T1, class T2>
+struct concat_children_lists;
+
+template<class... T1s, class... T2s>
+struct concat_children_lists<children_list<T1s...>, children_list<T2s...>> {
+    using type = children_list<T1s..., T2s...>;
+};
+
+struct base_base
+{};
+
+template<class T>
+struct is_format : public std::integral_constant<bool, std::is_base_of<base_base, T>::value>
+{};
+
+namespace {
+
+template<class... Children>
+struct all_children_are_formats
+        : public std::true_type
+{};
+
+template<class Child, class... Children>
+struct all_children_are_formats<Child, Children...>
+        : public std::integral_constant<bool, is_format<Child>::value && all_children_are_formats<Children...>::value>
+{};
+
+template<class ChildrenList>
+struct is_children_list_valid;
+
+template<class... Children>
+struct is_children_list_valid<children_list<Children...>>
+        : public std::integral_constant<bool, all_children_are_formats<Children...>::value>
+{};
+
+}
+
+template<class ChildrenList>
+struct base : base_base {
+    static_assert(is_children_list<ChildrenList>::value, "'ChildrenList' needs to be a children_list");
+    static_assert(is_children_list_valid<ChildrenList>::value, "All children must be valid formats!");
+
+    using children = ChildrenList;
+};
 
 }}

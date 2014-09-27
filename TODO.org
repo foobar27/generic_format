@@ -9,8 +9,29 @@
   - or even reduce the data with some function?
 ** Features
 - repeated fields,
+  - deref operator
+    - binary operators should automatically dereference
+    - not taken into account when constructing reference tree
+    - normal references should not have a native_type, only a
+      native_referenced_type, deref then wraps that to native_type
+    - we need type traits for references/unreferenced types
+    - verify reference has been defined before in the format
+  - placeholder_map via is_same, no more via numbers
+  - get =is_format= to work
+    - we will need the same partial specialization for the traversal to compute the placeholder_map!
+  - generic ast traversal (via ::children)
+    - to compute size
+    - to compute placeholder_map
+  - move more into base class of ast?
+    - e.g. native_type
+  - how to "nest" references (e.g. nested structs, all have references)
+    - make a variadic kind of generator, which is given as a template argument?
+  - separate interface and implementation
   - disable copy ctor for state
-  - think hard: should placeholders contain native types or formats, or both?
+  - also allow reference+constant arithmetic
+  - reuse std::plus for operators
+  - use integral_constant for type checks, and false_type and true_type
+  - try out with map<int, map<int, int>>
   - we need another argument for read/write methods, a state object
     - the struct can be accessed by placeholders
   - even when number of repetitions depends on several fields (e.g. width*height)
@@ -27,6 +48,8 @@
   - check that placeholder are well-formed (unique, and references only to previously defined values)
   - port strings to this infrastructure
   - also allow std::placeholders
+  - replace the state by varargs (even only the arguments which are actually referenced!)
+- simplify the declarations of the ast nodes (to facilitate the user to declare their own)
 - can we somehow wrap private fields?
 - allow serialization to asio buffers
 - strings: provide alternatives: fixed-length, zero-terminated, length-data-format, ...
@@ -57,6 +80,7 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- search for '...' and check if it can be simplified
 - refactor placeholders.hpp
 - think about strategy of what belongs into 'impl' namespaces
 - somehow reuse the same code (via visitor pattern?) for

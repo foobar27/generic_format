@@ -16,36 +16,36 @@ namespace iostream {
 
 struct iostream_raw_writer : base_raw_writer {
 
-    explicit iostream_raw_writer(std::ostream * const os) : os{os} {}
+    explicit iostream_raw_writer(std::ostream * const os) : _os{os} {}
 
     template<class T>
     void operator()(const T & v) {
-        os->write(reinterpret_cast<const char*>(&v), sizeof(v));
+        _os->write(reinterpret_cast<const char*>(&v), sizeof(v));
     }
 
     void operator()(const void * p, std::size_t size) {
-        os->write(reinterpret_cast<const char*>(p), size);
+        _os->write(reinterpret_cast<const char*>(p), size);
     }
 
 private:
-    std::ostream *const os;
+    std::ostream *const _os;
 };
 
 struct iostream_raw_reader : base_raw_reader {
 
-    explicit iostream_raw_reader(std::istream * const is) : is{is} {}
+    explicit iostream_raw_reader(std::istream * const is) : _is{is} {}
 
     template<class T>
     void operator()(T & v) {
-        is->read(reinterpret_cast<char*>(&v), sizeof(v));
+        _is->read(reinterpret_cast<char*>(&v), sizeof(v));
     }
 
     void operator()(void * p, std::size_t size) {
-        is->read(reinterpret_cast<char*>(p), size);
+        _is->read(reinterpret_cast<char*>(p), size);
     }
 
 private:
-    std::istream *const is;
+    std::istream *const _is;
 };
 
 /**
