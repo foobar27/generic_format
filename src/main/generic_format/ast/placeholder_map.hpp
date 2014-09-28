@@ -33,6 +33,14 @@ struct is_placeholder_map_entry : std::false_type {};
 template<class T, typename Placeholder>
 struct is_placeholder_map_entry<placeholder_map_entry<T, Placeholder>> : std::true_type {};
 
+template<typename Placeholder>
+struct placeholder_matcher {
+
+    template<class Entry>
+    using type = std::is_same<Placeholder, typename Entry::placeholder>;
+
+};
+
 /** @brief Type specifying an ordered map of placeholders.
  *
  * A placeholder_map maps placeholders to a struct which contains the native type.
@@ -107,20 +115,10 @@ struct placeholder_map_get_index_helper<Index, Placeholder, Entry, Entries...> {
 };
 
 /// Helper operation for placeholder_map_put to check for duplicates.
+
 template<typename Placeholder, class... Entries>
-struct placeholder_map_contains;
-
-template<typename Placeholder>
-struct placeholder_map_contains<Placeholder> {
-    static constexpr auto value = false;
-};
-
-template<typename Placeholder, class Entry, class... Entries>
-struct placeholder_map_contains<Placeholder, Entry, Entries...> {
-    using _current_placeholder = typename Entry::placeholder;
-    static constexpr auto value = std::is_same<Placeholder, _current_placeholder>::value ? true : placeholder_map_contains<Placeholder, Entries...>::value;
-};
-
+struct placeholder_map_contains : variadic::for_any<placeholder_matcher<Placeholder>::template type, Entries...>
+{};
 
 /// Helper operation for placeholder_map_put
 template<class... Entries>

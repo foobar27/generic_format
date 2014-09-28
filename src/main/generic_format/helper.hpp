@@ -89,6 +89,14 @@ template<template<class> class Predicate, class Arg, class... Args>
 struct for_all<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value && for_all<Predicate, Args...>::value>
 {};
 
+template<template<class> class Predicate, class... Args>
+struct for_any : std::false_type
+{};
+
+template<template<class> class Predicate, class Arg, class... Args>
+struct for_any<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value || for_any<Predicate, Args...>::value>
+{};
+
 }
 }
 
