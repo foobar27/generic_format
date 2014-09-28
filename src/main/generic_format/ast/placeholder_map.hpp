@@ -85,20 +85,6 @@ struct placeholder_map_tuple_type;
 // Helper functions
 namespace {
 
-/** @brief Concatenate the types of two tuples.
- *
- * This is needed to build the `tuple_type` of the placeholder_container.
- * @tparam T1 the type of the first std::tuple
- * @tparam T2 the type of the second std::tuple
- */
-template<class T1, class T2>
-struct concat_tuples;
-
-template<class... T1s, class... T2s>
-struct concat_tuples<std::tuple<T1s...>, std::tuple<T2s...>> {
-    using type = std::tuple<T1s..., T2s...>;
-};
-
 /// @brief Helper operation for placeholder_map_get.
 template<typename placeholder, class... Entries>
 struct placeholder_map_get_helper;
@@ -147,18 +133,6 @@ struct placeholder_map_contains<Placeholder, Entry, Entries...> {
     static constexpr auto value = std::is_same<Placeholder, _current_placeholder>::value ? true : placeholder_map_contains<Placeholder, Entries...>::value;
 };
 
-/// Helper operation for placeholder_map_tuple_type
-template<class... Entries>
-struct placeholder_map_tuple_type_helper {
-    using type = std::tuple<>;
-};
-
-template<class Entry, class... Entries>
-struct placeholder_map_tuple_type_helper<Entry, Entries...> {
-    using _tuple1 = std::tuple<typename Entry::type>;
-    using _tuple2 = typename placeholder_map_tuple_type_helper<Entries...>::type;
-    using type = typename concat_tuples<_tuple1, _tuple2>::type;
-};
 
 /// Helper operation for placeholder_map_put
 template<class... Entries>
@@ -193,7 +167,7 @@ struct placeholder_map_get_index<placeholder_map<Entries...>, Placeholder> {
 
 template<class... Entries>
 struct placeholder_map_tuple_type<placeholder_map<Entries...>> {
-    using type = typename placeholder_map_tuple_type_helper<Entries...>::type;
+    using type = std::tuple<typename Entries::type...>;
 };
 
 template<class Entry, class... Entries>
