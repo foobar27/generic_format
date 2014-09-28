@@ -81,6 +81,10 @@ constexpr T sum(T initial_value, Ts... ts) {
 
 namespace variadic {
 
+/** @brief Tests whether a predicate holds for all variadic arguments.
+ *
+ * Provides the member constant value equal true if Predicate holds for every argument, else value is false.
+ */
 template<template<class> class Predicate, class... Args>
 struct for_all : std::true_type
 {};
@@ -89,6 +93,10 @@ template<template<class> class Predicate, class Arg, class... Args>
 struct for_all<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value && for_all<Predicate, Args...>::value>
 {};
 
+/** @brief Tests whether a predicate holds for some variadic arguments.
+ *
+ * Provides the member constant value equal true if Predicate holds for at least one argument, else value is false.
+ */
 template<template<class> class Predicate, class... Args>
 struct for_any : std::false_type
 {};
@@ -96,9 +104,6 @@ struct for_any : std::false_type
 template<template<class> class Predicate, class Arg, class... Args>
 struct for_any<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value || for_any<Predicate, Args...>::value>
 {};
-
-template<template<class> class Predicate, class... Args>
-struct index_of;
 
 namespace {
 
@@ -112,6 +117,11 @@ struct index_of_helper<Predicate, N, Arg, Args...> : std::integral_constant<std:
 
 }
 
+/** @brief Finds an argument matching a predicate.
+ *
+ * Provides the index of the first occurrence of Args satisfying Predicate.
+ * Fails at compile-time if not argument matches the predicate.
+ */
 template<template<class> class Predicate, class... Args>
 struct index_of {
     static constexpr auto value = index_of_helper<Predicate, 0, Args...>::value;

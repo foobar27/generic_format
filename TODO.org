@@ -67,33 +67,26 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
-- factor out more algorithms (like index_of)
-- use more sophisticated template pack expansion
-  - use std::forward<>...
-- use integral_constant for type checks, and false_type and true_type
+- extract custom map type (indexed by a Predicate)
+- use =std::forward<>...= in reader/writer???
 - separate interface and implementation (e.g. helper.hpp)
 - search for '...' and check if it can be simplified
-- generic ast traversal (via ::children)
-  - to compute size
-  - to compute placeholder_map
-- move more into base class of ast?
-  - e.g. native_type
-- think about strategy of what belongs into 'impl' namespaces
 - somehow reuse the same code (via visitor pattern?) for
   - write
   - read
   - seek
   - size
   - ...
-- change template argument name convention (no more all-caps)
-- more "concepts" and "archetypes"
-  - e.g. you can't add a reference and something else (except products and sums)
-  - flatten references to references? or disallow them?
+- move more into base class of ast?
+  - e.g. native_type
+- generic ast traversal (via ::children)
+  - to compute size
+  - to compute placeholder_map
 - completely factor out size computation
 - where to put operator<<? Same namespace? Global namespace?
 - in DEBUG builds: fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
 - be less sloppy about move ctors in tests (especially assignments)
-- default values via initializer lists
+- provide default values via initializer lists
 - fill in doxygen @author & co
 - factor out foreach
 - remove type-specific operator() from =raw_reader= and =raw_writer=
