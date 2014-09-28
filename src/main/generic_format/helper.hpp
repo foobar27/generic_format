@@ -97,6 +97,27 @@ template<template<class> class Predicate, class Arg, class... Args>
 struct for_any<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value || for_any<Predicate, Args...>::value>
 {};
 
+template<template<class> class Predicate, class... Args>
+struct index_of;
+
+namespace {
+
+template<template<class> class Predicate, std::size_t N, class... Args>
+struct index_of_helper : std::integral_constant<std::size_t, N>
+{};
+
+template<template<class> class Predicate, std::size_t N, class Arg, class... Args>
+struct index_of_helper<Predicate, N, Arg, Args...> : std::integral_constant<std::size_t, Predicate<Arg>::value ? N : index_of_helper<Predicate, N + 1, Args...>::value>
+{};
+
+}
+
+template<template<class> class Predicate, class... Args>
+struct index_of {
+    static constexpr auto value = index_of_helper<Predicate, 0, Args...>::value;
+    static_assert(value < sizeof...(Args), "Item not found in variadic argument list!");
+};
+
 }
 }
 

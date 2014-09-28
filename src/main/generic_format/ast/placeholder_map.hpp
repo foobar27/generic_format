@@ -97,25 +97,7 @@ struct placeholder_map_tuple_type;
 // Helper functions
 namespace {
 
-/// Helper operation for placeholder_map_get_index.
-template<std::size_t Index, typename Placeholder, class... Entries>
-struct placeholder_map_get_index_helper;
-
-template<std::size_t Index, typename Placeholder>
-struct placeholder_map_get_index_helper<Index, Placeholder> {
-    static constexpr std::size_t value = -1; // very big number, will be checked later
-};
-
-template<std::size_t Index, typename Placeholder, class Entry, class... Entries>
-struct placeholder_map_get_index_helper<Index, Placeholder, Entry, Entries...> {
-    using _current_placeholder = typename Entry::placeholder;
-    static constexpr auto value = std::is_same<Placeholder, _current_placeholder>::value
-            ? Index
-            : placeholder_map_get_index_helper<Index+1, Placeholder, Entries...>::value;
-};
-
 /// Helper operation for placeholder_map_put to check for duplicates.
-
 template<typename Placeholder, class... Entries>
 struct placeholder_map_contains : variadic::for_any<placeholder_matcher<Placeholder>::template type, Entries...>
 {};
@@ -140,10 +122,9 @@ struct placeholder_map_put_helper<Entry, Entries...> {
 // Implementations of the placeholder_map functions.
 
 template<typename Placeholder, class... Entries>
-struct placeholder_map_get_index<placeholder_map<Entries...>, Placeholder> {
-    static constexpr auto value = placeholder_map_get_index_helper<0, Placeholder, Entries...>::value;
-    static_assert(value != -1, "Placeholder not found in placeholder map!");
-};
+struct placeholder_map_get_index<placeholder_map<Entries...>, Placeholder>
+        : variadic::index_of<placeholder_matcher<Placeholder>::template type, Entries...>
+{};
 
 template<class... Entries>
 struct placeholder_map_tuple_type<placeholder_map<Entries...>> {
