@@ -38,20 +38,10 @@ namespace {
         static constexpr auto value = Format::size + sizes_sum<Formats...>::value;
     };
 
-    template<class... Members>
-    struct members_to_children_list {
-        using type = children_list<>;
-    };
-
-    template<class Member, class... Members>
-    struct members_to_children_list<Member, Members...> {
-        using type = typename concat_children_lists<children_list<typename Member::format>, typename members_to_children_list<Members...>::type>::type;
-    };
-
 }
 
 template<class T, class... Members>
-struct adapted_struct : public base<typename members_to_children_list<Members...>::type> {
+struct adapted_struct : public base<children_list<typename Members::format...>> {
     using native_type = T;
     using members_tuple = std::tuple<Members...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();

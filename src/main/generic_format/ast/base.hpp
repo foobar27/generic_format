@@ -34,14 +34,6 @@ struct is_children_list<children_list<Children...>> {
     static constexpr auto value = true;
 };
 
-template<class T1, class T2>
-struct concat_children_lists;
-
-template<class... T1s, class... T2s>
-struct concat_children_lists<children_list<T1s...>, children_list<T2s...>> {
-    using type = children_list<T1s..., T2s...>;
-};
-
 struct base_base
 {};
 
