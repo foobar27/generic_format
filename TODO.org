@@ -67,6 +67,8 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- use more sophisticated template pack expansion
+  - use std::forward<>...
 - use integral_constant for type checks, and false_type and true_type
 - separate interface and implementation (e.g. helper.hpp)
 - search for '...' and check if it can be simplified

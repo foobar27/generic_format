@@ -9,7 +9,6 @@
 #pragma once
 namespace generic_format {
 namespace ast {
-namespace impl {
 
 struct size_container {
     bool is_fixed;
@@ -40,6 +39,5 @@ constexpr size_container dynamic_size() {
     return {false, 0};
 }
 
-}
 }
 }

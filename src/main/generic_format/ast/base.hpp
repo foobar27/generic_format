@@ -71,4 +71,5 @@ struct base : base_base {
     using children = ChildrenList;
 };
 
-}}
+}
+}

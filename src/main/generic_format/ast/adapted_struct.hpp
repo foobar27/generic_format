@@ -26,26 +26,12 @@ struct member {
     static constexpr auto size = format::size;
 };
 
-namespace {
-
-    template<class... Formats>
-    struct sizes_sum {
-        static constexpr size_container value {};
-    };
-
-    template<class Format, class... Formats>
-    struct sizes_sum<Format, Formats...> {
-        static constexpr auto value = Format::size + sizes_sum<Formats...>::value;
-    };
-
-}
-
 template<class T, class... Members>
 struct adapted_struct : public base<children_list<typename Members::format...>> {
     using native_type = T;
     using members_tuple = std::tuple<Members...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
-    static constexpr auto size = sizes_sum<Members...>::value;
+    static constexpr auto size = sum(fixed_size(0), Members::size...);
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {

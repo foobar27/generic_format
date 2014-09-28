@@ -13,8 +13,6 @@
 namespace generic_format {
 namespace ast {
 
-using namespace impl;
-
 template<class T>
 struct raw : base<children_list<>> {
     using native_type = T;
