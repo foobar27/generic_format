@@ -30,7 +30,7 @@ struct is_format : public std::integral_constant<bool, std::is_base_of<base_base
 
 template<class... Children>
 struct children_list {
-    static_assert(for_all<is_format, Children...>::value, "All children must be formats!");
+    static_assert(variadic::for_all<is_format, Children...>::value, "All children must be formats!");
 };
 
 template<class T>

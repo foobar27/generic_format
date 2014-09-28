@@ -41,7 +41,7 @@ struct is_placeholder_map_entry<placeholder_map_entry<T, Placeholder>> : std::tr
  */
 template<class... Entries>
 struct placeholder_map {
-    static_assert(for_all<is_placeholder_map_entry, Entries...>::value, "A placeholder_map must have valid entries!");
+    static_assert(variadic::for_all<is_placeholder_map_entry, Entries...>::value, "A placeholder_map must have valid entries!");
 };
 
 template<class Map>
