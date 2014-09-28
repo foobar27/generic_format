@@ -36,16 +36,6 @@ struct placeholder_map_entry {
     using placeholder = Placeholder;
 };
 
-/** @brief Operation to look up an entry by placholder.
- *
- * Returns the given entry in the `type` field.
- * Fails at compile-time if the given placeholder does not exist in the map.
- * @tparam Map a placeholder_map
- * @tparam Placeholder the placeholder of the entry to be looked up.
- */
-template<class Map, typename Placeholder>
-struct placeholder_map_get;
-
 /** @brief Operation to look up the index of an entry, which is identified by its placeholder.
  *
  * Returns the given index in the `value` field.
@@ -84,22 +74,6 @@ struct placeholder_map_tuple_type;
 
 // Helper functions
 namespace {
-
-/// @brief Helper operation for placeholder_map_get.
-template<typename placeholder, class... Entries>
-struct placeholder_map_get_helper;
-
-template<typename Placeholder>
-struct placeholder_map_get_helper<Placeholder> {
-    using type = void; // sentinel
-};
-
-template<typename Placeholder, class Entry, class... Entries>
-struct placeholder_map_get_helper<Placeholder, Entry, Entries...> {
-    using _current_placeholder = typename Entry::placeholder;
-    using _remaining_result = typename placeholder_map_get_helper<Placeholder, Entries...>::type;
-    using type = typename conditional_type<std::is_same<Placeholder, _current_placeholder>::value, Entry, _remaining_result>::type;
-};
 
 /// Helper operation for placeholder_map_get_index.
 template<std::size_t Index, typename Placeholder, class... Entries>
@@ -152,12 +126,6 @@ struct placeholder_map_put_helper<Entry, Entries...> {
 }
 
 // Implementations of the placeholder_map functions.
-
-template<typename Placeholder, class... Entries>
-struct placeholder_map_get<placeholder_map_get<Entries...>, Placeholder> {
-    using type = typename placeholder_map_get_helper<Placeholder, Entries...>::type;
-    static_assert(!std::is_void<type>::value, "Placeholder not found in placeholder map!");
-};
 
 template<typename Placeholder, class... Entries>
 struct placeholder_map_get_index<placeholder_map<Entries...>, Placeholder> {
