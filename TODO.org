@@ -67,6 +67,8 @@
 - json de/serialization
 - merge of two files
 ** Code Cleanup
+- check all static asserts
+- factor out more algorithms (like index_of)
 - use more sophisticated template pack expansion
   - use std::forward<>...
 - use integral_constant for type checks, and false_type and true_type

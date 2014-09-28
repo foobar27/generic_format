@@ -23,6 +23,7 @@ namespace ast {
 template<class Map>
 class placeholder_container {
 public:
+    static_assert(is_placeholder_map<Map>::value, "Map needs to be a placeholder map!");
     using tuple_type  = typename placeholder_map_tuple_type<Map>::type;
 
     template<typename Placeholder>

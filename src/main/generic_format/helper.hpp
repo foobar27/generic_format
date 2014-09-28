@@ -79,5 +79,14 @@ constexpr T sum(T initial_value, Ts... ts) {
     return fold_left(constexpr_plus<T>(), initial_value, ts...);
 }
 
+template<template<class> class Predicate, class... Args>
+struct for_all : std::true_type
+{};
+
+template<template<class> class Predicate, class Arg, class... Args>
+struct for_all<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value && for_all<Predicate, Args...>::value>
+{};
+
+
 }
 

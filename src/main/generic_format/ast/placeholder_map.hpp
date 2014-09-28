@@ -16,15 +16,6 @@
 namespace generic_format {
 namespace ast {
 
-/** @brief Type specifying an ordered map of placeholders.
- *
- * A placeholder_map maps placeholders to a struct which contains the native type.
- * The maps are implemented as lists of entries, the order of which will be used when keeping the state during serialization and deserialization.
- * @tparam Entries variadic argument representing the entries of type placeholder_map_entry.
- */
-template<class... Entries>
-struct placeholder_map {};
-
 /** @brief Type specifying an entry of a placeholder_map.
  *
  * @tparam T the native type of the placeholder
@@ -35,6 +26,29 @@ struct placeholder_map_entry {
     using type = T;
     using placeholder = Placeholder;
 };
+
+template<class T>
+struct is_placeholder_map_entry : std::false_type {};
+
+template<class T, typename Placeholder>
+struct is_placeholder_map_entry<placeholder_map_entry<T, Placeholder>> : std::true_type {};
+
+/** @brief Type specifying an ordered map of placeholders.
+ *
+ * A placeholder_map maps placeholders to a struct which contains the native type.
+ * The maps are implemented as lists of entries, the order of which will be used when keeping the state during serialization and deserialization.
+ * @tparam Entries variadic argument representing the entries of type placeholder_map_entry.
+ */
+template<class... Entries>
+struct placeholder_map {
+    static_assert(for_all<is_placeholder_map_entry, Entries...>::value, "A placeholder_map must have valid entries!");
+};
+
+template<class Map>
+struct is_placeholder_map : std::false_type {};
+
+template<class... Entries>
+struct is_placeholder_map<placeholder_map<Entries...>> : std::true_type {};
 
 /** @brief Operation to look up the index of an entry, which is identified by its placeholder.
  *
