@@ -106,11 +106,6 @@ struct placeholder_map_contains : variadic::for_any<placeholder_matcher<Placehol
 template<class... Entries>
 struct placeholder_map_put_helper;
 
-template<class Entry>
-struct placeholder_map_put_helper<Entry> {
-    using type = placeholder_map<Entry>;
-};
-
 template<class Entry, class... Entries>
 struct placeholder_map_put_helper<Entry, Entries...> {
     using type = placeholder_map<Entry, Entries...>;
