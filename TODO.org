@@ -8,39 +8,40 @@
 - or return value, or pass reference, to fill result?
   - or even reduce the data with some function?
 ** Features
+- priorities
+  - scopes for placeholders. Within a scope:
+    - all nested placeholders will be translated to a unique placeholder
+    - within a scope
+    - but how can we leak a placeholder, e.g. the 'data_ref', to write visitors
+  - remove coupling to vector
+    - use visitors instead
+    - pointwise visitor
+      - hook: pre
+      - hook: pointwise
+      - hook: post
+    - bulk visitor
+      - has access to raw reader/writer
+    - example visitors
+      - see sample arguments for std::copy
+      - memcpy
+      - custom (e..g. opencv)
+- allow serialization to asio buffers
 - repeated fields,
+  - port strings to this infrastructure
+  - replace the state by varargs (even only the arguments which are actually referenced!)
   - deref operator
     - verify reference has been defined before in the format
   - how to "nest" references (e.g. nested structs, all have references)
     - make a variadic kind of generator, which is given as a template argument?
   - disable copy ctor for state
   - also allow reference+constant arithmetic
-  - generic ast traversal (via ::children)
-    - to compute size
-    - to compute placeholder_map
-  - move more into base class of ast?
-    - e.g. native_type
   - try out with map<int, map<int, int>>
   - we need another argument for read/write methods, a state object
     - the struct can be accessed by placeholders
-  - even when number of repetitions depends on several fields (e.g. width*height)
-    #+BEGIN_SRC cpp
-    auto width = reference(std::placeholder::_1, uint32_le);
-    auto height = reference(std::placeholder::_2, uint32_le_t);
-    auto data = repeated(width*height, int8_le);
-    Image_format = GENERIC_FORMAT_ADAPT_STRUCT(Image, width, height, data);
-    #+END_SRC
-  - remove coupling to vector, use visitors instead?
   - test for overflows!
   - who takes care of the allocation of 'data'?
   - or when the data is simply serialized into a vector
-  - check that placeholder are well-formed (unique, and references only to previously defined values)
-  - port strings to this infrastructure
-  - also allow std::placeholders
-  - replace the state by varargs (even only the arguments which are actually referenced!)
-- simplify the declarations of the ast nodes (to facilitate the user to declare their own)
 - can we somehow wrap private fields?
-- allow serialization to asio buffers
 - strings: provide alternatives: fixed-length, zero-terminated, length-data-format, ...
 - more meaningful error messages
 - floating point primitives
@@ -48,15 +49,12 @@
 - iterator-like interface
 - array-like interface for fixed-length types
 - sequences: be variadic
-- refine syntax for struct-wrapping
 - mapping from one type to the other without intermediate data structure
-- support nested structs
 - keep state, e.g. checksums
 - verify header fields, e.g. via integral_constant
 - have a look at the [[https://github.com/ztellman/gloss/wiki/Introduction][gloss]] features
 - Seriously support endianness. Currently we support it in the naming
   scheme, but then again =uint8_le= and =uint8_be= will certainly be the same.
-- what contract do we need for async i/o?
 - Allow the format to be saved in a file. This could integrate a flag which
   byte-order has been used, such that files created on a machine are
   automatically created in the native endian format, but files copied from
@@ -72,7 +70,11 @@
 - use integral_constant for type checks, and false_type and true_type
 - separate interface and implementation (e.g. helper.hpp)
 - search for '...' and check if it can be simplified
-- refactor placeholders.hpp
+- generic ast traversal (via ::children)
+  - to compute size
+  - to compute placeholder_map
+- move more into base class of ast?
+  - e.g. native_type
 - think about strategy of what belongs into 'impl' namespaces
 - somehow reuse the same code (via visitor pattern?) for
   - write
@@ -98,7 +100,6 @@
 - use more initializer syntax
 - clean up benchmark (especially timing part)
 - use more type inference
-- remove std::tuple dependency
 - use =size_t= when appropriate
 - clean up the build system. For example I don't like that we force C++11
   upon other people, even on those who are using C++14. Also check if
