@@ -14,7 +14,45 @@
 namespace generic_format {
 namespace ast {
 
-template<class Reference, class Format>
+namespace {
+
+template<class Format, class RawWriter, class State>
+struct element_writer {
+    element_writer(RawWriter & raw_writer, State & state)
+        : raw_writer(raw_writer)
+        , state(state)
+    {}
+
+    template<typename NativeType>
+    inline void operator()(const NativeType & v) {
+        Format().write(raw_writer, state, v);
+    }
+
+    RawWriter & raw_writer;
+    State & state;
+};
+
+
+template<class Format, class RawReader, class State>
+struct element_reader {
+    element_reader(RawReader & raw_reader, State & state)
+        : raw_reader(raw_reader)
+        , state(state)
+    {}
+
+    template<typename NativeType>
+    inline void operator()(NativeType & v) {
+        Format().read(raw_reader, state, v);
+    }
+
+    RawReader & raw_reader;
+    State & state;
+};
+
+
+}
+
+template<class Reference, class Format, class Mapping>
 struct repeated : base<children_list<Format>> {
     using native_type = std::vector<typename Format::native_type>;
     using count_reference = Reference;
@@ -27,21 +65,15 @@ struct repeated : base<children_list<Format>> {
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        Format f;
-        for (auto & v : t)
-            f.write(raw_writer, state, v);
+        element_writer<Format, RawWriter, State> w(raw_writer, state);
+        Mapping().write(w, t);
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
+        element_reader<Format, RawReader, State> r(raw_reader, state);
         auto length = count_reference()(state);
-        Format f;
-        t.clear();
-        native_element_type v;
-        for (std::size_t i=0; i<length;++i) {
-            f.read(raw_reader, state, v);
-            t.push_back(v);
-        }
+        Mapping().template read<decltype(r), native_type, native_element_type>(length, r, t);
     }
 
 };

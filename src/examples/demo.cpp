@@ -20,6 +20,25 @@ struct Image {
     std::vector<std::uint8_t> data;
 };
 
+struct mapping_back_inserter {
+    template<class ElementWriter, typename NativeType>
+    void write(ElementWriter & element_writer, const NativeType & t) const {
+        for (auto & v : t)
+            element_writer(v);
+    }
+
+    template<class ElementReader, typename NativeType, typename NativeElementType>
+    void read(std::size_t length, ElementReader & element_reader, NativeType & t) const {
+        t.clear();
+        NativeElementType v;
+        for (std::size_t i=0; i<length; ++i) {
+            element_reader(v);
+            t.push_back(v);
+        }
+    }
+
+};
+
 int main() {
     using namespace generic_format::primitives;
     using namespace generic_format::dsl;
@@ -44,7 +63,7 @@ int main() {
     static constexpr auto Image_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Image, width,  width_ref),
                 GENERIC_FORMAT_MEMBER(Image, height, height_ref),
-                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_ref*height_ref, uint8_le))
+                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_ref*height_ref, uint8_le, mapping_back_inserter()))
                 );
 
     constexpr auto size_container = decltype(Packet_format)::size;

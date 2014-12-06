@@ -79,8 +79,8 @@ constexpr ast::dereference<Reference> deref(Reference) {
     return {};
 }
 
-template<class Reference, class Format>
-constexpr ast::repeated<ast::dereference<Reference>, Format> repeated(Reference, Format) {
+template<class Reference, class Format, class Mapping>
+constexpr ast::repeated<ast::dereference<Reference>, Format, Mapping> repeated(Reference, Format, Mapping) {
     return {};
 }
 

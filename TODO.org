@@ -96,13 +96,11 @@
 - use more initializer syntax
 - clean up benchmark (especially timing part)
 - use more type inference
-- use =size_t= when appropriate
 - clean up the build system. For example I don't like that we force C++11
   upon other people, even on those who are using C++14. Also check if
   installation of the header files works correctly, and other projects can use
   it correcly via =find_package=.
-- factor out foreach to iterate over all the fields
-- add doxygen and a proper documentation
+- add doxygen and a proper high-level documentation
 ** Missing Documentation
 - contract for =raw_reader= and =raw_writer=
 ** Optimizations
