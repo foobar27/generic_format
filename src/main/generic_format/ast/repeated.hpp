@@ -66,7 +66,8 @@ struct repeated : base<children_list<Format>> {
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
         element_writer<Format, RawWriter, State> w(raw_writer, state);
-        Mapping().write(w, t);
+        auto length = count_reference()(state);
+        Mapping().write(length, w, t);
     }
 
     template<class RawReader, class State>

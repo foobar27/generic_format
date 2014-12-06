@@ -22,7 +22,7 @@ struct Image {
 
 struct mapping_back_inserter {
     template<class ElementWriter, typename NativeType>
-    void write(ElementWriter & element_writer, const NativeType & t) const {
+    void write(std::size_t , ElementWriter & element_writer, const NativeType & t) const {
         for (auto & v : t)
             element_writer(v);
     }
