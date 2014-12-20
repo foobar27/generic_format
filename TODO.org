@@ -7,6 +7,14 @@
 ** Philosophical Questions
 - or return value, or pass reference, to fill result?
   - or even reduce the data with some function?
+- API questions
+  - internal
+    - 
+    - reduce explosion of combinations between the APIs?
+  - external
+    - how to separate syntax (format specification) and semantics
+      (data-structure which represent the data)
+      - this smells like a monad?
 ** Features
 - priorities
   - scopes for placeholders. Within a scope:
@@ -14,17 +22,10 @@
     - within a scope
     - but how can we leak a placeholder, e.g. the 'data_ref', to write visitors
   - remove coupling to vector
-    - use visitors instead
-    - pointwise visitor
-      - hook: pre
-      - hook: pointwise
-      - hook: post
-    - bulk visitor
-      - has access to raw reader/writer
     - example visitors
       - see sample arguments for std::copy
       - memcpy
-      - custom (e..g. opencv)
+      - custom (e.g. opencv)
 - allow serialization to asio buffers
 - repeated fields,
   - port strings to this infrastructure
@@ -66,7 +67,14 @@
 - lookup-indices to seek to position
 - json de/serialization
 - merge of two files
+** Arduino Support
+- [ ] remove exceptions
+- [ ] bit-boundaries instead of byte-boundaries
+  - [ ] adjust size_container
 ** Code Cleanup
+- take care of =using= in namespace blocks
+  - see http://stackoverflow.com/questions/6175705/scope-of-using-declaration-within-a-namespace
+- clean up directory structure of tests directory
 - extract custom map type (indexed by a Predicate)
 - use =std::forward<>...= in reader/writer???
 - separate interface and implementation (e.g. helper.hpp)
