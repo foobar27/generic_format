@@ -28,12 +28,12 @@ BOOST_AUTO_TEST_CASE( population )
     // (empty)
 
     lookup_table_builder<uint, string> builder2(2, 3);
-    builder1.push_back("2");
-    builder1.push_back("3");
-    builder1.push_back("4");
+    builder2.push_back("2");
+    builder2.push_back("3");
+    builder2.push_back("4");
 
     lookup_table_builder<uint, string> builder3(5, 1);
-    builder2.push_back("5");
+    builder3.push_back("5");
 
 
     vector<lookup_table_builder<uint, string>> builders;
@@ -44,7 +44,22 @@ BOOST_AUTO_TEST_CASE( population )
 
     lookup_table<uint, string> table(builders.begin(), builders.end());
 
-    vector<string> expected {"0", "1"};
+    vector<string> expected {"0", "1", "2", "3", "4", "5"};
+    BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
+
+    expected = {"1", "2", "3", "4", "5"};
+    BOOST_CHECK_EQUAL(table.snapshot_from_id(1), expected);
+}
+
+BOOST_AUTO_TEST_CASE( lookup ) {
+    lookup_table<uint, string> table;
+
+    vector<string> expected {};
+    BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
+
+    BOOST_CHECK_EQUAL(table.lookup_by_value("0"), 0);
+    BOOST_CHECK_EQUAL(table.lookup_by_id(0), "0");
+    expected = {"0"};
     BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
 }
 

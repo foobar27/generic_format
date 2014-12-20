@@ -30,14 +30,16 @@ public:
     using value_type = ValueType;
     lookup_table_builder(id_type initial_id, std::size_t number_of_ids)
         : _initial_id(initial_id)
+        , index(0)
         , _values(number_of_ids)
     {}
 
     void push_back(const value_type & value) {
-        _values.push_back(value);
+        _values[index++] = value;
     }
 private:
     const IdType _initial_id;
+    std::size_t index;
     std::vector<value_type> _values;
 
     friend class lookup_table<IdType, ValueType>;
@@ -62,6 +64,8 @@ public:
     lookup_table(InputIterator first_builder, InputIterator last_builder) {
         std::map<IdType, std::size_t> first2last; // used to see if builders are contiguous
         for (auto b = first_builder; b != last_builder; ++b) {
+            if (b->_values.size() == 0)
+                continue;
             auto sz = b->_initial_id + b->_values.size();
             if (_values.size() < sz)
                 _values.resize(sz);
@@ -103,7 +107,7 @@ public:
         } else {
             int id = _values.size();
             // TODO handle overflow of id_type!
-            _values[id] = value;
+            _values.push_back(value);
             _map[value] = id;
             return id;
         }
@@ -111,14 +115,14 @@ public:
 
     // TODO for internal use (serialization) only
     std::vector<value_type> snapshot_from_id(id_type initial_id) const {
-        assert(initial_id < _values.size());
+        assert(initial_id <= _values.size());
         return std::vector<value_type>(_values.begin() + initial_id, _values.end());
     }
 
 private:
     std::vector<value_type> _values;
     std::unordered_map<value_type, id_type> _map;
-    std::mutex _mutex;
+    mutable std::mutex _mutex;
 };
 
 }
