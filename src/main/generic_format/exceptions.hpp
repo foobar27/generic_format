@@ -8,9 +8,17 @@
 */
 #pragma once
 
+#include <exception>
+
 namespace generic_format {
 
-struct serialization_exception {};
-struct deserialization_exception {};
+struct serialization_exception : public std::exception {
+public:
+    virtual char const * what() const noexcept { return "Serialization exception."; }
+};
+struct deserialization_exception : public std::exception {
+public:
+    virtual char const * what() const noexcept { return "Deserialization exception."; }
+};
 
 }
