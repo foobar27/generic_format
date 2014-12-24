@@ -45,6 +45,30 @@ private:
     friend class lookup_table<IdType, ValueType>;
 };
 
+template<class IdType, class ValueType>
+class lookup_table_snapshot {
+public:
+    using id_type = IdType;
+    using value_type = ValueType;
+
+    lookup_table_snapshot(id_type initial_id, std::vector<value_type> && values)
+        : _initial_id(initial_id)
+        , _values(values)
+    {}
+
+    id_type initial_id() const {
+        return _initial_id;
+    }
+
+    const std::vector<value_type> & values() const {
+        return _values;
+    }
+
+private:
+    id_type _initial_id;
+    std::vector<value_type> _values;
+};
+
 /** @brief A lookup table which distributes unique, congituous and increasing indices.
  */
 template<class IdType, class ValueType>
@@ -114,9 +138,9 @@ public:
     }
 
     // TODO for internal use (serialization) only
-    std::vector<value_type> snapshot_from_id(id_type initial_id) const {
+    lookup_table_snapshot<id_type, value_type> snapshot_from_id(id_type initial_id) const {
         assert(initial_id <= _values.size());
-        return std::vector<value_type>(_values.begin() + initial_id, _values.end());
+        return lookup_table_snapshot<id_type, value_type>(initial_id, std::vector<value_type>(_values.begin() + initial_id, _values.end()));
     }
 
 private:

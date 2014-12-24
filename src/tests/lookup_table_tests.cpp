@@ -45,22 +45,32 @@ BOOST_AUTO_TEST_CASE( population )
     lookup_table<uint, string> table(builders.begin(), builders.end());
 
     vector<string> expected {"0", "1", "2", "3", "4", "5"};
-    BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
+    lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
+    BOOST_CHECK_EQUAL(snapshot.values(), expected);
 
     expected = {"1", "2", "3", "4", "5"};
-    BOOST_CHECK_EQUAL(table.snapshot_from_id(1), expected);
+    snapshot = table.snapshot_from_id(1);
+    BOOST_CHECK_EQUAL(snapshot.values(), expected);
 }
 
 BOOST_AUTO_TEST_CASE( lookup ) {
     lookup_table<uint, string> table;
 
     vector<string> expected {};
-    BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
+    lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
+    BOOST_CHECK_EQUAL(snapshot.values(), expected);
 
     BOOST_CHECK_EQUAL(table.lookup_by_value("0"), 0);
     BOOST_CHECK_EQUAL(table.lookup_by_id(0), "0");
     expected = {"0"};
-    BOOST_CHECK_EQUAL(table.snapshot_from_id(0), expected);
+    snapshot = table.snapshot_from_id(0);
+    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+
+    BOOST_CHECK_EQUAL(table.lookup_by_value("1"), 1);
+    BOOST_CHECK_EQUAL(table.lookup_by_id(1), "1");
+    expected = {"0", "1"};
+    snapshot = table.snapshot_from_id(0);
+    BOOST_CHECK_EQUAL(snapshot.values(), expected);
 }
 
 // TODO test that contiguity check is working
