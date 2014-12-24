@@ -23,6 +23,14 @@
       (data-structure which represent the data)
       - this smells like a monad?
 ** Features
+- mapping layer
+  - [ ] make ast::sequence variadic, in order to simplify mapping
+  - [ ] simple implicit formats (e.g. for size of vector)
+  - [ ] implicit sequences (with different return type)
+  - [ ] maybe rename reference to variable?
+  - [ ] references
+  - [ ] lenses
+  - [ ] reuse the above code in adapted_struct
 - priorities
   - scopes for placeholders. Within a scope:
     - all nested placeholders will be translated to a unique placeholder
@@ -34,8 +42,8 @@
       - memcpy
       - custom (e.g. opencv)
 - create new namespace which is used to *access* different fields
-    - composability?
-  - repeated fields
+  - composability?
+- repeated fields
   - monads?
 - allow serialization to asio buffers
 - repeated fields,

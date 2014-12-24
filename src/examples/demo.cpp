@@ -13,6 +13,7 @@
 #include "generic_format/generic_format.hpp"
 #include "generic_format/targets/iostream.hpp"
 #include "generic_format/dsl.hpp"
+#include "generic_format/mapping/mappings.hpp"
 
 struct Image {
     std::uint32_t width;
@@ -20,74 +21,53 @@ struct Image {
     std::vector<std::uint8_t> data;
 };
 
-struct mapping_vector {
+//void nested_vector_example() {
+//    using namespace generic_format::primitives;
+//    using namespace generic_format::dsl;
+//    using namespace generic_format::targets::iostream;
+//    using namespace generic_format::mapping;
+//    using namespace std;
+//    placeholder<0> _;
 
-    template<typename ElementNativeType>
-    using native_type = std::vector<ElementNativeType>;
+//    static constexpr auto outer_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
+//    static constexpr auto inner_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
+//    static constexpr auto f =
+//            outer_size_ref
+//            << repeated(outer_size_ref,
+//                        inner_size_ref
+//                        << repeated(inner_size_ref,
+//                                    string_format(uint32_le),
+//                                    mapping_vector()),
+//                        mapping_vector());
 
-    template<class ElementWriter, typename NativeType>
-    void write(std::size_t , ElementWriter & element_writer, const NativeType & t) const {
-        for (auto & v : t)
-            element_writer(v);
-    }
+//    string fileName {"nested.out" };
 
-    template<class ElementReader, typename NativeType, typename NativeElementType>
-    void read(std::size_t length, ElementReader & element_reader, NativeType & t) const {
-        t.resize(length);
-        NativeElementType v;
-        for (std::size_t i=0; i<length; ++i) {
-            element_reader(v);
-            t[i] = v;
-        }
-    }
+//    {
+//        ofstream os {fileName, ios_base::out | ios_base::binary};
+//        auto writer = iostream_target::writer {&os};
 
-};
+//        vector<vector<uint32_t>> data {{1, 2}, {3, 4, 5, 6}, {7}};
+//        writer(data, f);
+//    }
+//    {
+//        ifstream is {fileName, ios_base::in | ios_base::binary};
+//        auto reader = iostream_target::reader {&is};
 
-void nested_vector_example() {
-    using namespace generic_format::primitives;
-    using namespace generic_format::dsl;
-    using namespace generic_format::targets::iostream;
-    using namespace std;
-    placeholder<0> _;
-
-    static constexpr auto outer_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-    static constexpr auto inner_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
-    static constexpr auto f =
-            outer_size_ref
-            << repeated(outer_size_ref,
-                        inner_size_ref
-                        << repeated(inner_size_ref,
-                                    string_format(uint32_le),
-                                    mapping_vector()),
-                        mapping_vector());
-
-    string fileName {"nested.out" };
-
-    {
-        ofstream os {fileName, ios_base::out | ios_base::binary};
-        auto writer = iostream_target::writer {&os};
-
-        vector<vector<uint32_t>> data {{1, 2}, {3, 4, 5, 6}, {7}};
-        writer(data, f);
-    }
-    {
-        ifstream is {fileName, ios_base::in | ios_base::binary};
-        auto reader = iostream_target::reader {&is};
-
-        vector<vector<uint32_t>> data;
-        reader(data, f);
-        for (auto & row : data) {
-            for (auto x : row)
-                std::cout << x << " ";
-            std::cout << std::endl;
-        }
-    }
-}
+//        vector<vector<uint32_t>> data;
+//        reader(data, f);
+//        for (auto & row : data) {
+//            for (auto x : row)
+//                std::cout << x << " ";
+//            std::cout << std::endl;
+//        }
+//    }
+//}
 
 
 int main() {
     using namespace generic_format::primitives;
     using namespace generic_format::dsl;
+    using namespace generic_format::mapping;
     using namespace generic_format::targets::iostream;
     using namespace std;
     using namespace demo;
@@ -156,5 +136,5 @@ int main() {
         }
         cout << endl;
     }
-    nested_vector_example();
+//    nested_vector_example();
 }

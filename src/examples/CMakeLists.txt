@@ -8,5 +8,5 @@ target_link_libraries(demo generic_format)
 add_executable(benchmark benchmark.cpp packet.hpp)
 target_link_libraries(benchmark generic_format)
 
-add_executable(datestreams datestreams.cpp)
-target_link_libraries(datestreams generic_format)
+#add_executable(datestreams datestreams.cpp)
+#target_link_libraries(datestreams generic_format)

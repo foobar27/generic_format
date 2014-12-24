@@ -9,6 +9,7 @@
 #pragma once
 
 #include "generic_format/lookup/lookup_table.hpp"
+#include "generic_format/mapping/mappings.hpp"
 
 namespace generic_format{
 namespace lookup {
@@ -34,42 +35,42 @@ static constexpr auto lookup_table_size_ref = generic_format::dsl::ref(lookup_ta
 template<class LookupType>
 struct lookup_table_format_helper;
 
-// TODO implement (this is just copy&paste from the vector code)
-template<class IdType>
-struct lookup_table_mapping {
-
-    template<typename NativeElementType>
-    using native_type = generic_format::lookup::lookup_table<IdType, NativeElementType>;
-
-    template<class ElementWriter, typename NativeType>
-    void write(std::size_t , ElementWriter & element_writer, const NativeType & snapshot) const {
-
-        element_writer();
-        for (auto & v : snapshot.values())
-            element_writer(v);
+template<class IdType, class ValueType>
+struct initial_id_reference : public generic_format::mapping::reference<lookup_table_builder<IdType, ValueType>, IdType> {
+    using builder_type = lookup_table_builder<IdType, ValueType>;
+    IdType operator()(const builder_type & table) const {
+        return table.initial_id();
     }
-
-    template<class ElementReader, typename NativeType, typename NativeElementType>
-    void read(std::size_t length, ElementReader & element_reader, NativeType & t) const {
-        t.resize(length);
-        NativeElementType v;
-        for (std::size_t i=0; i<length; ++i) {
-            element_reader(v);
-            t[i] = v;
-        }
+    IdType & operator()(builder_type & table, IdType id) const {
+        return table.initial_id(id);
     }
+};
 
+template<class IdType, class ValueType>
+struct values_reference : public generic_format::mapping::reference<lookup_table_builder<IdType, ValueType>, std::vector<ValueType>&>{
+    using builder_type = lookup_table_builder<IdType, ValueType>;
+    const std::vector<ValueType> & operator()(const builder_type & table) const {
+        return table.values(); // TODO what are re going to return? A reference?
+    }
+    std::vector<ValueType> & operator(builder_type & table) const {
+        return table.values();
+    }
 };
 
 template<class IdFormat, class ValueFormat>
 struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
-    using format =
-    decltype(lookup_table_size_ref
-        << IdFormat()
+    using id_type = typename IdFormat::native_type;
+    using value_type = typename IdFormat::native_type;
+    using builder_type = lookup_table_builder<id_type, value_type>;
+    // TODO how do we get out of std::tuple??? And how to provide the lookup_table_builder instead?
+    using format = decltype(
+        implicit_sequence<builder_type>()
+        << implicit(lookup_table_size_ref)
+        << IdFormat * initial_id_lense<id_type, value_type>())
         << generic_format::dsl::repeated(
             lookup_table_size_ref,
-            ValueFormat(),
-            lookup_table_mapping<typename IdFormat::native_type>()));
+            ValueFormat() * values_lense<id_type, value_type>(),
+            generic_format::mapping::vector_mapping());
 };
 
 }
