@@ -13,4 +13,9 @@ if(Boost_FOUND)
   target_link_libraries(lookup_table_tests generic_format ${Boost_LIBRARIES})
   add_test(lookup_table_tests lookup_table_tests)
 
+  add_executable(compile_tests compile_tests.cpp test_common.hpp)
+  target_link_libraries(compile_tests generic_format ${Boost_LIBRARIES})
+  add_test(compile_tests compile_tests)
+
+  
 endif()

@@ -275,4 +275,3 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(struct_test, TARGET, all_targets) {
                      chunk(Person_format, {"foo1", "bar1", 42}),
                      chunk(Person_format, {"foo2", "bar2", 24}));
 }
-

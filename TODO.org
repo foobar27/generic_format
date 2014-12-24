@@ -24,13 +24,21 @@
       - this smells like a monad?
 ** Features
 - mapping layer
-  - [ ] make ast::sequence variadic, in order to simplify mapping
+  - [-] make ast::sequence variadic, in order to simplify mapping
+    - [X] adjust ast
+    - [X] adjust dsl
+    - [X] add test case with 4 different combinations of flattening
+    - [X] add test case with deep flattening
+    - [ ] fix compile-time test cases
+    - [ ] add read/write test case with more than 2 items in tuple
   - [ ] simple implicit formats (e.g. for size of vector)
   - [ ] implicit sequences (with different return type)
+  - [ ] simplify adapted_struct
   - [ ] maybe rename reference to variable?
   - [ ] references
-  - [ ] lenses
+  - [ ] lenses (references might be a special case)
   - [ ] reuse the above code in adapted_struct
+  - [ ] refactor vector_mapping (provide two hoooks: clear and push_back)
 - priorities
   - scopes for placeholders. Within a scope:
     - all nested placeholders will be translated to a unique placeholder

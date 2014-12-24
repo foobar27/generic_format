@@ -68,5 +68,13 @@ private:
     }
 };
 
+template<class Format>
+struct is_sequence : public std::false_type
+{};
+
+template<class... Formats>
+struct is_sequence<ast::sequence<Formats...>> : public std::true_type
+{};
+
 }
 }
