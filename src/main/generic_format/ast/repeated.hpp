@@ -54,11 +54,11 @@ struct element_reader {
 
 template<class Reference, class Format, class Mapping>
 struct repeated : base<children_list<Format>> {
-    using native_type = std::vector<typename Format::native_type>;
     using count_reference = Reference;
     using native_count_type = typename count_reference::native_type;
     using format = Format;
     using native_element_type = typename format::native_type;
+    using native_type = typename Mapping::template native_type<native_element_type>;
     static constexpr auto size = dynamic_size(); // TODO fixed if format is fixed and count_reference points to constant
 
     static_assert(std::is_integral<native_count_type>::value, "Number of repetitions must be an integral type!");

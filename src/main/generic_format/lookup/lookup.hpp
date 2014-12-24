@@ -8,6 +8,8 @@
 */
 #pragma once
 
+#include "generic_format/lookup/lookup_table.hpp"
+
 namespace generic_format{
 namespace lookup {
 
@@ -33,11 +35,17 @@ template<class LookupType>
 struct lookup_table_format_helper;
 
 // TODO implement (this is just copy&paste from the vector code)
+template<class IdType>
 struct lookup_table_mapping {
-    template<class ElementWriter, typename NativeType>
-    void write(std::size_t , ElementWriter & element_writer, const NativeType & t) const {
 
-        for (auto & v : t)
+    template<typename NativeElementType>
+    using native_type = generic_format::lookup::lookup_table<IdType, NativeElementType>;
+
+    template<class ElementWriter, typename NativeType>
+    void write(std::size_t , ElementWriter & element_writer, const NativeType & snapshot) const {
+
+        element_writer();
+        for (auto & v : snapshot.values())
             element_writer(v);
     }
 
@@ -55,13 +63,13 @@ struct lookup_table_mapping {
 
 template<class IdFormat, class ValueFormat>
 struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
-    using format = decltype(
-    lookup_table_size_ref
+    using format =
+    decltype(lookup_table_size_ref
         << IdFormat()
         << generic_format::dsl::repeated(
             lookup_table_size_ref,
             ValueFormat(),
-            lookup_table_mapping()));
+            lookup_table_mapping<typename IdFormat::native_type>()));
 };
 
 }
