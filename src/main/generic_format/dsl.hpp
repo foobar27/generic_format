@@ -74,6 +74,11 @@ constexpr ast::variable<Placeholder, Format> var(Placeholder, Format) {
     return {};
 }
 
+template<class NativeType>
+constexpr ast::sequence<NativeType, ast::children_list<>> seq(NativeType) {
+    return {};
+}
+
 template<class Variable>
 constexpr ast::dereference<Variable> deref(Variable) {
     return {};
@@ -87,40 +92,56 @@ constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Va
 }
 
 // Helpers for constructing sequences.
-// They avoid creating nested ast::sequences.
+// They avoid creating nested sequences.
 
 namespace {
 
-// default implementation (format << format), no flattening
-template<class Format1, class Format2, bool IsFormat1Sequence = ast::is_sequence<Format1>::value, bool IsFormat2Sequence = ast::is_sequence<Format2>::value>
-struct merged_sequence_format {
-    using type = ast::sequence<Format1, Format2>;
+template<class ChildrenList>
+struct unmapped_sequence;
+
+template<class... Formats>
+struct unmapped_sequence<ast::children_list<Formats...>> {};
+
+// default implementation: just make un unmapped sequence
+template<class Format1, class Format2>
+struct merged_sequence {
+    using type = unmapped_sequence<ast::children_list<Format1, Format2>>;
 };
 
-// partial specialization for format << sequence
-template<class Format1, class... Formats>
-struct merged_sequence_format<Format1, ast::sequence<Formats...>, false, true> {
-    using type = ast::sequence<Format1, Formats...>;
+// scalar << *
+// => use default implementation
+
+// unmapped_sequence << scalar
+// OR: unmapped_sequence << sequence
+template<class List1, class Format2>
+struct merged_sequence<unmapped_sequence<List1>, Format2> {
+    using merged_list = typename variadic::append_element<List1, Format2>::type;
+    using type = unmapped_sequence<merged_list>;
 };
 
-// partial specialization for sequence << format
-template<class Format2, class... Formats>
-struct merged_sequence_format<ast::sequence<Formats...>, Format2, true, false> {
-    // sequence << format
-    using type = typename conditional_type<sizeof...(Formats), ast::sequence<Formats..., Format2>, Format2>::type;
+// unmapped_sequence << unmapped_sequence
+// => just merge the elements
+template<class List1, class List2>
+struct merged_sequence<unmapped_sequence<List1>, unmapped_sequence<List2>> {
+    using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
+    using type = unmapped_sequence<merged_list>;
 };
 
-// partial specialization for sequence << sequence
-template<class Format1, class Format2, class... Format2s>
-struct merged_sequence_format<Format1, ast::sequence<Format2, Format2s...>, true, true> {
-    // First step: move Format2 to Format1 (which is certainly a sequence), and call the result new_format1 and new_format2
-    // This might trigger another recursion if Format2 is a sequence, but there's only a finite number of levels in a tree.
-    using new_format1 = typename merged_sequence_format<Format1, Format2>::type;
-    using new_format2 = typename ast::sequence<Format2s...>;
+// sequence << scalar
+// OR: sequence << sequence
+// => prolong the first sequence with the second format (even if it is an ast::sequence)
+template<class NativeType, class List1, class Format2>
+struct merged_sequence<ast::sequence<NativeType, List1>, Format2> {
+    using merged_list = typename variadic::merge_generic_lists<List1, variadic::generic_list<Format2>>::type;
+    using type = ast::sequence<NativeType, merged_list>;
+};
 
-    // Second step: Merge the new_format1 and new_format2.
-    // This recursion should stop because new_format2 is getting smaller.
-    using type = typename conditional_type<sizeof...(Format2s), typename merged_sequence_format<new_format1, new_format2>::type, new_format1>::type;
+// sequence << unmapped_sequence
+// => prolong the first sequence with the elements of the unmapped sequence
+template<class NativeType1, class List1, class List2>
+struct merged_sequence<ast::sequence<NativeType1, List1>, unmapped_sequence<List2>> {
+    using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
+    using type = ast::sequence<NativeType1, merged_list>;
 };
 
 }
@@ -131,7 +152,7 @@ struct merged_sequence_format<Format1, ast::sequence<Format2, Format2s...>, true
  * Simplifies the sequences by flattening it.
  */
 template<class Format1, class Format2>
-constexpr typename generic_format::merged_sequence_format<Format1, Format2>::type operator<<(const Format1, const Format2) {
+constexpr typename generic_format::merged_sequence<Format1, Format2>::type operator<<(const Format1, const Format2) {
     return {};
 }
 

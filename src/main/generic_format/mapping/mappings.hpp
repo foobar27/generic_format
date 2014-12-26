@@ -9,6 +9,7 @@
 #pragma once
 
 #include <vector>
+#include <tuple>
 
 namespace generic_format {
 namespace mapping {
@@ -35,6 +36,63 @@ struct mapping_vector {
     }
 
 };
+
+template<class TupleType, std::size_t Index>
+struct tuple_get { // TODO inherit from reference?
+
+    using element_type = std::tuple_element<Index, TupleType>;
+
+    element_type & operator()(TupleType & t) const {
+        return std::get<Index>(t);
+    }
+
+    const element_type & operator()(const TupleType & t) const {
+        return std::get<Index>(t);
+    }
+
+};
+
+namespace {
+
+// TODO extract the (indexed) transformation logic into helper.hpp?
+template<std::size_t Index, class Acc, class TupleType, class... Formats>
+struct tuple_mapping_accessors;
+
+template<std::size_t Index, class Acc, class TupleType>
+struct tuple_mapping_accessors<Index, Acc, TupleType> {
+    using type = Acc;
+};
+
+template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
+struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
+    using current_element = tuple_get<TupleType, Index>;
+    using new_acc = typename variadic::append_element<Acc, current_element >::type;
+    using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
+};
+
+// TODO put this next to children_list, as some kind of constructor?
+template<class List>
+struct elements_to_children;
+
+template<class... Children>
+struct elements_to_children<variadic::generic_list<Children...>> {
+    using type = ast::children_list<Children...>;
+};
+
+template<class... Formats>
+struct sequence_helper {
+    using tuple_type = std::tuple<typename Formats::native_type...>;
+    using element_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
+    using children_list = typename elements_to_children<element_list>::type;
+    using type = ast::sequence<tuple_type, children_list>;
+};
+
+}
+
+template<class... Formats>
+constexpr typename sequence_helper<Formats...>::type tuple(Formats...) {
+    return {};
+}
 
 }
 }

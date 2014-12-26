@@ -1,21 +1,25 @@
 * Roadmap
 ** Work out mapping concept
-- [X] make ast::sequence variadic, in order to simplify mapping
-  - [X] adjust ast
-  - [X] adjust dsl
-  - [X] add test case with all combinations of flattening
-  - [X] fix compile-time test cases
-  - [X] add read/write test cases with more than 2 items in tuple
-- [ ] introduce lenses (do they make sense in a non-implicit context?
-  - [ ] rename existing references to variables
+- [-] introduce lenses (do they make sense in a non-implicit context?
+  - [X] rename existing references to variables
   - [ ] transform before serialization / after deserialization
   - [ ] special kind of lenses:
     - [ ] member pointers
     - [ ] getter/setter
-- [ ] introduce mapped sequences
-  - [ ] introduce ast node
-  - [ ] adjust << operator
-  - [ ] take care of native format
+- [-] introduce mapped sequences
+  - [ ] slim down current mapping interface
+    - [ ] e.g. what would ElementWriter mean?
+  - [ ] test case for generic_list
+  - [X] introduce ast node
+  - [X] adjust << operator
+  - [X] take care of native format
+  - [ ] reuse =mapped_sequence= for =sequence= (by using a std::tuple-mapping)
+  - [ ] test case: Image << Packet (bounded sequence of two bounded sequences)
+  - [ ] constraints on sequence elements: is_unmapped_sequence or is_format
+  - [ ] reuse reference type for tuple_get and other mappings
+  - [ ] implement default mappings (?)
+    - [ ] via type selection (tuple, vector, ...)
+  - [ ] warn about not-explicitely mapped items in mapped_sequences?
 - [ ] simplify =adapted_struct=
   - [ ] special kind of lenses: member pointers
   - [ ] use mapped sequences
@@ -31,6 +35,7 @@
 - [ ] port strings to =repeated= infrastructure
 - [ ] example implementation: lookup tables
 ** Code Cleanup
+- reuse generic_list for children_list
 - take care of =using= in namespace blocks
   - see http://stackoverflow.com/questions/6175705/scope-of-using-declaration-within-a-namespace
 - clean up directory structure of tests directory

@@ -96,15 +96,14 @@ namespace {
 int main() {
     using namespace generic_format::primitives;
     using namespace generic_format::dsl;
-    using namespace generic_format::mapping;
     using namespace generic_format::targets::iostream;
     using namespace std;
     using namespace demo;
 
     string fileName {"foo.out" };
 
-    static constexpr auto f = uint16_le << uint32_le;
-    static constexpr auto words_format = string_format(uint16_le) << string_format(uint32_le);
+    static constexpr auto f = generic_format::mapping::tuple(uint16_le, uint32_le);
+    static constexpr auto words_format = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
     static constexpr auto Packet_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
                 GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),

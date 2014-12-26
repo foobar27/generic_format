@@ -1,0 +1,9 @@
+* Changelog
+- Sequences are not variadic and flattened at construction time in the DSL. This
+  change is needed for mapped sequences. <2014-12-25 Thu>
+- References have been renamed to variables. We try to leave the meaning of
+  /reference/ as close to the C++ meaning as possible. <2014-12-26 Fri>
+- =ast::sequence= no longer has a default mapping (to =std::tuple=). This is
+  required for mapping more complex types. You need to provide the mapping as
+  the first item of the sequence via =dsl::seq()=, and the remaining items need
+  all to have an implicit mapping.

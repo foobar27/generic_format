@@ -81,6 +81,34 @@ constexpr T sum(T initial_value, Ts... ts) {
 
 namespace variadic {
 
+template<class... Elements>
+struct generic_list {};
+
+/// @brief Insert an element at the end of a generic list.
+template<class List, class NewElement>
+struct append_element;
+
+template<class NewElement, class... Elements>
+struct append_element<generic_list<Elements...>, NewElement> {
+    using type = generic_list<Elements..., NewElement>;
+};
+
+/// @brief Merge two generic lists
+template<class List1, class List2>
+struct merge_generic_lists;
+
+template<class... Elements>
+struct merge_generic_lists<generic_list<Elements...>, generic_list<>> {
+    using type = generic_list<Elements...>;
+};
+
+template<class List1, class Element2, class... Elements2>
+struct merge_generic_lists<List1, generic_list<Element2, Elements2...>> {
+    using new_list1 = typename append_element<List1, Element2>::type;
+    using new_list2 = generic_list<Elements2...>;
+    using type = typename merge_generic_lists<new_list1, new_list2>::type;
+};
+
 /** @brief Tests whether a predicate holds for all variadic arguments.
  *
  * Provides the member constant value equal true if Predicate holds for every argument, else value is false.
