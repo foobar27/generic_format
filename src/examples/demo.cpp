@@ -112,13 +112,13 @@ int main() {
 
     placeholder<0> _;
 
-    static constexpr auto width_ref  = ref(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
-    static constexpr auto height_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-    //static constexpr auto data_ref   = ref(GENERIC_FORMAT_PLACEHOLDER(_, 2), );
+    static constexpr auto width_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
+    static constexpr auto height_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
+    //static constexpr auto data_var   = var(GENERIC_FORMAT_PLACEHOLDER(_, 2), );
     static constexpr auto Image_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Image, width,  width_ref),
-                GENERIC_FORMAT_MEMBER(Image, height, height_ref),
-                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_ref*height_ref, uint8_le, mapping_vector()))
+                GENERIC_FORMAT_MEMBER(Image, width,  width_var),
+                GENERIC_FORMAT_MEMBER(Image, height, height_var),
+                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_var*height_var, uint8_le, mapping_vector()))
                 );
 
     constexpr auto size_container = decltype(Packet_format)::size;

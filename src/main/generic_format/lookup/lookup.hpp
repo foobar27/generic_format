@@ -28,7 +28,7 @@ constexpr _lookup_type<IdFormat, ValueFormat> lookup_type(IdFormat, ValueFormat)
 namespace {
 
 struct lookup_table_placeholder {};
-static constexpr auto lookup_table_size_ref = generic_format::dsl::ref(lookup_table_placeholder(), generic_format::primitives::uint32_le);
+static constexpr auto lookup_table_size_var = generic_format::dsl::var(lookup_table_placeholder(), generic_format::primitives::uint32_le);
 
 // We need a helper class because partial specialization works only for classes,
 // and we need partial specialization to destructure the LookupType.
@@ -65,10 +65,10 @@ struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
     // TODO how do we get out of std::tuple??? And how to provide the lookup_table_builder instead?
     using format = decltype(
         implicit_sequence<builder_type>()
-        << implicit(lookup_table_size_ref)
+        << implicit(lookup_table_size_var)
         << IdFormat * initial_id_lense<id_type, value_type>())
         << generic_format::dsl::repeated(
-            lookup_table_size_ref,
+            lookup_table_size_var,
             ValueFormat() * values_lense<id_type, value_type>(),
             generic_format::mapping::vector_mapping());
 };

@@ -15,30 +15,30 @@
 namespace generic_format {
 namespace ast {
 
-struct reference_base {};
+struct variable_base {};
 
 template<typename Placeholder, class ElementType>
-struct reference;
+struct variable;
 
 template<class T>
-struct is_reference;
+struct is_variable;
 
 namespace {
-template<class Reference1, class Reference2, class Operator>
+template<class Variable1, class Variable2, class Operator>
 struct binary_operator;
 }
 
 template<class T>
-struct is_reference : std::integral_constant<bool, std::is_base_of<reference_base, T>::value>
+struct is_variable : std::integral_constant<bool, std::is_base_of<variable_base, T>::value>
 {};
 
 template<typename Placeholder, class ElementType>
-struct is_reference<reference<Placeholder, ElementType>> {
+struct is_variable<variable<Placeholder, ElementType>> {
     static constexpr bool value = true;
 };
 
-template<class Reference1, class Reference2, class Operator>
-struct is_reference<binary_operator<Reference1, Reference2, Operator>> {
+template<class Variable1, class Variable2, class Operator>
+struct is_variable<binary_operator<Variable1, Variable2, Operator>> {
     static constexpr bool value = true;
 };
 
@@ -59,51 +59,51 @@ struct product_operator {
     }
 };
 
-template<class Reference1, class Reference2, class Operator>
-struct binary_operator : public base<children_list<Reference1, Reference2>>, reference_base {
-    using left_type = Reference1;
-    using right_type = Reference2;
-    using left_native_type = typename Reference1::native_type;
-    using right_native_type = typename Reference2::native_type;
+template<class Variable1, class Variable2, class Operator>
+struct binary_operator : public base<children_list<Variable1, Variable2>>, variable_base {
+    using left_type = Variable1;
+    using right_type = Variable2;
+    using left_native_type = typename Variable1::native_type;
+    using right_native_type = typename Variable2::native_type;
     using native_type = typename Operator::result_type;
-    static_assert(is_reference<Reference1>::value, "Reference1 must be a reference!");
-    static_assert(is_reference<Reference2>::value, "Reference2 must be a reference!");
+    static_assert(is_variable<Variable1>::value, "Variable2 must be a variable!");
+    static_assert(is_variable<Variable2>::value, "Variable2 must be a variable!");
 
     template<class State>
     native_type operator()(State & state) const {
-        return Operator()(Reference1()(state), Reference2()(state));
+        return Operator()(Variable1()(state), Variable2()(state));
     }
 
 };
 
 }
 
-template<class Reference1, class Reference2>
-struct sum : public binary_operator<Reference1, Reference2, sum_operator<typename Reference1::native_type, typename Reference2::native_type>>
+template<class Variable1, class Variable2>
+struct sum : public binary_operator<Variable1, Variable2, sum_operator<typename Variable1::native_type, typename Variable2::native_type>>
 {};
 
 
-template<class Reference1, class Reference2>
-struct product : public binary_operator<Reference1, Reference2, product_operator<typename Reference1::native_type, typename Reference2::native_type>>
+template<class Variable1, class Variable2>
+struct product : public binary_operator<Variable1, Variable2, product_operator<typename Variable1::native_type, typename Variable2::native_type>>
 {};
 
 template<typename Placeholder, class ElementType>
-struct reference : base<children_list<ElementType>>, reference_base {
-    static_assert(is_format<ElementType>::value, "Can only take references from formats!");
-    static_assert(!is_reference<ElementType>::value, "Cannot take references of references!");
+struct variable : base<children_list<ElementType>>, variable_base {
+    static_assert(is_format<ElementType>::value, "Can only take variable from formats!");
+    static_assert(!is_variable<ElementType>::value, "Cannot take variables of variables!");
     using placeholder = Placeholder;
     using element_type = ElementType;
     using native_type = typename ElementType::native_type;
-    using type = reference<placeholder, element_type>;
+    using type = variable<placeholder, element_type>;
     static constexpr auto size = element_type::size;
 
-    template<class OtherReference>
-    constexpr sum<type, OtherReference> operator+(OtherReference) const {
+    template<class OtherVariable>
+    constexpr sum<type, OtherVariable> operator+(OtherVariable) const {
         return {};
     }
 
-    template<class OtherReference>
-    constexpr product<type, OtherReference> operator*(OtherReference) const {
+    template<class OtherVariable>
+    constexpr product<type, OtherVariable> operator*(OtherVariable) const {
         return {};
     }
 
@@ -127,10 +127,10 @@ struct reference : base<children_list<ElementType>>, reference_base {
 
 };
 
-template<class Reference>
+template<class Variable>
 struct dereference : base<children_list<>> {
-    static_assert(is_reference<Reference>::value, "Can only dereference references or combinations of references!");
-    using type = Reference;
+    static_assert(is_variable<Variable>::value, "Can only dereference variables or combinations of variables!");
+    using type = Variable;
     using native_type = typename type::native_type;
 
     template<class State>
@@ -142,8 +142,8 @@ struct dereference : base<children_list<>> {
 
 /// partial specialization to make dereferencing idempotent
 template<typename Placeholder, class ElementType>
-struct dereference<reference<Placeholder, ElementType>> : base<children_list<>> {
-    using type = reference<Placeholder, ElementType>;
+struct dereference<variable<Placeholder, ElementType>> : base<children_list<>> {
+    using type = variable<Placeholder, ElementType>;
     using native_type = typename type::native_type;
 
     template<class State>

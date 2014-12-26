@@ -70,17 +70,17 @@ struct placeholder {
 };
 
 template<class Placeholder, class Format>
-constexpr ast::reference<Placeholder, Format> ref(Placeholder, Format) {
+constexpr ast::variable<Placeholder, Format> var(Placeholder, Format) {
     return {};
 }
 
-template<class Reference>
-constexpr ast::dereference<Reference> deref(Reference) {
+template<class Variable>
+constexpr ast::dereference<Variable> deref(Variable) {
     return {};
 }
 
-template<class Reference, class Format, class Mapping>
-constexpr ast::repeated<ast::dereference<Reference>, Format, Mapping> repeated(Reference, Format, Mapping) {
+template<class Variable, class Format, class Mapping>
+constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Variable, Format, Mapping) {
     return {};
 }
 
