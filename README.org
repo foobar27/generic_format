@@ -13,6 +13,7 @@ Currently the building blocks of this domain-specific language are:
 This is an early prototype, i.e.
 - it almost hasn't been tested
 - expect the API to change
+- the code might not even compile
 
 Things which are probably going to break: (this list is *not* exhaustive)
 - primitive type, especially byte-order
