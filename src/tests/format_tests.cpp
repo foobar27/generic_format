@@ -172,6 +172,7 @@ void read_chunks(R& reader, C & c, CS... cs) {
 
 namespace {
 
+// TODO simplify via helper.hpp (sum function)
 template<class... CS>
 struct sizes_sum;
 
@@ -187,6 +188,7 @@ struct sizes_sum<C, CS...> {
     static constexpr auto _remaining_value = sizes_sum<CS...>::value;
     static constexpr auto value = _current_value + _remaining_value;
 };
+
 
 }
 
@@ -229,12 +231,20 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(strings_test, TARGET, all_targets) {
                      chunk(string_format(uint16_le), "world"));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test, TARGET, all_targets) {
+BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_2, TARGET, all_targets) {
     check_round_trip((1+5)+(2+5)+(1+1),
                      TARGET(),
                      chunk(string_format(uint8_le) << string_format(uint16_le), std::make_tuple("hello", "world")),
                      chunk(string_format(uint8_le), "!"));
 }
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
+    check_round_trip((1+5)+(2+5)+(4+1)+(1+1),
+                     TARGET(),
+                     chunk(string_format(uint8_le) << string_format(uint16_le) << string_format(uint32_le), std::make_tuple("hello", "world", "!")),
+                     chunk(string_format(uint8_le), "?"));
+}
+
 
 struct Person {
     std::string first_name {}, last_name {};

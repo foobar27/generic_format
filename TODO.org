@@ -1,9 +1,70 @@
+* Roadmap
+** Work out mapping concept
+- [X] make ast::sequence variadic, in order to simplify mapping
+  - [X] adjust ast
+  - [X] adjust dsl
+  - [X] add test case with all combinations of flattening
+  - [X] fix compile-time test cases
+  - [X] add read/write test cases with more than 2 items in tuple
+- [ ] introduce lenses (do they make sense in a non-implicit context?
+  - [ ] rename existing references to variables
+  - [ ] transform before serialization / after deserialization
+  - [ ] special kind of lenses:
+    - [ ] member pointers
+    - [ ] getter/setter
+- [ ] introduce mapped sequences
+  - [ ] introduce ast node
+  - [ ] adjust << operator
+  - [ ] take care of native format
+- [ ] simplify =adapted_struct=
+  - [ ] special kind of lenses: member pointers
+  - [ ] use mapped sequences
+  - [ ] remove ast::adapted_struct (only leave the DSL)
+  - [ ] try out nested references
+- [ ] implement mappings for basic data structures
+  - [ ] vectors
+    - [ ] implement
+    - [ ] remove =vector_mapping=
+    - [ ] test
+  - [ ] maps
+  - [ ] sets
+- [ ] port strings to =repeated= infrastructure
+- [ ] example implementation: lookup tables
+** Code Cleanup
+- take care of =using= in namespace blocks
+  - see http://stackoverflow.com/questions/6175705/scope-of-using-declaration-within-a-namespace
+- clean up directory structure of tests directory
+- use 'explicit' where appropriate
+- clean up benchmark (especially timing part)
+- use more type inference
+- clean up the build system. For example I don't like that we force C++11
+  upon other people, even on those who are using C++14. Also check if
+  installation of the header files works correctly, and other projects can use
+  it correcly via =find_package=.
+- use more initializer syntax
+- more documentation
+  - rewrite the introduction of the README file
+  - write a paragraph: why not use boost::spirit/karma?
+  - enhance doxygen
+  - higher-level documentation
+    - various internal APIs
+  - how to
+    - wrap own types
+  - fill in doxygen @author & co
+  - contract for =raw_reader= and =raw_writer=
+** Scopes for placeholders
+- [ ] scopes for placeholders. Within a scope:
+  - all nested placeholders will be translated to a unique placeholder
+  - within a scope
+  - but how can we leak a placeholder, e.g. the 'data_ref', to write visitors
+** Named Fields for JSON de/serialization
+** Optimization ideas
+- [ ] replace the state by varargs (maybe even only the arguments which are actually referenced!)
+- [ ] verify how gcc and clang compile the code
+- [ ] perhaps play with =inline=
+- [ ] maybe don't use references for primitive types
+- [ ] =adapted_struct=: if no padding nad pod, copy memory (we need to trust the user that the order is correct)
 * Various Ideas
-** Documentation
-- rewrite the introduction of the README file
-- write a paragraph: why not use boost::spirit/karma?
-- general overview (list the various aspects of the library)
-- how to wrap own types
 ** Philosophical Questions
 - or return value, or pass reference, to fill result?
   - or even reduce the data with some function?
@@ -23,40 +84,15 @@
       (data-structure which represent the data)
       - this smells like a monad?
 ** Features
-- mapping layer
-  - [-] make ast::sequence variadic, in order to simplify mapping
-    - [X] adjust ast
-    - [X] adjust dsl
-    - [X] add test case with 4 different combinations of flattening
-    - [X] add test case with deep flattening
-    - [ ] fix compile-time test cases
-    - [ ] add read/write test case with more than 2 items in tuple
-  - [ ] simple implicit formats (e.g. for size of vector)
-  - [ ] implicit sequences (with different return type)
-  - [ ] simplify adapted_struct
-  - [ ] maybe rename reference to variable?
-  - [ ] references
-  - [ ] lenses (references might be a special case)
-  - [ ] reuse the above code in adapted_struct
-  - [ ] refactor vector_mapping (provide two hoooks: clear and push_back)
 - priorities
   - scopes for placeholders. Within a scope:
     - all nested placeholders will be translated to a unique placeholder
     - within a scope
     - but how can we leak a placeholder, e.g. the 'data_ref', to write visitors
-  - remove coupling to vector
-    - example visitors
-      - see sample arguments for std::copy
-      - memcpy
-      - custom (e.g. opencv)
-- create new namespace which is used to *access* different fields
-  - composability?
 - repeated fields
   - monads?
 - allow serialization to asio buffers
 - repeated fields,
-  - port strings to this infrastructure
-  - replace the state by varargs (even only the arguments which are actually referenced!)
   - deref operator
     - verify reference has been defined before in the format
   - how to "nest" references (e.g. nested structs, all have references)
@@ -76,7 +112,6 @@
 - enums
 - iterator-like interface
 - array-like interface for fixed-length types
-- sequences: be variadic
 - mapping from one type to the other without intermediate data structure
 - keep state, e.g. checksums
 - verify header fields, e.g. via integral_constant
@@ -99,9 +134,6 @@
 - [ ] bit-boundaries instead of byte-boundaries
   - [ ] adjust size_container
 ** Code Cleanup
-- take care of =using= in namespace blocks
-  - see http://stackoverflow.com/questions/6175705/scope-of-using-declaration-within-a-namespace
-- clean up directory structure of tests directory
 - extract custom map type (indexed by a Predicate)
 - use =std::forward<>...= in reader/writer???
 - separate interface and implementation (e.g. helper.hpp)
@@ -122,24 +154,7 @@
 - in DEBUG builds: fail if buffer overrun in unbounded_memory? (e.g. via some assertions, and DEBUG flags?)
 - be less sloppy about move ctors in tests (especially assignments)
 - provide default values via initializer lists
-- fill in doxygen @author & co
 - factor out foreach
 - remove type-specific operator() from =raw_reader= and =raw_writer=
 - =adapt_struct= -> =struct_format=
-- use 'explicit' where appropriate
 - named members
-- use more initializer syntax
-- clean up benchmark (especially timing part)
-- use more type inference
-- clean up the build system. For example I don't like that we force C++11
-  upon other people, even on those who are using C++14. Also check if
-  installation of the header files works correctly, and other projects can use
-  it correcly via =find_package=.
-- add doxygen and a proper high-level documentation
-** Missing Documentation
-- contract for =raw_reader= and =raw_writer=
-** Optimizations
-- verify how gcc and clang compile the code
-- perhaps play with inlining
-- maybe don't use references for primitive types
-- optimization: =adapted_struct=: if no padding and pod, copy memory

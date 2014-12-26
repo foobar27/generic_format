@@ -21,6 +21,38 @@ struct Image {
     std::vector<std::uint8_t> data;
 };
 
+namespace {
+
+// TODO vector_size_accessor
+
+//struct push_back_visitor {
+
+//    template<class DataStructure, class Element>
+//    void operator()(DataStructure & ds, const Element & element) const {
+//        ds.push_back(element);
+//    }
+//};
+
+
+//template<class Placeholder, class SizeFormat, class ElementFormat>
+//struct vector_format_helper {
+//    using size_ref = generic_format::ast::reference<Placeholder, SizeFormat>;
+//    using native_element_type = typename ElementFormat::native_type;
+//    using type = decltype(
+
+//    mapped_sequence<std::vector<native_element_type>>()
+//    << mapping(size_ref(), vector_resize_accessor())
+//    << repeated(size_ref(), ElementFormat(), push_back_visitor())
+
+//    );
+//};
+}
+
+//template<class Placeholder, class SizeFormat, class ElementFormat>
+//constexpr typename vector_format_helper<Placeholder, SizeFormat, ElementFormat>::type vector_format(Placeholder, SizeFormat, ElementFormat) {
+//    return {};
+//}
+
 //void nested_vector_example() {
 //    using namespace generic_format::primitives;
 //    using namespace generic_format::dsl;
@@ -29,16 +61,13 @@ struct Image {
 //    using namespace std;
 //    placeholder<0> _;
 
-//    static constexpr auto outer_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-//    static constexpr auto inner_size_ref = ref(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
-//    static constexpr auto f =
-//            outer_size_ref
-//            << repeated(outer_size_ref,
-//                        inner_size_ref
-//                        << repeated(inner_size_ref,
-//                                    string_format(uint32_le),
-//                                    mapping_vector()),
-//                        mapping_vector());
+//    static constexpr auto nested_vector =
+//            vector_format(GENERIC_FORMAT_PLACEHOLDER(_, 0),
+//                          uint32_le,
+//                          vector_format(GENERIC_FORMAT_PLACEHOLDER(_, 1),
+//                                        uint32_le,
+//                                        string_format(uint32_le)))
+
 
 //    string fileName {"nested.out" };
 

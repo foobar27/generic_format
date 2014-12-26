@@ -13,11 +13,64 @@
 #include "generic_format/primitives.hpp"
 #include "generic_format/dsl.hpp"
 
+#include <type_traits>
+
 using namespace generic_format::primitives;
 
 // Just a dummy unit test - actually all the testing in this file should be done at compile-time.
 BOOST_AUTO_TEST_CASE( dummy )
 {}
+
+//
+// helper.hpp
+// TODO move tests to separate file?
+//
+
+void test_conditional_type() {
+    using namespace std;
+    using namespace generic_format;
+
+    using t_false = typename conditional_type<false, true_type, false_type>::type;
+    using t_true  = typename conditional_type<true,  true_type, false_type>::type;
+
+    static_assert(!t_false::value, "false");
+    static_assert(t_true::value, "true");
+}
+
+void test_sum() {
+    using generic_format::sum;
+    static_assert(sum(0) == 0, "empty sum");
+    static_assert(sum(0, 1, 2, 3) == 6, "sum");
+}
+
+void test_index_of() {
+    using generic_format::variadic::index_of;
+    using std::is_integral;
+    static_assert(index_of<is_integral, int>::value == 0, "first");
+    static_assert(index_of<is_integral, double, int>::value == 1, "second");
+}
+
+void test_for_all() {
+    using namespace std;
+    using namespace generic_format::variadic;
+    static_assert(for_all<is_integral>::value, "[]");
+    static_assert(for_all<is_integral, int>::value, "[true]");
+    static_assert(!for_all<is_integral, double>::value, "[false]");
+    static_assert(!for_all<is_integral, int, double>::value, "[true, false]");
+    static_assert(!for_all<is_integral, double, int>::value, "[false, true]");
+    static_assert(for_all<is_integral, int, int>::value, "[true, true]");
+}
+
+void test_for_any() {
+    using namespace std;
+    using namespace generic_format::variadic;
+    static_assert(!for_any<is_integral>::value, "[]");
+    static_assert(for_any<is_integral, int>::value, "[true]");
+    static_assert(!for_any<is_integral, double>::value, "[false]");
+    static_assert(for_any<is_integral, int, double>::value, "[true, false]");
+    static_assert(for_any<is_integral, double, int>::value, "[false, true]");
+    static_assert(for_any<is_integral, int, int>::value, "[true, true]");
+}
 
 void test_is_format() {
     using namespace generic_format::ast;

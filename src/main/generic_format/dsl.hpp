@@ -125,7 +125,11 @@ struct merged_sequence_format<Format1, ast::sequence<Format2, Format2s...>, true
 
 }
 }
-
+/**
+ *@brief Concatenate two formats.
+ *
+ * Simplifies the sequences by flattening it.
+ */
 template<class Format1, class Format2>
 constexpr typename generic_format::merged_sequence_format<Format1, Format2>::type operator<<(const Format1, const Format2) {
     return {};
