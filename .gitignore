@@ -1,4 +1,12 @@
 docs
 build
-CMakeLists.txt.user
+CMakeLists.txt.user*
 *~
+\#*\#
+.\#*
+
+# org-mode
+.org-id-locations
+
+# flymake-mode
+*_flymake.*
