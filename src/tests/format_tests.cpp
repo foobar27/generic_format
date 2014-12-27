@@ -20,7 +20,7 @@
 #include "generic_format/targets/iostream.hpp"
 #include "generic_format/targets/unbounded_memory.hpp"
 #include "generic_format/dsl.hpp"
-#include "generic_format/mapping/mappings.hpp"
+#include "generic_format/mapping/mapping.hpp"
 
 using namespace generic_format::targets::iostream;
 using namespace generic_format::targets::unbounded_memory;

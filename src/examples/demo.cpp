@@ -13,7 +13,7 @@
 #include "generic_format/generic_format.hpp"
 #include "generic_format/targets/iostream.hpp"
 #include "generic_format/dsl.hpp"
-#include "generic_format/mapping/mappings.hpp"
+#include "generic_format/mapping/mapping.hpp"
 
 struct Image {
     std::uint32_t width;

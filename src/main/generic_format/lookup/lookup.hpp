@@ -9,7 +9,7 @@
 #pragma once
 
 #include "generic_format/lookup/lookup_table.hpp"
-#include "generic_format/mapping/mappings.hpp"
+#include "generic_format/mapping/mapping.hpp"
 
 namespace generic_format{
 namespace lookup {
