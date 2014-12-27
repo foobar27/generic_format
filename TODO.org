@@ -1,4 +1,12 @@
 * Roadmap
+** Think about next directions
+- Real World Examples (database for tcp/ip communications, compact storage of document stream)
+- Stabilization (cleanup of code and build scripts, add documentation)
+- Async de/serialization (should be easier now after the big refactoring)
+- Named Fields (JSON de/serialization)
+- Reduced scope for placeholders (I will see in real world examples if it's necessary)
+- Increase Portability (seriously support byte order, maybe remove exceptions,
+  try to get compiling on arduino)
 ** Work out concept for mapping repeated formats
 - [-] implement mappings for basic data structures
   - [X] maybe rename accessor to reference_accessor
@@ -78,14 +86,9 @@
     - all nested placeholders will be translated to a unique placeholder
     - within a scope
     - but how can we leak a placeholder, e.g. the 'data_ref', to write visitors
-- repeated fields
-  - monads?
-- allow serialization to asio buffers
 - repeated fields,
   - deref operator
     - verify reference has been defined before in the format
-  - how to "nest" references (e.g. nested structs, all have references)
-    - make a variadic kind of generator, which is given as a template argument?
   - disable copy ctor for state
   - also allow reference+constant arithmetic
   - try out with map<int, map<int, int>>
@@ -145,5 +148,3 @@
 - provide default values via initializer lists
 - factor out foreach
 - remove type-specific operator() from =raw_reader= and =raw_writer=
-- =adapt_struct= -> =struct_format=
-- named members
