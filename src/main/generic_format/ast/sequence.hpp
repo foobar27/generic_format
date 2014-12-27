@@ -29,12 +29,12 @@ struct sequence<NativeType, children_list<Formats...>> : base<children_list<Form
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        write_elements<RawWriter, State>(raw_writer, state, t);
+        write_elements<RawWriter, State, Formats...>(raw_writer, state, t);
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
-        read_elements<RawReader, State>(raw_reader, state, t);
+        read_elements<RawReader, State, Formats...>(raw_reader, state, t);
     }
 
 private:

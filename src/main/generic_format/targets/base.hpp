@@ -17,26 +17,24 @@ namespace targets {
 
 namespace {
 
-using namespace ast;
-
 template<class Format>
 struct map_for_format;
 
 template<class... Children>
 struct map_for_children {
-    using type = placeholder_map<>;
+    using type = ast::placeholder_map<>;
 };
 
 template<class Child, class... Children>
 struct map_for_children<Child, Children...> {
-    using type = typename merge_placeholder_maps<typename map_for_format<Child>::type, typename map_for_children<Children...>::type>::type;
+    using type = typename ast::merge_placeholder_maps<typename map_for_format<Child>::type, typename map_for_children<Children...>::type>::type;
 };
 
 template<class Format>
 struct map_for_children_list;
 
 template<class... Children>
-struct map_for_children_list<children_list<Children...>> {
+struct map_for_children_list<ast::children_list<Children...>> {
     using type = typename map_for_children<Children...>::type;
 };
 
@@ -44,20 +42,20 @@ template<class Format, class Enabled = void>
 struct helper;
 
 template<class Format>
-struct helper<Format, typename std::enable_if<!is_variable<Format>::value, void>::type> {
-    using type = placeholder_map<>;
+struct helper<Format, typename std::enable_if<!ast::is_variable<Format>::value, void>::type> {
+    using type = ast::placeholder_map<>;
 };
 
 template<class Variable>
-struct helper<Variable, typename std::enable_if<is_variable<Variable>::value, void>::type> {
-    using type = placeholder_map<placeholder_map_entry<typename Variable::native_type, typename Variable::placeholder>>;
+struct helper<Variable, typename std::enable_if<ast::is_variable<Variable>::value, void>::type> {
+    using type = ast::placeholder_map<ast::placeholder_map_entry<typename Variable::native_type, typename Variable::placeholder>>;
 };
 
 template<class Format>
 struct map_for_format {
     using _current_map = typename helper<Format>::type;
     using _children_map = typename map_for_children_list<typename Format::children>::type;
-    using type = typename merge_placeholder_maps<_current_map, _children_map>::type;
+    using type = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
 };
 
 }

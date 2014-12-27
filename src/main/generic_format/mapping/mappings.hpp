@@ -37,10 +37,10 @@ struct mapping_vector {
 
 };
 
-template<class TupleType, std::size_t Index>
-struct tuple_get { // TODO inherit from reference?
+template<class Format, class TupleType, std::size_t Index>
+struct tuple_get : public ast::accessor<Format, TupleType> {
 
-    using element_type = std::tuple_element<Index, TupleType>;
+    using element_type = typename std::tuple_element<Index, TupleType>::type;
 
     element_type & operator()(TupleType & t) const {
         return std::get<Index>(t);
@@ -65,7 +65,7 @@ struct tuple_mapping_accessors<Index, Acc, TupleType> {
 
 template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
 struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
-    using current_element = tuple_get<TupleType, Index>;
+    using current_element = ast::reference<tuple_get<Format, TupleType, Index>>;
     using new_acc = typename variadic::append_element<Acc, current_element >::type;
     using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };

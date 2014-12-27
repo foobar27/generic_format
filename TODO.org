@@ -7,6 +7,10 @@
     - [ ] member pointers
     - [ ] getter/setter
 - [-] introduce mapped sequences
+  - [X] implement reference accessor
+  - [X] implement reference_accessor::size
+  - [ ] uncomment test cases for sequence flattening, and extend these tests
+  - [ ] separate static-assert if unmapped_sequence is used as a format
   - [ ] slim down current mapping interface
     - [ ] e.g. what would ElementWriter mean?
   - [ ] test case for generic_list
@@ -20,6 +24,7 @@
   - [ ] implement default mappings (?)
     - [ ] via type selection (tuple, vector, ...)
   - [ ] warn about not-explicitely mapped items in mapped_sequences?
+  - [ ] rename mappings.hpp => mapping.hpp
 - [ ] simplify =adapted_struct=
   - [ ] special kind of lenses: member pointers
   - [ ] use mapped sequences

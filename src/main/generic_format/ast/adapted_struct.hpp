@@ -9,6 +9,7 @@
 #pragma once
 
 #include "generic_format/ast/base.hpp"
+#include "generic_format/helper.hpp"
 
 namespace generic_format {
 namespace ast {
@@ -31,7 +32,7 @@ struct adapted_struct : public base<children_list<typename Members::format...>> 
     using native_type = T;
     using members_tuple = std::tuple<Members...>;
     static constexpr auto number_of_members = std::tuple_size<members_tuple>();
-    static constexpr auto size = sum(fixed_size(0), Members::size...);
+    static constexpr auto size = generic_format::sum(fixed_size(0), Members::size...);
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {

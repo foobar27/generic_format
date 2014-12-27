@@ -20,6 +20,7 @@
 #include "generic_format/targets/iostream.hpp"
 #include "generic_format/targets/unbounded_memory.hpp"
 #include "generic_format/dsl.hpp"
+#include "generic_format/mapping/mappings.hpp"
 
 using namespace generic_format::targets::iostream;
 using namespace generic_format::targets::unbounded_memory;
@@ -234,14 +235,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(strings_test, TARGET, all_targets) {
 BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_2, TARGET, all_targets) {
     check_round_trip((1+5)+(2+5)+(1+1),
                      TARGET(),
-                     chunk(string_format(uint8_le) << string_format(uint16_le), std::make_tuple("hello", "world")),
+                     chunk(generic_format::mapping::tuple(string_format(uint8_le), string_format(uint16_le)), std::make_tuple("hello", "world")),
                      chunk(string_format(uint8_le), "!"));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
     check_round_trip((1+5)+(2+5)+(4+1)+(1+1),
                      TARGET(),
-                     chunk(string_format(uint8_le) << string_format(uint16_le) << string_format(uint32_le), std::make_tuple("hello", "world", "!")),
+                     chunk(generic_format::mapping::tuple(string_format(uint8_le), string_format(uint16_le), string_format(uint32_le)), std::make_tuple("hello", "world", "!")),
                      chunk(string_format(uint8_le), "?"));
 }
 

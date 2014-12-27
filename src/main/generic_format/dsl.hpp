@@ -89,6 +89,19 @@ constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Va
     return {};
 }
 
+// TODO documentation
+template<class ChildrenList>
+struct unmapped_sequence;
+
+template<class... Formats>
+struct unmapped_sequence<ast::children_list<Formats...>> {};
+
+template<class T>
+struct is_unmapped_sequence : std::false_type {};
+
+template<class... Formats>
+struct is_unmapped_sequence<ast::children_list<Formats...>> : std::true_type {};
+
 }
 
 // Helpers for constructing sequences.
@@ -96,16 +109,10 @@ constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Va
 
 namespace {
 
-template<class ChildrenList>
-struct unmapped_sequence;
-
-template<class... Formats>
-struct unmapped_sequence<ast::children_list<Formats...>> {};
-
 // default implementation: just make un unmapped sequence
 template<class Format1, class Format2>
 struct merged_sequence {
-    using type = unmapped_sequence<ast::children_list<Format1, Format2>>;
+    using type = dsl::unmapped_sequence<ast::children_list<Format1, Format2>>;
 };
 
 // scalar << *
@@ -114,17 +121,17 @@ struct merged_sequence {
 // unmapped_sequence << scalar
 // OR: unmapped_sequence << sequence
 template<class List1, class Format2>
-struct merged_sequence<unmapped_sequence<List1>, Format2> {
+struct merged_sequence<dsl::unmapped_sequence<List1>, Format2> {
     using merged_list = typename variadic::append_element<List1, Format2>::type;
-    using type = unmapped_sequence<merged_list>;
+    using type = dsl::unmapped_sequence<merged_list>;
 };
 
 // unmapped_sequence << unmapped_sequence
 // => just merge the elements
 template<class List1, class List2>
-struct merged_sequence<unmapped_sequence<List1>, unmapped_sequence<List2>> {
+struct merged_sequence<dsl::unmapped_sequence<List1>, dsl::unmapped_sequence<List2>> {
     using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
-    using type = unmapped_sequence<merged_list>;
+    using type = dsl::unmapped_sequence<merged_list>;
 };
 
 // sequence << scalar
@@ -139,7 +146,7 @@ struct merged_sequence<ast::sequence<NativeType, List1>, Format2> {
 // sequence << unmapped_sequence
 // => prolong the first sequence with the elements of the unmapped sequence
 template<class NativeType1, class List1, class List2>
-struct merged_sequence<ast::sequence<NativeType1, List1>, unmapped_sequence<List2>> {
+struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence<List2>> {
     using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
     using type = ast::sequence<NativeType1, merged_list>;
 };

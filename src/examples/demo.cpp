@@ -100,7 +100,7 @@ int main() {
     using namespace std;
     using namespace demo;
 
-    string fileName {"foo.out" };
+    string fileName {"demo.out" };
 
     static constexpr auto f = generic_format::mapping::tuple(uint16_le, uint32_le);
     static constexpr auto words_format = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
@@ -113,12 +113,11 @@ int main() {
 
     static constexpr auto width_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
     static constexpr auto height_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-    //static constexpr auto data_var   = var(GENERIC_FORMAT_PLACEHOLDER(_, 2), );
-    static constexpr auto Image_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Image, width,  width_var),
-                GENERIC_FORMAT_MEMBER(Image, height, height_var),
-                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_var*height_var, uint8_le, mapping_vector()))
-                );
+//    static constexpr auto Image_format = adapt_struct(
+//                GENERIC_FORMAT_MEMBER(Image, width,  width_var),
+//                GENERIC_FORMAT_MEMBER(Image, height, height_var),
+//                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_var*height_var, uint8_le, mapping_vector()))
+//                );
 
     constexpr auto size_container = decltype(Packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size;
@@ -131,14 +130,14 @@ int main() {
         writer(v, f);
 
         Packet packet { 1, 2, 3 };
-        writer(packet, Packet_format);
+//        writer(packet, Packet_format);
         tuple<string, string> words {"hello", "world"};
-        writer(words, words_format);
+//        writer(words, words_format);
 
         Image image {2, 3,
                      {1, 2, 3,
                       4, 5, 6}};
-        writer(image, Image_format);
+        //writer(image, Image_format);
     }
     {
         ifstream is {fileName, ios_base::in | ios_base::binary};
@@ -157,7 +156,7 @@ int main() {
         cout << get<0>(words) << " " << get<1>(words) << endl;
 
         Image image;
-        reader(image, Image_format);
+        //reader(image, Image_format);
         cout << "Image: width=" << image.width << " height=" << image.height << " data=";
         for (auto v : image.data) {
             cout << " " << static_cast<int>(v);
