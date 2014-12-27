@@ -6,7 +6,7 @@
   - [X] special kind of lenses:
     - [X] member pointers
     - [X] tuple accessors
-- [-] introduce mapped sequences
+- [X] introduce mapped sequences
   - [X] implement reference accessor
   - [X] implement reference_accessor::size
   - [X] test case for generic_list
@@ -14,28 +14,29 @@
   - [X] introduce ast node
   - [X] adjust << operator
   - [X] take care of native format
-  - [ ] slim down current vector mapping interface
-    - [ ] e.g. what would ElementWriter mean?
-  - [ ] test case: tuple(Image << Packet) (bounded sequence of two bounded sequences)
-  - [ ] implement default mappings (?)
-    - [ ] via type selection (tuple, vector, ...)
-  - [ ] warn about not-explicitely mapped items in mapped_sequences?
+  - [X] test case: tuple(Image << Packet) (bounded sequence of two bounded sequences)
   - [X] rename mappings.hpp => mapping.hpp
-  - [ ] separate namespace for accessor
-- [-] simplify =adapted_struct=
+  - [X] separate namespace for accessor
+- [X] simplify =adapted_struct=
   - [X] special kind of references: member pointers
   - [X] use mapped sequences
   - [X] remove ast::adapted_struct (only leave the DSL)
-  - [ ] try out nested references
+  - [X] try out nested references
 - [ ] implement mappings for basic data structures
   - [ ] vectors
-    - [ ] implement
-    - [ ] remove =vector_mapping=
+    - [ ] implement push_back interface
+    - [ ] remove =vector_mapping= and old mapping code
+    - [ ] reimplement vectors with indexed iteration and resize
     - [ ] test
   - [ ] maps
   - [ ] sets
 - [ ] port strings to =repeated= infrastructure
 - [ ] example implementation: lookup tables
+** Improve Usability
+- [ ] implement default mappings (?)
+  - [ ] via type selection (tuple, vector, ...)
+- [ ] error about not-explicitely mapped items in mapped_sequences?
+- [ ] useful error message if forgot to call seq()
 ** Code Cleanup
 - reuse generic_list for children_list
 - take care of =using= in namespace blocks

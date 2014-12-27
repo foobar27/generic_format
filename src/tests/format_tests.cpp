@@ -246,7 +246,6 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
                      chunk(string_format(uint8_le), "?"));
 }
 
-
 struct Person {
     std::string first_name {}, last_name {};
     std::uint8_t age {};
@@ -262,10 +261,42 @@ struct Person {
 
 };
 
+struct Packet {
+    std::uint32_t source, target;
+    std::uint16_t port;
+};
+
+struct Address {
+    std::uint16_t number;
+    std::string street;
+};
+
+struct User {
+    std::string first_name, last_name;
+    Address address;
+};
+
 bool operator==(const Person & p1, const Person & p2) {
     return p1.first_name == p2.first_name
             && p1.last_name == p2.last_name
             && p1.age == p2.age;
+}
+
+bool operator==(const Packet & p1, const Packet & p2) {
+    return p1.source == p2.source
+            && p1.target == p2.target
+            && p1.port == p2.port;
+}
+
+bool operator==(const Address & p1, const Address & p2) {
+    return p1.number == p2.number
+            && p1.street == p2.street;
+}
+
+bool operator==(const User & p1, const User & p2) {
+    return p1.first_name == p2.first_name
+            && p1.last_name == p2.last_name
+            && p1.address == p2.address;
 }
 
 static constexpr auto Person_format = adapt_struct(
@@ -273,11 +304,39 @@ static constexpr auto Person_format = adapt_struct(
             GENERIC_FORMAT_MEMBER(Person, last_name,  string_format(uint8_le)),
             GENERIC_FORMAT_MEMBER(Person, age,        uint8_le));
 
+static constexpr auto Packet_format = adapt_struct(
+            GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
+            GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
+            GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le));
+
+static constexpr auto Address_format = adapt_struct(
+            GENERIC_FORMAT_MEMBER(Address, number, uint16_le),
+            GENERIC_FORMAT_MEMBER(Address, street, string_format(uint32_le)));
+
+static constexpr auto User_format = adapt_struct(
+            GENERIC_FORMAT_MEMBER(User, first_name, string_format(uint32_le)),
+            GENERIC_FORMAT_MEMBER(User, last_name,  string_format(uint32_le)),
+            GENERIC_FORMAT_MEMBER(User, address,    Address_format));
+
 std::ostream& operator<<(std::ostream& os, const Person & p) {
     os << "Person[first_name=" << p.first_name << ", last_name=" << p.last_name << ", age=" << p.age << "]";
     return os;
 }
 
+std::ostream& operator<<(std::ostream& os, const Packet & p) {
+    os << "Packet[source=" << p.source << ", target=" << p.target << ", port=" << p.port << "]";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const Address & p) {
+    os << "Address[number=" << p.number << ", street=" << p.street << "]";
+    return os;
+}
+
+std::ostream& operator<<(std::ostream& os, const User & p) {
+    os << "User[first_name=" << p.first_name << ", last_name=" << p.last_name << ", address=" << p.address << "]";
+    return os;
+}
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(struct_test, TARGET, all_targets) {
     check_round_trip((1+4)+(1+4)+1
@@ -285,4 +344,16 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(struct_test, TARGET, all_targets) {
                      TARGET(),
                      chunk(Person_format, {"foo1", "bar1", 42}),
                      chunk(Person_format, {"foo2", "bar2", 24}));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(struct_sequence_test, TARGET, all_targets) {
+    check_round_trip((1+4)+(1+4)+1 + (4+4+2),
+                     TARGET(),
+                     chunk(generic_format::mapping::tuple(Person_format, Packet_format), std::make_tuple<Person, Packet>({"foo1", "bar1", 42}, {1,2,3})));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(nested_struct_test, TARGET, all_targets) {
+    check_round_trip((4+4)+(4+4) + 2+(4+14),
+                     TARGET(),
+                     chunk(User_format, {"foo1", "bar1", {10, "Downing Street"}}));
 }
