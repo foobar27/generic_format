@@ -1,46 +1,22 @@
 * Roadmap
-** Work out mapping concept
-- [X] introduce lenses or a similar concept (do they make sense in a non-implicit context?
-  - [X] rename existing references to variables
-  - [X] transform before serialization / after deserialization
-  - [X] special kind of lenses:
-    - [X] member pointers
-    - [X] tuple accessors
-- [X] introduce mapped sequences
-  - [X] implement reference accessor
-  - [X] implement reference_accessor::size
-  - [X] test case for generic_list
-  - [X] uncomment test cases for sequence flattening, and extend these tests
-  - [X] introduce ast node
-  - [X] adjust << operator
-  - [X] take care of native format
-  - [X] test case: tuple(Image << Packet) (bounded sequence of two bounded sequences)
-  - [X] rename mappings.hpp => mapping.hpp
-  - [X] separate namespace for accessor
-- [X] simplify =adapted_struct=
-  - [X] special kind of references: member pointers
-  - [X] use mapped sequences
-  - [X] remove ast::adapted_struct (only leave the DSL)
-  - [X] try out nested references
-- [ ] implement mappings for basic data structures
+** Work out concept for mapping repeated formats
+- [-] implement mappings for basic data structures
+  - [X] maybe rename accessor to reference_accessor
   - [ ] vectors
-    - [ ] implement push_back interface
-    - [ ] remove =vector_mapping= and old mapping code
-    - [ ] reimplement vectors with indexed iteration and resize
+    - [ ] implement vector mapping with indexed iteration and resize
+    - [ ] use index in reference<indexed_reference_accessor>
+    - [ ] remove =vector_mapping= and old mapping code in repeated()
     - [ ] test
-  - [ ] maps
+  - [ ] refactor reference.hpp (lots of seemingly duplicated code)
   - [ ] sets
+    - [ ] cannot iterate?
+  - [ ] maps
 - [ ] port strings to =repeated= infrastructure
 - [ ] example implementation: lookup tables
-** Improve Usability
-- [ ] implement default mappings (?)
-  - [ ] via type selection (tuple, vector, ...)
-- [ ] error about not-explicitely mapped items in mapped_sequences?
-- [ ] useful error message if forgot to call seq()
 ** Code Cleanup
+- remove compilation warnings
+  - especially unused variables in compilation test cases
 - reuse generic_list for children_list
-- take care of =using= in namespace blocks
-  - see http://stackoverflow.com/questions/6175705/scope-of-using-declaration-within-a-namespace
 - clean up directory structure of tests directory
 - use 'explicit' where appropriate
 - clean up benchmark (especially timing part)
@@ -60,6 +36,11 @@
     - wrap own types
   - fill in doxygen @author & co
   - contract for =raw_reader= and =raw_writer=
+** Improve Usability
+- [ ] implement default mappings (?)
+  - [ ] via type selection (tuple, vector, ...)
+- [ ] error about not-explicitely mapped items in mapped_sequences?
+- [ ] useful error message if forgot to call seq()
 ** Scopes for placeholders
 - [ ] scopes for placeholders. Within a scope:
   - all nested placeholders will be translated to a unique placeholder

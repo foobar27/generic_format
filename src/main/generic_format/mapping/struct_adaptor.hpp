@@ -8,7 +8,7 @@
 */
 #pragma once
 
-#include "generic_format/accessors.hpp"
+#include "generic_format/accessor/accessor.hpp"
 #include "generic_format/ast/reference.hpp"
 #include "generic_format/helper.hpp"
 
@@ -26,7 +26,7 @@ struct reference_ctor {
 
 template<class Class, class... Members>
 struct struct_adaptor {
-    static_assert(variadic::for_all<accessors::is_member_ptr, Members...>::value, "All children must be member_ptrs!");
+    static_assert(variadic::for_all<accessor::is_member_ptr, Members...>::value, "All children must be member_ptrs!");
 
     using class_type = Class;
     using element_list = typename generic_format::variadic::transform<reference_ctor, variadic::generic_list<Members...>>::type;

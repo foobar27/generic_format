@@ -8,7 +8,7 @@
 */
 #pragma once
 
-#include "generic_format/accessors.hpp"
+#include "generic_format/accessor/accessor.hpp"
 
 #include <tuple>
 
@@ -28,7 +28,7 @@ struct tuple_mapping_accessors<Index, Acc, TupleType> {
 
 template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
 struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
-    using current_element = ast::reference<accessors::tuple_get<Format, TupleType, Index>>;
+    using current_element = ast::reference<accessor::tuple_get<Format, TupleType, Index>>;
     using new_acc = typename variadic::append_element<Acc, current_element >::type;
     using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };

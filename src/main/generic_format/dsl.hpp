@@ -46,7 +46,7 @@ constexpr typename mapping::struct_adaptor<typename first_class<Fields...>::type
  * To be used as an argument for #adapt_struct.
  */
 template<class Class, class Type, Type Class::* Member, class Format>
-constexpr accessors::member_ptr<Class, Type, Member, Format> member() {
+constexpr accessor::member_ptr<Class, Type, Member, Format> member() {
     return {};
 }
 

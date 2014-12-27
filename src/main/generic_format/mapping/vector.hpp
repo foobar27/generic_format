@@ -13,28 +13,38 @@
 namespace generic_format {
 namespace mapping {
 
-struct mapping_vector {
+namespace {
 
-    template<typename ElementNativeType>
-    using native_type = std::vector<ElementNativeType>;
+// TODO extract the (indexed) transformation logic into helper.hpp?
+template<std::size_t Index, class Acc, class TupleType, class... Formats>
+struct tuple_mapping_accessors;
 
-    template<class ElementWriter, typename NativeType>
-    void write(std::size_t , ElementWriter & element_writer, const NativeType & t) const {
-        for (auto & v : t)
-            element_writer(v);
-    }
-
-    template<class ElementReader, typename NativeType, typename NativeElementType>
-    void read(std::size_t length, ElementReader & element_reader, NativeType & t) const {
-        t.resize(length);
-        NativeElementType v;
-        for (std::size_t i=0; i<length; ++i) {
-            element_reader(v);
-            t[i] = v;
-        }
-    }
-
+template<std::size_t Index, class Acc, class TupleType>
+struct tuple_mapping_accessors<Index, Acc, TupleType> {
+    using type = Acc;
 };
+
+template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
+struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
+    using current_element = ast::reference<accessor::tuple_get<Format, TupleType, Index>>;
+    using new_acc = typename variadic::append_element<Acc, current_element >::type;
+    using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
+};
+
+template<class... Formats>
+struct sequence_helper {
+    using tuple_type = std::tuple<typename Formats::native_type...>;
+    using element_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
+    using children_list = typename ast::create_children_list<element_list>::type;
+    using type = ast::sequence<tuple_type, children_list>;
+};
+
+}
+
+template<class... Formats>
+constexpr typename sequence_helper<Formats...>::type tuple(Formats...) {
+    return {};
+}
 
 }
 }
