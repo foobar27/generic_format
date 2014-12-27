@@ -34,7 +34,7 @@ struct first_class<Member, Members...> {
  * All arguments must adapt members of the same class.
  */
 template<class... Fields>
-constexpr generic_format::ast::adapted_struct<typename first_class<Fields...>::type, Fields...> adapt_struct(Fields...) {
+constexpr ast::adapted_struct<typename first_class<Fields...>::type, Fields...> adapt_struct(Fields...) {
     // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO
     return {};
 }
@@ -45,7 +45,7 @@ constexpr generic_format::ast::adapted_struct<typename first_class<Fields...>::t
  * To be used as an argument for #adapt_struct.
  */
 template<class Class, class Type, Type Class::* Member, class Format>
-constexpr generic_format::ast::member<Class, Type, Member, Format> member() {
+constexpr ast::member<Class, Type, Member, Format> member() {
     return {};
 }
 
@@ -56,7 +56,7 @@ constexpr generic_format::ast::member<Class, Type, Member, Format> member() {
  * @param LengthType the type which is used to serialize the length.
  */
 template<class LengthFormat>
-constexpr generic_format::ast::string<LengthFormat> string_format(LengthFormat) {
+constexpr ast::string<LengthFormat> string_format(LengthFormat) {
     return {};
 }
 
@@ -76,7 +76,7 @@ constexpr ast::variable<Placeholder, Format> var(Placeholder, Format) {
 }
 
 template<class NativeType>
-constexpr ast::sequence<NativeType, variadic::generic_list<>> seq(NativeType) {
+constexpr ast::sequence<NativeType, ast::children_list<>> seq(NativeType) {
     return {};
 }
 
@@ -170,12 +170,12 @@ struct merged_sequence<dsl::unmapped_sequence<List1>, dsl::unmapped_sequence<Lis
 // => prolong the first sequence with the second format (even if it is an ast::sequence)
 template<class NativeType, class List1, class Format2>
 struct merged_sequence<ast::sequence<NativeType, List1>, Format2, Dispatcher::MAPPED_SEQUENCE, Dispatcher::SCALAR> {
-    using merged_list = typename variadic::merge_generic_lists<List1, variadic::generic_list<Format2>>::type;
+    using merged_list = typename ast::append_child<List1, Format2>::type;
     using type = ast::sequence<NativeType, merged_list>;
 };
 template<class NativeType, class List1, class Format2>
 struct merged_sequence<ast::sequence<NativeType, List1>, Format2, Dispatcher::MAPPED_SEQUENCE, Dispatcher::MAPPED_SEQUENCE> {
-    using merged_list = typename variadic::merge_generic_lists<List1, variadic::generic_list<Format2>>::type;
+    using merged_list = typename ast::append_child<List1, Format2>::type;
     using type = ast::sequence<NativeType, merged_list>;
 };
 
@@ -183,7 +183,7 @@ struct merged_sequence<ast::sequence<NativeType, List1>, Format2, Dispatcher::MA
 // => prolong the first sequence with the elements of the unmapped sequence
 template<class NativeType1, class List1, class List2>
 struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence<List2>, Dispatcher::MAPPED_SEQUENCE, Dispatcher::UNMAPPED_SEQUENCE> {
-    using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
+    using merged_list = typename ast::merge_children_lists<List1, typename ast::create_children_list<List2>::type>::type;
     using type = ast::sequence<NativeType1, merged_list>;
 };
 

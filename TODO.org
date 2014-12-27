@@ -9,17 +9,14 @@
 - [-] introduce mapped sequences
   - [X] implement reference accessor
   - [X] implement reference_accessor::size
-  - [ ] test case for generic_list
-  - [ ] uncomment test cases for sequence flattening, and extend these tests
-  - [ ] separate static-assert if unmapped_sequence is used as a format
-  - [ ] slim down current vector mapping interface
-    - [ ] e.g. what would ElementWriter mean?
+  - [X] test case for generic_list
+  - [X] uncomment test cases for sequence flattening, and extend these tests
   - [X] introduce ast node
   - [X] adjust << operator
   - [X] take care of native format
-  - [ ] reuse =mapped_sequence= for =sequence= (by using a std::tuple-mapping)
+  - [ ] slim down current vector mapping interface
+    - [ ] e.g. what would ElementWriter mean?
   - [ ] test case: Image << Packet (bounded sequence of two bounded sequences)
-  - [ ] constraints on sequence elements: is_unmapped_sequence or is_format
   - [ ] implement default mappings (?)
     - [ ] via type selection (tuple, vector, ...)
   - [ ] warn about not-explicitely mapped items in mapped_sequences?

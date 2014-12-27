@@ -135,3 +135,18 @@ void test_unmapped_flattening() {
 
     X1234 x1_23_4 = X1() << X23() << X4();
 }
+
+void test_mapped_flattening() {
+    using namespace generic_format::variadic;
+    using namespace generic_format::dsl;
+    using namespace generic_format::ast;
+    using X1 = uint8_le_t;
+    using X2 = uint16_le_t;
+    using X3 = uint32_le_t;
+    using X4 = uint8_le_t;
+    using X5 = uint16_le_t;
+
+    using X34 = unmapped_sequence<generic_list<X3, X4>>;
+    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() << (seq(uint64_le) << X5());
+
+}
