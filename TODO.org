@@ -1,11 +1,11 @@
 * Roadmap
 ** Work out mapping concept
-- [-] introduce lenses (do they make sense in a non-implicit context?
+- [X] introduce lenses or a similar concept (do they make sense in a non-implicit context?
   - [X] rename existing references to variables
-  - [ ] transform before serialization / after deserialization
-  - [ ] special kind of lenses:
-    - [ ] member pointers
-    - [ ] getter/setter
+  - [X] transform before serialization / after deserialization
+  - [X] special kind of lenses:
+    - [X] member pointers
+    - [X] tuple accessors
 - [-] introduce mapped sequences
   - [X] implement reference accessor
   - [X] implement reference_accessor::size
@@ -16,15 +16,16 @@
   - [X] take care of native format
   - [ ] slim down current vector mapping interface
     - [ ] e.g. what would ElementWriter mean?
-  - [ ] test case: Image << Packet (bounded sequence of two bounded sequences)
+  - [ ] test case: tuple(Image << Packet) (bounded sequence of two bounded sequences)
   - [ ] implement default mappings (?)
     - [ ] via type selection (tuple, vector, ...)
   - [ ] warn about not-explicitely mapped items in mapped_sequences?
   - [X] rename mappings.hpp => mapping.hpp
-- [ ] simplify =adapted_struct=
-  - [ ] special kind of lenses: member pointers
-  - [ ] use mapped sequences
-  - [ ] remove ast::adapted_struct (only leave the DSL)
+  - [ ] separate namespace for accessor
+- [-] simplify =adapted_struct=
+  - [X] special kind of references: member pointers
+  - [X] use mapped sequences
+  - [X] remove ast::adapted_struct (only leave the DSL)
   - [ ] try out nested references
 - [ ] implement mappings for basic data structures
   - [ ] vectors

@@ -109,6 +109,25 @@ struct merge_generic_lists<List1, generic_list<Element2, Elements2...>> {
     using type = typename merge_generic_lists<new_list1, new_list2>::type;
 };
 
+// TODO document
+template<template<class> class Function, class List, class Acc = generic_list<>>
+struct transform;
+
+template<template<class> class Function, class Acc>
+struct transform<Function, generic_list<>, Acc> {
+    using type = Acc;
+};
+
+template<template<class> class Function, class Acc, class Element, class... Elements>
+struct transform<Function, generic_list<Element, Elements...>, Acc> {
+private:
+    using new_acc = typename append_element<Acc, typename Function<Element>::type>::type;
+    using new_list = generic_list<Elements...>;
+public:
+    using type = typename transform<Function, new_list, new_acc>::type;
+};
+
+
 /** @brief Tests whether a predicate holds for all variadic arguments.
  *
  * Provides the member constant value equal true if Predicate holds for every argument, else value is false.

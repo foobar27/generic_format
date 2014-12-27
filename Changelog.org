@@ -8,3 +8,4 @@
   the first item of the sequence via =dsl::seq()=, and the remaining items need
   all to have an implicit mapping. There is a wrapper mapping_tuple to create
   such a mapping yourself. <2014-12-27 Sat>
+- Removed =ast::adapted_struct= in favor of a mapping class. <2014-12-27 Sat>

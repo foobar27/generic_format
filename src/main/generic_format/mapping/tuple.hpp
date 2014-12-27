@@ -8,25 +8,12 @@
 */
 #pragma once
 
+#include "generic_format/accessors.hpp"
+
 #include <tuple>
 
 namespace generic_format {
 namespace mapping {
-
-template<class Format, class TupleType, std::size_t Index>
-struct tuple_get : public ast::accessor<Format, TupleType> {
-
-    using element_type = typename std::tuple_element<Index, TupleType>::type;
-
-    element_type & operator()(TupleType & t) const {
-        return std::get<Index>(t);
-    }
-
-    const element_type & operator()(const TupleType & t) const {
-        return std::get<Index>(t);
-    }
-
-};
 
 namespace {
 
@@ -41,7 +28,7 @@ struct tuple_mapping_accessors<Index, Acc, TupleType> {
 
 template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
 struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
-    using current_element = ast::reference<tuple_get<Format, TupleType, Index>>;
+    using current_element = ast::reference<accessors::tuple_get<Format, TupleType, Index>>;
     using new_acc = typename variadic::append_element<Acc, current_element >::type;
     using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };

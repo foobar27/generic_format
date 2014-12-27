@@ -11,6 +11,7 @@
 #include <tuple>
 
 #include "generic_format/ast/ast.hpp"
+#include "generic_format/mapping/mapping.hpp"
 #include "generic_format/helper.hpp"
 
 namespace generic_format{
@@ -34,7 +35,7 @@ struct first_class<Member, Members...> {
  * All arguments must adapt members of the same class.
  */
 template<class... Fields>
-constexpr ast::adapted_struct<typename first_class<Fields...>::type, Fields...> adapt_struct(Fields...) {
+constexpr typename mapping::struct_adaptor<typename first_class<Fields...>::type, Fields...>::type adapt_struct(Fields...) {
     // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO
     return {};
 }
@@ -45,7 +46,7 @@ constexpr ast::adapted_struct<typename first_class<Fields...>::type, Fields...> 
  * To be used as an argument for #adapt_struct.
  */
 template<class Class, class Type, Type Class::* Member, class Format>
-constexpr ast::member<Class, Type, Member, Format> member() {
+constexpr accessors::member_ptr<Class, Type, Member, Format> member() {
     return {};
 }
 

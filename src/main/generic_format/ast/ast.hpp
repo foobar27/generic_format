@@ -9,9 +9,8 @@
 #pragma once
 
 #include "generic_format/ast/raw.hpp"
-#include "generic_format/ast/reference_accessor.hpp"
+#include "generic_format/ast/reference.hpp"
 #include "generic_format/ast/sequence.hpp"
 #include "generic_format/ast/variable.hpp"
 #include "generic_format/ast/repeated.hpp"
 #include "generic_format/ast/string.hpp"
-#include "generic_format/ast/adapted_struct.hpp"

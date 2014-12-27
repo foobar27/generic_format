@@ -72,6 +72,17 @@ void test_for_any() {
     static_assert(for_any<is_integral, int, int>::value, "[true, true]");
 }
 
+template<typename T>
+struct into_tuple {
+    using type = std::tuple<T>;
+};
+
+void test_transform() {
+    using namespace generic_format::variadic;
+    using T = transform<into_tuple, generic_list<int, double, char>>::type;
+    generic_list<std::tuple<int>, std::tuple<double>, std::tuple<char>> t = T();
+}
+
 void test_is_format() {
     using namespace generic_format::ast;
     static_assert(is_format<uint8_le_t>::value, "positive is_format");
