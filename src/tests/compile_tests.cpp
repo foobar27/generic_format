@@ -78,51 +78,60 @@ void test_is_format() {
     static_assert(!is_format<uint8_t>::value, "negaitve is_format");
 }
 
-//void test_is_unmapped_sequence() {
-//    using namespace generic_format::variadic;
-//    using namespace generic_format::dsl;
-//    using namespace generic_format::ast;
-//    static_assert(!is_unmapped_sequence<uint8_le_t>::value, "negative is_sequence");
-//    static_assert(is_unmapped_sequence<unmapped_sequence<children_list<uint8_le_t, uint32_le_t>>>::value, "positive is_sequence");
-//}
+void test_generic_list() {
+    using namespace generic_format::variadic;
 
-//template<class Format>
-//struct is_flat;
+    using X1 = append_element<generic_list<>, int>::type;
+    generic_list<int> x1 = X1();
 
-//template<class... Formats>
-//struct is_flat<generic_format::ast::sequence<Formats...>> : public std::integral_constant<bool, !generic_format::variadic::for_any<generic_format::ast::is_sequence, Formats...>::value>
-//{};
+    using X2 = append_element<X1, double>::type;
+    generic_list<int, double> x2 = X2();
 
-//template<class... Formats>
-//struct is_flat<const generic_format::ast::sequence<Formats...>> : public std::integral_constant<bool, !generic_format::variadic::for_any<generic_format::ast::is_sequence, Formats...>::value>
-//{};
+    using X3 = merge_generic_lists<X2, X1>::type;
+    generic_list<int, double, int> x3 = X3();
 
-//void test_is_flat() {
-//    using namespace generic_format::ast;
-//    static_assert(is_flat<sequence<uint8_le_t>>::value, "uint8_le");
-//    static_assert(is_flat<sequence<uint8_le_t, uint16_le_t>>::value, "uint8_le << uint16_le");
-//    static_assert(is_flat<sequence<uint8_le_t, uint16_le_t, uint32_le_t>>::value, "uint8_le << uint16_le << uint32_le");
-//    static_assert(!is_flat<sequence<uint8_le_t, sequence<uint16_le_t, uint32_le_t>>>::value, "uint8_le << uint16_le << uint32_le");
-//    static_assert(!is_flat<sequence<sequence<uint8_le_t, uint16_le_t>, uint32_le_t>>::value, "uint8_le << uint16_le << uint32_le");
-//}
+    using X4 = merge_generic_lists<X2, generic_list<>>::type;
+    generic_list<int, double> x4 = X4();
 
-//// Flattening of ast::sequence via << operator
-//void test_sequence_flattening() {
-//    static constexpr auto x1 = uint8_le;
-//    static constexpr auto x2 = uint16_le;
-//    static constexpr auto x3 = uint32_le;
-//    static constexpr auto x4 = uint8_le;
+}
 
-//    static constexpr auto x12 = x1 << x2;            static_assert(is_flat<decltype(x12)>::value, "x1 << x2");
-//    static constexpr auto x23 = x2 << x3;            static_assert(is_flat<decltype(x23)>::value, "x2 << x3");
-//    static constexpr auto x34 = x3 << x4;            static_assert(is_flat<decltype(x34)>::value, "x3 << x4");
+void test_is_unmapped_sequence() {
+    using namespace generic_format::variadic;
+    using namespace generic_format::dsl;
+    using namespace generic_format::ast;
+    static_assert(!is_unmapped_sequence<uint8_le_t>::value, "negative is_unmapped_sequence");
+    static_assert(is_unmapped_sequence<unmapped_sequence<generic_list<uint8_le_t, uint32_le_t>>>::value, "positive is_unmapped_sequence");
+}
 
-//    static constexpr auto x123 = x1 << x2 << x3;     static_assert(is_flat<decltype(x123)>::value, "x1 << x2 << x3");
-//    static constexpr auto x234 = x2 << x3 << x4;     static_assert(is_flat<decltype(x234)>::value, "x2 << x3 << x4");
+// Flattening of unmapped_sequence via << operator
+void test_unmapped_flattening() {
+    using namespace generic_format::variadic;
+    using namespace generic_format::dsl;
+    using namespace generic_format::ast;
+    using X1 = uint8_le_t;
+    using X2 = uint16_le_t;
+    using X3 = uint32_le_t;
+    using X4 = uint8_le_t;
 
-//    static constexpr auto x12_34 = x12 << x34;       static_assert(is_flat<decltype(x12_34)>::value, "(x1 << x2) << (x3 << x4)");
-//    static constexpr auto x123_4 = x123 << x4;       static_assert(is_flat<decltype(x123_4)>::value, "(x1 << x2 << x3) << x4)");
-//    static constexpr auto x1_234 = x1 << x234;       static_assert(is_flat<decltype(x1_234)>::value, "x1 << (x2 << x3 << x4)");
+    using X12 = unmapped_sequence<generic_list<X1, X2>>;
+    X12 x12 = X1() << X2();
 
-//    static constexpr auto x1_23_4 = x1 << x23 << x4; static_assert(is_flat<decltype(x1_23_4)>::value, "x1 << (x2 << x3) << x4");
-//}
+    using X23 = unmapped_sequence<generic_list<X2, X3>>;
+    X23 x23 = X2() << X3();
+
+    using X34 = unmapped_sequence<generic_list<X3, X4>>;
+    X34 x34 = X3() << X4();
+
+    using X123 = unmapped_sequence<generic_list<X1, X2, X3>>;
+    X123 x123 = X1() << X2() << X3();
+
+    using X234 = unmapped_sequence<generic_list<X2, X3, X4>>;
+    X234 x234 = X2() << X3() << X4();
+
+    using X1234 = unmapped_sequence<generic_list<X1, X2, X3, X4>>;
+    X1234 x12_34 = X12() << X34();
+    X1234 x123_4 = X123() << X4();
+    X1234 x1_234 = X1() << X234();
+
+    X1234 x1_23_4 = X1() << X23() << X4();
+}

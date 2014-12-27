@@ -11,6 +11,7 @@
 #include <tuple>
 
 #include "generic_format/ast/ast.hpp"
+#include "generic_format/helper.hpp"
 
 namespace generic_format{
 namespace dsl {
@@ -75,7 +76,7 @@ constexpr ast::variable<Placeholder, Format> var(Placeholder, Format) {
 }
 
 template<class NativeType>
-constexpr ast::sequence<NativeType, ast::children_list<>> seq(NativeType) {
+constexpr ast::sequence<NativeType, variadic::generic_list<>> seq(NativeType) {
     return {};
 }
 
@@ -90,17 +91,17 @@ constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Va
 }
 
 // TODO documentation
-template<class ChildrenList>
+template<class List>
 struct unmapped_sequence;
 
 template<class... Formats>
-struct unmapped_sequence<ast::children_list<Formats...>> {};
+struct unmapped_sequence<variadic::generic_list<Formats...>> {};
 
 template<class T>
 struct is_unmapped_sequence : std::false_type {};
 
 template<class... Formats>
-struct is_unmapped_sequence<ast::children_list<Formats...>> : std::true_type {};
+struct is_unmapped_sequence<unmapped_sequence<variadic::generic_list<Formats...>>> : std::true_type {};
 
 }
 
@@ -109,44 +110,79 @@ struct is_unmapped_sequence<ast::children_list<Formats...>> : std::true_type {};
 
 namespace {
 
+// We need a dispatcher system in order to disambiguation partial template specializations.
+enum class Dispatcher {SCALAR, UNMAPPED_SEQUENCE, MAPPED_SEQUENCE};
+
+template<class Format>
+struct dispatcher : std::integral_constant<Dispatcher, Dispatcher::SCALAR> {};
+
+template<class... Formats>
+struct dispatcher<dsl::unmapped_sequence<variadic::generic_list<Formats...>>> : std::integral_constant<Dispatcher, Dispatcher::UNMAPPED_SEQUENCE> {};
+
+template<class NativeType, class... Formats>
+struct dispatcher<ast::sequence<NativeType, ast::children_list<Formats...>>> : std::integral_constant<Dispatcher, Dispatcher::MAPPED_SEQUENCE> {};
+
 // default implementation: just make un unmapped sequence
-template<class Format1, class Format2>
+template<class Format1, class Format2, Dispatcher Dispatcher1 = dispatcher<Format1>::value, Dispatcher Dispatcher2 = dispatcher<Format2>::value>
 struct merged_sequence {
-    using type = dsl::unmapped_sequence<ast::children_list<Format1, Format2>>;
+    using type = dsl::unmapped_sequence<variadic::generic_list<Format1, Format2>>;
 };
 
-// scalar << *
+// SCALAR << SCALAR
+// OR: SCALAR << MAPPED_SEQUENCE
 // => use default implementation
 
-// unmapped_sequence << scalar
-// OR: unmapped_sequence << sequence
+// SCALAR << UNMAPPED_SEQUENCE
+// => prolong the second sequence with the first format (which is certainly not an ast::sequence)
+template<class Format1, class... Formats2>
+struct merged_sequence<Format1, dsl::unmapped_sequence<variadic::generic_list<Formats2...>>, Dispatcher::SCALAR, Dispatcher::SCALAR> {
+    using type = dsl::unmapped_sequence<variadic::generic_list<Format1, Formats2...>>;
+};
+template<class Format1, class... Formats2>
+struct merged_sequence<Format1, dsl::unmapped_sequence<variadic::generic_list<Formats2...>>, Dispatcher::SCALAR, Dispatcher::UNMAPPED_SEQUENCE> {
+    using type = dsl::unmapped_sequence<variadic::generic_list<Format1, Formats2...>>;
+};
+
+// UNMAPPED_SEQUENCE << SCALAR
+// OR: UNMAPPED_SEQUENCE << MAPPED_SEQUENCE
+// => prolong the first sequence with the second format (even if it is an ast::sequence)
 template<class List1, class Format2>
-struct merged_sequence<dsl::unmapped_sequence<List1>, Format2> {
+struct merged_sequence<dsl::unmapped_sequence<List1>, Format2, Dispatcher::UNMAPPED_SEQUENCE, Dispatcher::SCALAR> {
+    using merged_list = typename variadic::append_element<List1, Format2>::type;
+    using type = dsl::unmapped_sequence<merged_list>;
+};
+template<class List1, class Format2>
+struct merged_sequence<dsl::unmapped_sequence<List1>, Format2, Dispatcher::UNMAPPED_SEQUENCE, Dispatcher::MAPPED_SEQUENCE> {
     using merged_list = typename variadic::append_element<List1, Format2>::type;
     using type = dsl::unmapped_sequence<merged_list>;
 };
 
-// unmapped_sequence << unmapped_sequence
+// UNMAPPED_SEQEUENCE << UNMAPPED_SEQUENCE
 // => just merge the elements
 template<class List1, class List2>
-struct merged_sequence<dsl::unmapped_sequence<List1>, dsl::unmapped_sequence<List2>> {
+struct merged_sequence<dsl::unmapped_sequence<List1>, dsl::unmapped_sequence<List2>, Dispatcher::UNMAPPED_SEQUENCE, Dispatcher::UNMAPPED_SEQUENCE> {
     using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
     using type = dsl::unmapped_sequence<merged_list>;
 };
 
-// sequence << scalar
-// OR: sequence << sequence
+// MAPPED_SEQUENCE << SCALAR
+// OR: MAPPED_SEQUENCE << MAPPED_SEQUENCE
 // => prolong the first sequence with the second format (even if it is an ast::sequence)
 template<class NativeType, class List1, class Format2>
-struct merged_sequence<ast::sequence<NativeType, List1>, Format2> {
+struct merged_sequence<ast::sequence<NativeType, List1>, Format2, Dispatcher::MAPPED_SEQUENCE, Dispatcher::SCALAR> {
+    using merged_list = typename variadic::merge_generic_lists<List1, variadic::generic_list<Format2>>::type;
+    using type = ast::sequence<NativeType, merged_list>;
+};
+template<class NativeType, class List1, class Format2>
+struct merged_sequence<ast::sequence<NativeType, List1>, Format2, Dispatcher::MAPPED_SEQUENCE, Dispatcher::MAPPED_SEQUENCE> {
     using merged_list = typename variadic::merge_generic_lists<List1, variadic::generic_list<Format2>>::type;
     using type = ast::sequence<NativeType, merged_list>;
 };
 
-// sequence << unmapped_sequence
+// MAPPED_SEQUENCE << UNMAPPED_SEQUENCE
 // => prolong the first sequence with the elements of the unmapped sequence
 template<class NativeType1, class List1, class List2>
-struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence<List2>> {
+struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence<List2>, Dispatcher::MAPPED_SEQUENCE, Dispatcher::UNMAPPED_SEQUENCE> {
     using merged_list = typename variadic::merge_generic_lists<List1, List2>::type;
     using type = ast::sequence<NativeType1, merged_list>;
 };
