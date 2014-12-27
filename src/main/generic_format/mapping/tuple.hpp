@@ -46,20 +46,11 @@ struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
     using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };
 
-// TODO put this next to children_list, as some kind of constructor?
-template<class List>
-struct elements_to_children;
-
-template<class... Children>
-struct elements_to_children<variadic::generic_list<Children...>> {
-    using type = ast::children_list<Children...>;
-};
-
 template<class... Formats>
 struct sequence_helper {
     using tuple_type = std::tuple<typename Formats::native_type...>;
     using element_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
-    using children_list = typename elements_to_children<element_list>::type;
+    using children_list = typename ast::create_children_list<element_list>::type;
     using type = ast::sequence<tuple_type, children_list>;
 };
 
