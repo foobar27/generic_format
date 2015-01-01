@@ -116,7 +116,7 @@ int main() {
     static constexpr auto Image_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Image, width,  width_var),
                 GENERIC_FORMAT_MEMBER(Image, height, height_var),
-                GENERIC_FORMAT_MEMBER(Image, data,   repeated(width_var*height_var, uint8_le, generic_format::mapping::mapping_vector()))
+                GENERIC_FORMAT_MEMBER(Image, data,   generic_format::mapping::vector(eval(width_var*height_var), uint8_le))
                 );
 
     constexpr auto size_container = decltype(Packet_format)::size;

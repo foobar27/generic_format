@@ -1,7 +1,8 @@
 * Roadmap
 ** Think about next directions
+- Coproducts
 - Real World Examples (database for tcp/ip communications, compact storage of document stream)
-- Stabilization (cleanup of code and build scripts, add documentation)
+- Stabilization (systematic testing, cleanup of code and build scripts, add documentation)
 - Async de/serialization (should be easier now after the big refactoring)
 - Named Fields (JSON de/serialization)
 - Reduced scope for placeholders (I will see in real world examples if it's necessary)
@@ -10,6 +11,42 @@
 ** Work out concept for mapping repeated formats
 - [-] implement mappings for basic data structures
   - [X] maybe rename accessor to reference_accessor
+  - [X] decouple accessors from formats
+  - [X] introduce formatted_accessor
+  - [ ] reenable nested vector test
+  - [ ] verify that size is not written twice
+  - [ ] remove hack which bypasses reference types
+  - [ ] implement variable_accessor_binding for remaining kinds of accessors
+  - [ ] How should width*height and the resize-reference be bound together?
+    - [ ] potential solution dereference variables
+      - [ ] read() method: set the reference after evaluating the given variable
+      - [ ] write() method: nothing to do, because vector.size should be equal to width*height anyway
+      - [ ] for this solution we would need =variable_dummy_reference=
+	- [ ] What is format?
+	- [ ] What is inputType?
+	- [ ] what is outputType?
+	- [ ] this does not really fit...
+  - [ ] refactor image example (maybe need to repeat som logic from mapping::vector???)
+    - or via some default argument to vector_helper?
+  - [ ] test case for width_var*height_var
+  - [ ] does 'reference' need a '::size'?
+    - [ ] yes, for struct-adaptor
+    - [ ] no, for vector
+    - [ ] if no, needs to be reference<variable<>>
+    - [ ] maybe disambiguate on 'evaluate' or 'dereference'?
+    - [ ] related questions: do variables have a size? products and sums don't!
+    - [ ] possible solution
+      - [ ] references don't have a size, neither can they be read/written
+      - [ ] deref<ref> has a size and can be read/written to
+      - [ ] what do do about dsl::repeated?
+	- [ ] auto-dereference value?
+  - [ ] adjust ChangeLog
+  - [ ] take decision about when to read/write variables
+    - [ ] in principle dereferenced variables can be read, other variables can be accessed only
+    - [ ] Denkfehler:
+      - [ ] dereference can only be read (useful for combined values: width_var * height_var)
+      - [ ] references can be read and written to (useful to get and set the size of the vector)
+  - [ ] rename dereference?
   - [ ] vectors
     - [ ] implement vector mapping with indexed iteration and resize
     - [ ] use index in reference<indexed_reference_accessor>
@@ -19,9 +56,16 @@
   - [ ] sets
     - [ ] cannot iterate?
   - [ ] maps
+- [ ] strange reference interface (takes an index)
+- [ ] use more decltype and dsl::*
+- [ ] why has variable a size, but a product of variables doesn't?
 - [ ] port strings to =repeated= infrastructure
 - [ ] example implementation: lookup tables
+- [ ] Test cases for every kind of reference
+  - [ ] in standard situations
+  - [ ] in repeated situations
 ** Code Cleanup
+- use std::conditional
 - remove compilation warnings
   - especially unused variables in compilation test cases
 - reuse generic_list for children_list

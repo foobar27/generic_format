@@ -128,8 +128,8 @@ struct variable : base<children_list<ElementType>>, variable_base {
 };
 
 template<class Variable>
-struct dereference : base<children_list<>> {
-    static_assert(is_variable<Variable>::value, "Can only dereference variables or combinations of variables!");
+struct evaluator : base<children_list<>> {
+    static_assert(is_variable<Variable>::value, "Can only evaluate variables or combinations of variables!");
     using type = Variable;
     using native_type = typename type::native_type;
 
@@ -140,9 +140,9 @@ struct dereference : base<children_list<>> {
 
 };
 
-/// partial specialization to make dereferencing idempotent
+/// partial specialization to make evaluation idempotent
 template<typename Placeholder, class ElementType>
-struct dereference<variable<Placeholder, ElementType>> : base<children_list<>> {
+struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
     using type = variable<Placeholder, ElementType>;
     using native_type = typename type::native_type;
 
@@ -150,6 +150,37 @@ struct dereference<variable<Placeholder, ElementType>> : base<children_list<>> {
     native_type operator()(State & state) const {
         return type()(state);
     }
+};
+
+template<class VariableEvaluator, class Accessor, class Enable = void>
+struct variable_accessor_binding;
+
+namespace {
+struct variable_accessor_binding_base : base<children_list<>> {
+
+};
+}
+
+template<class VariableEvaluator, class Accessor>
+struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enable_if<!Accessor::is_reference && !Accessor::is_indexed>::type> : variable_accessor_binding_base {
+    using variable_evaluator = VariableEvaluator;
+    using accessor = Accessor;
+    using native_type = void;
+    using big_type = typename Accessor::big_type;
+    using small_type = typename Accessor::small_type;
+
+    template<class RawWriter, class State, class NativeType>
+    const small_type write(RawWriter &, State & state, const NativeType &) const {
+        return variable_evaluator()(state);
+    }
+
+    template<class RawReader, class State>
+    const small_type read(RawReader &, State & state, big_type & t) const {
+        small_type result = variable_evaluator()(state);
+        accessor().set(t, result);
+        return result;
+    }
+
 };
 
 }

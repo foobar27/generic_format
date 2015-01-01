@@ -14,67 +14,37 @@
 namespace generic_format {
 namespace ast {
 
-namespace {
+/** @brief
+ *
+ */
+template<class SizeReference, class ValueFormat>
+struct repeated : base<children_list<SizeReference, ValueFormat>> {
+    using size_reference = SizeReference;
+//    static_assert(ast::is_reference<size_reference>::value, "SizeReference must be a reference.");
+    using size_accessor = typename size_reference::accessor;
+    using native_size_type = typename size_accessor::small_type;
+    static_assert(std::is_integral<native_size_type>::value, "SizeReference must wrap an integral type!");
 
-template<class Format, class RawWriter, class State>
-struct element_writer {
-    element_writer(RawWriter & raw_writer, State & state)
-        : raw_writer(raw_writer)
-        , state(state)
-    {}
+    using value_format = ValueFormat;
 
-    template<typename NativeType>
-    inline void operator()(const NativeType & v) {
-        Format().write(raw_writer, state, v);
-    }
+    using native_type = typename value_format::native_type;
 
-    RawWriter & raw_writer;
-    State & state;
-};
-
-
-template<class Format, class RawReader, class State>
-struct element_reader {
-    element_reader(RawReader & raw_reader, State & state)
-        : raw_reader(raw_reader)
-        , state(state)
-    {}
-
-    template<typename NativeType>
-    inline void operator()(NativeType & v) {
-        Format().read(raw_reader, state, v);
-    }
-
-    RawReader & raw_reader;
-    State & state;
-};
-
-
-}
-
-template<class Reference, class Format, class Mapping>
-struct repeated : base<children_list<Format>> {
-    using count_reference = Reference;
-    using native_count_type = typename count_reference::native_type;
-    using format = Format;
-    using native_element_type = typename format::native_type;
-    using native_type = typename Mapping::template native_type<native_element_type>;
     static constexpr auto size = dynamic_size(); // TODO fixed if format is fixed and count_reference points to constant
-
-    static_assert(std::is_integral<native_count_type>::value, "Number of repetitions must be an integral type!");
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        element_writer<Format, RawWriter, State> w(raw_writer, state);
-        auto length = count_reference()(state);
-        Mapping().write(length, w, t);
+        auto length = size_reference().write(raw_writer, state, t);
+        value_format vf;
+        for (std::size_t i=0; i<length; ++i)
+            vf.write(raw_writer, state, t, i);
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
-        element_reader<Format, RawReader, State> r(raw_reader, state);
-        auto length = count_reference()(state);
-        Mapping().template read<decltype(r), native_type, native_element_type>(length, r, t);
+        auto length = size_reference().read(raw_reader, state, t);
+        value_format vf;
+        for (std::size_t i = 0; i<length; ++i)
+            vf.read(raw_reader, state, t, i);
     }
 
 };

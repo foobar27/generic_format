@@ -9,40 +9,44 @@
 #pragma once
 
 #include <vector>
+#include <generic_format/accessor/accessor.hpp>
+#include <generic_format/ast/reference.hpp>
 
 namespace generic_format {
 namespace mapping {
 
 namespace {
 
-// TODO extract the (indexed) transformation logic into helper.hpp?
-template<std::size_t Index, class Acc, class TupleType, class... Formats>
-struct tuple_mapping_accessors;
 
-template<std::size_t Index, class Acc, class TupleType>
-struct tuple_mapping_accessors<Index, Acc, TupleType> {
-    using type = Acc;
+// size is explicit
+template<class SizeVariable, class ValueFormat>
+struct vector_helper {
+    static_assert(ast::is_variable<SizeVariable>::value, "SizeVariable needs to be a variable, or an evaluated variable!");
+    using native_element_type = typename ValueFormat::native_type;
+    using vector_type = std::vector<native_element_type>;
+
+    using type = ast::sequence<vector_type, ast::children_list<SizeVariable, typename vector_helper<ast::evaluator<SizeVariable>, ValueFormat>::type>>;
 };
 
-template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
-struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
-    using current_element = ast::reference<accessor::tuple_get<Format, TupleType, Index>>;
-    using new_acc = typename variadic::append_element<Acc, current_element >::type;
-    using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
-};
+// size is implicit
+template<class SizeVariable, class ValueFormat>
+struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
+    using size_variable = SizeVariable;
+    using value_format = ValueFormat;
+    using native_element_type = typename value_format::native_type;
+    using vector_type = std::vector<native_element_type>;
 
-template<class... Formats>
-struct sequence_helper {
-    using tuple_type = std::tuple<typename Formats::native_type...>;
-    using element_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
-    using children_list = typename ast::create_children_list<element_list>::type;
-    using type = ast::sequence<tuple_type, children_list>;
+    using size_accessor = accessor::vector_resize_accessor<vector_type>;
+    using value_reference = ast::reference<ast::formatted_accessor<accessor::vector_item_accessor<vector_type, native_element_type>, ValueFormat>>;
+
+    // TODO simplify by using dsl::repeated & co
+    using type = ast::repeated<ast::variable_accessor_binding<size_variable, size_accessor>, ast::dereference<value_reference>>;
 };
 
 }
 
-template<class... Formats>
-constexpr typename sequence_helper<Formats...>::type tuple(Formats...) {
+template<class SizeVariable, class ValueFormat>
+static constexpr typename vector_helper<SizeVariable, ValueFormat>::type vector(SizeVariable, ValueFormat) {
     return {};
 }
 

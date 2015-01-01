@@ -9,3 +9,11 @@
   all to have an implicit mapping. There is a wrapper mapping_tuple to create
   such a mapping yourself. <2014-12-27 Sat>
 - Removed =ast::adapted_struct= in favor of a mapping class. <2014-12-27 Sat>
+- Added accessors, references and dereferences. Usually you should wrap an
+  accessor by a reference, and a reference by a dereference. Only dereferences
+  can be used as formats. References can, and must however be used as arguments
+  for =dsl::repeated=. Accessors are the interface you need to implement in order
+  to access the fields of your own classes. <2014-12-31 Wed>
+- =dsl::repeated= no longer reads in the number of elements itself - it needs to
+  be read in advance, e.g. by a sequence of a variable and a repeated
+  variable. <2014-12-31 Wed>

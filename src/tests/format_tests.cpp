@@ -246,6 +246,17 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
                      chunk(string_format(uint8_le), "?"));
 }
 
+//BOOST_AUTO_TEST_CASE_TEMPLATE(nested_vector_test, TARGET, all_targets) {
+//    placeholder<0> _;
+//    constexpr auto outer_size = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint16_le);
+//    constexpr auto inner_size = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint8_le);
+//    check_round_trip(2 + (1 + 1+2 + 1+2) + (1) + (1 + 1+2 + 1+2 + 1+2) + (1 + 1+1)
+//                     + (1+1),
+//                     TARGET(),
+//                     chunk(generic_format::mapping::vector(outer_size, generic_format::mapping::vector(inner_size, string_format(uint8_le))), {{"a1", "a2"}, {}, {"c1", "c2", "c3"}, {"d"}}),
+//                     chunk(string_format(uint8_le), "?"));
+//}
+
 struct Person {
     std::string first_name {}, last_name {};
     std::uint8_t age {};

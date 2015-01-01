@@ -11,7 +11,7 @@
 #include <tuple>
 
 #include "generic_format/ast/ast.hpp"
-#include "generic_format/mapping/mapping.hpp"
+#include "generic_format/mapping/struct_adaptor.hpp"
 #include "generic_format/helper.hpp"
 
 namespace generic_format{
@@ -23,7 +23,8 @@ struct first_class;
 
 template<class Member, class... Members>
 struct first_class<Member, Members...> {
-    using type = typename Member::class_type;
+    using acc = typename Member::accessor;
+    using type = typename acc::class_type;
 };
 
 }
@@ -46,7 +47,7 @@ constexpr typename mapping::struct_adaptor<typename first_class<Fields...>::type
  * To be used as an argument for #adapt_struct.
  */
 template<class Class, class Type, Type Class::* Member, class Format>
-constexpr accessor::member_ptr<Class, Type, Member, Format> member() {
+constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, Format> formatted_member() {
     return {};
 }
 
@@ -82,12 +83,17 @@ constexpr ast::sequence<NativeType, ast::children_list<>> seq(NativeType) {
 }
 
 template<class Variable>
-constexpr ast::dereference<Variable> deref(Variable) {
+constexpr ast::evaluator<Variable> eval(Variable) {
     return {};
 }
 
-template<class Variable, class Format, class Mapping>
-constexpr ast::repeated<ast::dereference<Variable>, Format, Mapping> repeated(Variable, Format, Mapping) {
+template<class Accessor>
+constexpr ast::reference<Accessor> ref(Accessor) {
+    return {};
+}
+
+template<class Variable, class Format>
+constexpr ast::repeated<Variable, Format> repeated(Variable, Format) {
     return {};
 }
 
@@ -201,5 +207,5 @@ constexpr typename generic_format::merged_sequence<Format1, Format2>::type opera
 }
 
 
-#define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::member<c, decltype(c::m), &c::m, decltype(s)>()
+#define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::formatted_member<c, decltype(c::m), &c::m, decltype(s)>()
 #define GENERIC_FORMAT_PLACEHOLDER(parent, id) decltype(parent)::create<id> {}
