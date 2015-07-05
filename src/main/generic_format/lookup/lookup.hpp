@@ -10,6 +10,7 @@
 
 #include "generic_format/lookup/lookup_table.hpp"
 #include "generic_format/mapping/mapping.hpp"
+#include "generic_format/primitives.hpp"
 
 namespace generic_format{
 namespace lookup {
@@ -36,7 +37,7 @@ template<class LookupType>
 struct lookup_table_format_helper;
 
 template<class IdType, class ValueType>
-struct initial_id_reference : public generic_format::mapping::reference<lookup_table_builder<IdType, ValueType>, IdType> {
+struct initial_id_reference : public generic_format::ast::reference<lookup_table_builder<IdType, ValueType>, IdType> {
     using builder_type = lookup_table_builder<IdType, ValueType>;
     IdType operator()(const builder_type & table) const {
         return table.initial_id();
@@ -47,12 +48,12 @@ struct initial_id_reference : public generic_format::mapping::reference<lookup_t
 };
 
 template<class IdType, class ValueType>
-struct values_reference : public generic_format::mapping::reference<lookup_table_builder<IdType, ValueType>, std::vector<ValueType>&>{
+struct values_reference : public generic_format::ast::reference<lookup_table_builder<IdType, ValueType>, std::vector<ValueType>&>{
     using builder_type = lookup_table_builder<IdType, ValueType>;
     const std::vector<ValueType> & operator()(const builder_type & table) const {
         return table.values(); // TODO what are re going to return? A reference?
     }
-    std::vector<ValueType> & operator(builder_type & table) const {
+    std::vector<ValueType> & operator()(builder_type & table) const {
         return table.values();
     }
 };
