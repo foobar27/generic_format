@@ -62,7 +62,7 @@ constexpr ast::string<LengthFormat> string_format(LengthFormat) {
     return {};
 }
 
-/** @brief A placeholder which is a also a factory for new placeholders.
+/** @brief A placeholder which is also a factory for new placeholders.
  *
  * This can be quite handy if you need to nest or reuse formats.
  */
