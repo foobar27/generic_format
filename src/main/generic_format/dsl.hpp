@@ -219,10 +219,10 @@ struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence
  *
  * Simplifies the sequences by flattening it.
  */
-template<class Format1, class Format2>
-constexpr typename generic_format::merged_sequence<Format1, Format2>::type operator<<(const Format1, const Format2) {
-    return {};
-}
+//template<class Format1, class Format2>
+//constexpr typename generic_format::merged_sequence<Format1, Format2>::type operator<<(const Format1, const Format2) {
+//    return {};
+//}
 
 
 #define GENERIC_FORMAT_MEMBER(c, m, s) generic_format::dsl::formatted_member<c, decltype(c::m), &c::m, decltype(s)>()

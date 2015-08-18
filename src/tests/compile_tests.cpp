@@ -115,49 +115,49 @@ void test_is_unmapped_sequence() {
 }
 
 // Flattening of unmapped_sequence via << operator
-void test_unmapped_flattening() {
-    using namespace generic_format::variadic;
-    using namespace generic_format::dsl;
-    using namespace generic_format::ast;
-    using X1 = uint8_le_t;
-    using X2 = uint16_le_t;
-    using X3 = uint32_le_t;
-    using X4 = uint8_le_t;
+//void test_unmapped_flattening() {
+//    using namespace generic_format::variadic;
+//    using namespace generic_format::dsl;
+//    using namespace generic_format::ast;
+//    using X1 = uint8_le_t;
+//    using X2 = uint16_le_t;
+//    using X3 = uint32_le_t;
+//    using X4 = uint8_le_t;
 
-    using X12 = unmapped_sequence<generic_list<X1, X2>>;
-    X12 x12 = X1() << X2();
+//    using X12 = unmapped_sequence<generic_list<X1, X2>>;
+//    X12 x12 = X1() << X2();
 
-    using X23 = unmapped_sequence<generic_list<X2, X3>>;
-    X23 x23 = X2() << X3();
+//    using X23 = unmapped_sequence<generic_list<X2, X3>>;
+//    X23 x23 = X2() << X3();
 
-    using X34 = unmapped_sequence<generic_list<X3, X4>>;
-    X34 x34 = X3() << X4();
+//    using X34 = unmapped_sequence<generic_list<X3, X4>>;
+//    X34 x34 = X3() << X4();
 
-    using X123 = unmapped_sequence<generic_list<X1, X2, X3>>;
-    X123 x123 = X1() << X2() << X3();
+//    using X123 = unmapped_sequence<generic_list<X1, X2, X3>>;
+//    X123 x123 = X1() << X2() << X3();
 
-    using X234 = unmapped_sequence<generic_list<X2, X3, X4>>;
-    X234 x234 = X2() << X3() << X4();
+//    using X234 = unmapped_sequence<generic_list<X2, X3, X4>>;
+//    X234 x234 = X2() << X3() << X4();
 
-    using X1234 = unmapped_sequence<generic_list<X1, X2, X3, X4>>;
-    X1234 x12_34 = X12() << X34();
-    X1234 x123_4 = X123() << X4();
-    X1234 x1_234 = X1() << X234();
+//    using X1234 = unmapped_sequence<generic_list<X1, X2, X3, X4>>;
+//    X1234 x12_34 = X12() << X34();
+//    X1234 x123_4 = X123() << X4();
+//    X1234 x1_234 = X1() << X234();
 
-    X1234 x1_23_4 = X1() << X23() << X4();
-}
+//    X1234 x1_23_4 = X1() << X23() << X4();
+//}
 
-void test_mapped_flattening() {
-    using namespace generic_format::variadic;
-    using namespace generic_format::dsl;
-    using namespace generic_format::ast;
-    using X1 = uint8_le_t;
-    using X2 = uint16_le_t;
-    using X3 = uint32_le_t;
-    using X4 = uint8_le_t;
-    using X5 = uint16_le_t;
+//void test_mapped_flattening() {
+//    using namespace generic_format::variadic;
+//    using namespace generic_format::dsl;
+//    using namespace generic_format::ast;
+//    using X1 = uint8_le_t;
+//    using X2 = uint16_le_t;
+//    using X3 = uint32_le_t;
+//    using X4 = uint8_le_t;
+//    using X5 = uint16_le_t;
 
-    using X34 = unmapped_sequence<generic_list<X3, X4>>;
-    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() << (seq(uint64_le) << X5());
+//    using X34 = unmapped_sequence<generic_list<X3, X4>>;
+//    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() << (seq(uint64_le) << X5());
 
-}
+//}
