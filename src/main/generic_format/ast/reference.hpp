@@ -82,7 +82,7 @@ struct dereference<reference<FormattedAccessor, typename std::enable_if<Formatte
     }
 
     template<class RawReader, class State>
-    const small_type read(RawReader & raw_reader, State & state, native_type & t, std::size_t = 0) const {
+    const small_type & read(RawReader & raw_reader, State & state, native_type & t, std::size_t = 0) const {
         format().read(raw_reader, state, acc()(t));
         return acc()(t);
     }

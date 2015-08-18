@@ -11,6 +11,7 @@
 #include "generic_format/ast/placeholder_map.hpp"
 #include "generic_format/ast/placeholder_container.hpp"
 #include "generic_format/ast/base.hpp"
+#include "generic_format/ast/variable.hpp"
 
 namespace generic_format {
 namespace targets {

@@ -98,6 +98,24 @@ constexpr ast::repeated<Variable, Format> repeated(Variable, Format) {
 }
 
 // TODO documentation
+
+template<class VersionFormat, class BaseFormat>
+struct version_helper {
+
+    using native_version_type = typename VersionFormat::native_type;
+
+    template<native_version_type CurrentVersion>
+    constexpr ast::versioned<VersionFormat, BaseFormat, CurrentVersion> version() const {
+        return {};
+    }
+};
+
+template<class VersionFormat, class BaseFormat>
+constexpr version_helper<VersionFormat, BaseFormat> versioned(VersionFormat, BaseFormat) {
+    return {};
+}
+
+// TODO documentation
 template<class List>
 struct unmapped_sequence;
 

@@ -8,6 +8,8 @@
 */
 #pragma once
 
+#include "generic_format/ast/raw.hpp"
+
 namespace generic_format {
 
 namespace primitives {
