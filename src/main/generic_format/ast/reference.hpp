@@ -59,7 +59,7 @@ struct is_reference<reference<FormattedAccessor>> : std::true_type {};
 template<class Reference, class Enable = void>
 struct dereference; // no implementation
 
-namespace {
+namespace impl {
 template<class FormattedAccessor>
 struct dereference_base : base<children_list<typename FormattedAccessor::format>> {
     using format = typename FormattedAccessor::format;
@@ -68,7 +68,7 @@ struct dereference_base : base<children_list<typename FormattedAccessor::format>
 }
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor, typename std::enable_if<FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type>> : dereference_base<FormattedAccessor> {
+struct dereference<reference<FormattedAccessor, typename std::enable_if<FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type>> : impl::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -90,7 +90,7 @@ struct dereference<reference<FormattedAccessor, typename std::enable_if<Formatte
 };
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type> : dereference_base<FormattedAccessor> {
+struct dereference<reference<FormattedAccessor>, typename std::enable_if<!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type> : impl::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -112,7 +112,7 @@ struct dereference<reference<FormattedAccessor>, typename std::enable_if<!Format
 };
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<FormattedAccessor::is_reference && FormattedAccessor::is_indexed>::type> : dereference_base<FormattedAccessor>  {
+struct dereference<reference<FormattedAccessor>, typename std::enable_if<FormattedAccessor::is_reference && FormattedAccessor::is_indexed>::type> : impl::dereference_base<FormattedAccessor>  {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using big_type = typename acc::big_type;
