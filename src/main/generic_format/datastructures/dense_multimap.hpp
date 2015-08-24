@@ -1,8 +1,16 @@
+/**
+    @file
+    @copyright
+        Copyright Sebastien Wagener 2014
+        Distributed under the Boost Software License, Version 1.0.
+        (See accompanying file LICENSE_1_0.txt or copy at
+        http://www.boost.org/LICENSE_1_0.txt)
+*/
 #pragma once
 
 #include <vector>
 
-#include "generic_format/primitives.hpp"
+#include "generic_format/ast/ast.hpp"
 
 namespace generic_format { namespace datastructures {
 
@@ -84,7 +92,6 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
         // TODO verify integer overflow
-        using namespace generic_format::primitives;
         int count = 0;
         index_format().write(raw_writer, state, t._data.size());
         for (auto & row : t._data) {
@@ -99,7 +106,6 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
         // TODO verify integer overflow
-        using namespace generic_format::primitives;
         int count = 0;
         native_index_type nRows;
         index_format().read(raw_reader, state, nRows);

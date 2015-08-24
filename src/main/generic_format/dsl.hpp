@@ -15,6 +15,7 @@
 #include "generic_format/helper.hpp"
 
 #include "generic_format/datastructures/dense_multimap.hpp"
+#include "generic_format/datastructures/dense_reversible_multimap.hpp"
 
 namespace generic_format{
 namespace dsl {
@@ -65,19 +66,33 @@ constexpr ast::string<LengthFormat> string_format(LengthFormat) {
 }
 
 /**
- * @brief Serializer for a generic_format::datastructures::multimap.
+ * @brief Serializer for a generic_format::datastructures::dense_multimap.
  *
  * The multimap will be encoded as the numbers of rows, and
  * each row will subsequently be encoded as the number of items in the row,
  * followed by the actual items.
  *
  * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row.
+ * @param ValueFormat the type which is used to serialize the values in the rows.
  */
 template<class IndexFormat, class ValueFormat>
 constexpr datastructures::format::dense_multimap_format<IndexFormat, ValueFormat> dense_multimap_format(IndexFormat, ValueFormat) {
     return {};
 }
 
+/**
+ * @brief Serializer for a generic_format::datastructures::dense_reversible_multimap.
+ *
+ * The multimap will be encoded in its front representation, as the numbers of rows, and
+ * each row will subsequently be encoded as the number of items in the row,
+ * followed by the actual items.
+ *
+ * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row, as well as the values in the row.
+ */
+template<class IndexFormat>
+constexpr datastructures::format::dense_reversible_multimap_format<IndexFormat> dense_reversible_multimap_format(IndexFormat) {
+    return {};
+}
 
 /** @brief A placeholder which is also a factory for new placeholders.
  *
