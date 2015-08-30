@@ -20,14 +20,24 @@ namespace generic_format { namespace mapping {
 // TODO move this to default-mappings
 struct vector_output {
 
+    template<class T, typename SizeType>
+    void initialize(T & t, SizeType sz) const {
+        t.resize(sz);
+    }
+
     template<class T>
-    std::back_insert_iterator<T> output_iterator(T & t) const {
-        return std::back_insert_iterator<T>(t);
+    typename T::iterator output_iterator(T & t) const {
+        return t.begin();
     }
 };
 
 // TODO move this to default-mappings
 struct set_output {
+
+    template<class T, typename SizeType>
+    void initialize(T & t, SizeType) const {
+        t.clear();
+    }
 
     template<class T>
     std::insert_iterator<std::set<uint8_t>> output_iterator(T & t) const {
@@ -65,6 +75,7 @@ struct range : generic_format::ast::base<generic_format::ast::children_list<Inde
         // TODO verify overflow
         native_index_type sz;
         index_format().read(raw_reader, state, sz);
+        output_info().initialize(t, sz);
         auto output = output_info().output_iterator(t);
         for (native_index_type i=0; i<sz; ++i) {
             native_value_type v;
