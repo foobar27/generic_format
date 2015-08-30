@@ -9,6 +9,9 @@
 #define BOOST_TEST_MODULE "FORMAT_TESTS"
 #include "test_common.hpp"
 
+#include <algorithm>
+#include <vector>
+#include <set>
 #include <cstddef>
 #include <cstdlib>
 #include <tuple>
@@ -247,21 +250,47 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(range_test, TARGET, all_targets) {
+    using generic_format::mapping::range;
+    using generic_format::mapping::vector_output;
+    using std::vector;
+    using std::back_insert_iterator;
+
+    using format = range<vector<uint8_t>, vector_output, uint16_le_t, uint8_le_t>;
+
     check_round_trip(2 + 5*1,
                      TARGET(),
-                     chunk(generic_format::mapping::range<std::vector<uint8_t>, std::back_insert_iterator<std::vector<uint8_t>>, uint16_le_t, uint8_le_t>(), {1,3,5,7,8}));
+                     chunk(format(), {1,3,5,7,8}));
 }
 
-//BOOST_AUTO_TEST_CASE_TEMPLATE(nested_vector_test, TARGET, all_targets) {
-//    placeholder<0> _;
-//    constexpr auto outer_size = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint16_le);
-//    constexpr auto inner_size = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint8_le);
-//    check_round_trip(2 + (1 + 1+2 + 1+2) + (1) + (1 + 1+2 + 1+2 + 1+2) + (1 + 1+1)
-//                     + (1+1),
-//                     TARGET(),
-//                     chunk(generic_format::mapping::vector(outer_size, generic_format::mapping::vector(inner_size, string_format(uint8_le))), {{"a1", "a2"}, {}, {"c1", "c2", "c3"}, {"d"}}),
-//                     chunk(string_format(uint8_le), "?"));
-//}
+BOOST_AUTO_TEST_CASE_TEMPLATE(nested_range_test, TARGET, all_targets) {
+    using generic_format::mapping::range;
+    using generic_format::mapping::vector_output;
+    using std::vector;
+    using std::back_insert_iterator;
+
+    using row_type = vector<uint8_t>;
+    using matrix_type = vector<row_type>;
+    using row_format = range<row_type, vector_output, uint16_le_t, uint8_le_t>;
+    using matrix_format = range<matrix_type, vector_output, uint32_le_t, row_format>;
+
+    check_round_trip(4 + (2 + 1*1) + (2 + 3*1),
+                     TARGET(),
+                     chunk(matrix_format(), {{1}, {3,5,7}}));
+}
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(set_range_test, TARGET, all_targets) {
+    using generic_format::mapping::range;
+    using generic_format::mapping::set_output;
+    using std::set;
+    using std::inserter;
+    using std::insert_iterator;
+
+    using format = range<set<uint8_t>, set_output, uint16_le_t, uint8_le_t>;
+
+    check_round_trip(2 + 5*1,
+                     TARGET(),
+                     chunk(format(), {1,3,5,7,9}));
+}
 
 struct Person {
     std::string first_name {}, last_name {};

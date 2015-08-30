@@ -8,16 +8,37 @@
 */
 #pragma once
 
+// TODO the following two includes won't be needed later on
 #include <vector>
+#include <set>
+
 #include <generic_format/accessor/accessor.hpp>
 #include <generic_format/ast/reference.hpp>
 
 namespace generic_format { namespace mapping {
 
-template<class NativeType, class OutputIteratorType, class IndexFormat, class ValueFormat>
+// TODO move this to default-mappings
+struct vector_output {
+
+    template<class T>
+    std::back_insert_iterator<T> output_iterator(T & t) const {
+        return std::back_insert_iterator<T>(t);
+    }
+};
+
+// TODO move this to default-mappings
+struct set_output {
+
+    template<class T>
+    std::insert_iterator<std::set<uint8_t>> output_iterator(T & t) const {
+        return { t, t.end() };
+    }
+};
+
+template<class NativeType, class OutputInfo, class IndexFormat, class ValueFormat>
 struct range : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using native_type = NativeType;
-    using output_iterator_type = OutputIteratorType;
+    using output_info = OutputInfo;
     using index_format = IndexFormat;
     using value_format = ValueFormat;
     using native_index_type = typename index_format::native_type;
@@ -31,7 +52,8 @@ struct range : generic_format::ast::base<generic_format::ast::children_list<Inde
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        native_index_type sz = t.end() - t.begin();
+        // TODO verify overflow
+        native_index_type sz = static_cast<native_index_type>(t.size());
         index_format().write(raw_writer, state, sz);
         for (const auto & v : t) {
             value_format().write(raw_writer, state, v);
@@ -40,9 +62,10 @@ struct range : generic_format::ast::base<generic_format::ast::children_list<Inde
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
+        // TODO verify overflow
         native_index_type sz;
         index_format().read(raw_reader, state, sz);
-        output_iterator_type output(t);
+        auto output = output_info().output_iterator(t);
         for (native_index_type i=0; i<sz; ++i) {
             native_value_type v;
             value_format().read(raw_reader, state, v);

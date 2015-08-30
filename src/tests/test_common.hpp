@@ -12,6 +12,8 @@
 
 #include <boost/test/unit_test.hpp>
 
+#include <vector>
+#include <set>
 #include <tuple>
 
 namespace {
@@ -48,6 +50,20 @@ std::ostream& operator<<(std::ostream& out, const std::tuple<TS...>& value) {
 
 template<typename T>
 std::ostream& operator<<(std::ostream& out, const std::vector<T>& xs) {
+    out << "[";
+    bool first = true;
+    for (auto & x : xs) {
+        if (!first)
+            out << ", ";
+        out << x;
+        first = false;
+    }
+    out << "]";
+    return out;
+}
+
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const std::set<T>& xs) {
     out << "[";
     bool first = true;
     for (auto & x : xs) {
