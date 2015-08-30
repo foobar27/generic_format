@@ -8,6 +8,7 @@
 */
 #pragma once
 
+#include "generic_format/ast/inference.hpp"
 #include "generic_format/ast/raw.hpp"
 #include "generic_format/ast/reference.hpp"
 #include "generic_format/ast/sequence.hpp"

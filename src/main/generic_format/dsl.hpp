@@ -9,6 +9,8 @@
 #pragma once
 
 #include <tuple>
+#include <vector>
+#include <set>
 
 #include "generic_format/ast/ast.hpp"
 #include "generic_format/mapping/struct_adaptor.hpp"
@@ -62,6 +64,43 @@ constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, For
  */
 template<class LengthFormat>
 constexpr ast::string<LengthFormat> string_format(LengthFormat) {
+    return {};
+}
+
+template<class NativeType>
+struct _range_output_info;
+
+template<class T, class Allocator>
+struct _range_output_info<std::vector<T, Allocator>> {
+    using type = mapping::vector_output;
+};
+
+template<class Key, class Compare, class Allocator>
+struct _range_output_info<std::set<Key, Compare, Allocator>> {
+    using type = mapping::set_output;
+};
+
+
+template<class IndexFormat, class ValueFormat, class NativeType>
+struct _range_format_type_inferrer_helper {
+    using index_format = IndexFormat;
+    using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
+    using native_type = NativeType;
+
+    static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
+    static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
+
+    using type = mapping::range<native_type, typename _range_output_info<NativeType>::type, index_format, value_format>;
+};
+
+template<class IndexFormat, class ValueFormat>
+struct _range_format_type_inferrer {
+    template<class NativeType>
+    using infer = typename _range_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
+};
+
+template<class IndexFormat, class ValueFormat>
+constexpr typename ast::inferring_format<_range_format_type_inferrer<IndexFormat, ValueFormat>> range_format(IndexFormat, ValueFormat) {
     return {};
 }
 

@@ -51,14 +51,20 @@ struct range : generic_format::ast::base<generic_format::ast::children_list<Inde
     using output_info = OutputInfo;
     using index_format = IndexFormat;
     using value_format = ValueFormat;
-    using native_index_type = typename index_format::native_type;
-    using native_value_type = typename value_format::native_type;
-
-    static constexpr auto size = generic_format::ast::dynamic_size(); // TODO except if index_format is a constant?
 
     static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
     static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
+
+    using native_index_type = typename index_format::native_type;
+    using native_value_type = typename value_format::native_type;
+    using native_element_type = typename native_type::value_type;
+
     static_assert(std::is_integral<native_index_type>::value, "IndexFormat must be an integral type!");
+    static_assert(std::is_convertible<native_element_type, native_value_type>::value
+                  && std::is_convertible<native_value_type, native_element_type>::value,
+                  "Element types must be convertible!");
+
+    static constexpr auto size = generic_format::ast::dynamic_size(); // TODO except if index_format is a constant?
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {

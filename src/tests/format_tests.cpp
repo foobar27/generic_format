@@ -138,6 +138,12 @@ struct _chunk {
     native_type actual_value;
 };
 
+// TODO merge back with 'chunk()'
+template<class F, class NativeType>
+_chunk<typename generic_format::ast::infer_format<F, NativeType>::type> inferred_chunk(F, NativeType t) {
+    return {t};
+}
+
 template<class F>
 _chunk<F> chunk(F, typename F::native_type t) {
     return {t};
@@ -250,32 +256,27 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(range_test, TARGET, all_targets) {
-    using generic_format::mapping::range;
-    using generic_format::mapping::vector_output;
+    using generic_format::dsl::range_format;
     using std::vector;
-    using std::back_insert_iterator;
 
-    using format = range<vector<uint8_t>, vector_output, uint16_le_t, uint8_le_t>;
+    static constexpr auto format = range_format(uint16_le, uint8_le);
 
+    vector<uint8_t> v {1,3,5,7,8};
     check_round_trip(2 + 5*1,
                      TARGET(),
-                     chunk(format(), {1,3,5,7,8}));
+                     inferred_chunk(format, v));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(nested_range_test, TARGET, all_targets) {
-    using generic_format::mapping::range;
-    using generic_format::mapping::vector_output;
+    using generic_format::dsl::range_format;
     using std::vector;
-    using std::back_insert_iterator;
 
-    using row_type = vector<uint8_t>;
-    using matrix_type = vector<row_type>;
-    using row_format = range<row_type, vector_output, uint16_le_t, uint8_le_t>;
-    using matrix_format = range<matrix_type, vector_output, uint32_le_t, row_format>;
+    static constexpr auto format = range_format(uint32_le, range_format(uint16_le, uint8_le));
 
+    vector<vector<uint8_t>> v {{1}, {3,5,7}};
     check_round_trip(4 + (2 + 1*1) + (2 + 3*1),
                      TARGET(),
-                     chunk(matrix_format(), {{1}, {3,5,7}}));
+                     inferred_chunk(format, v));
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(set_range_test, TARGET, all_targets) {
