@@ -280,18 +280,43 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(nested_container_test, TARGET, all_targets) {
 }
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(set_container_test, TARGET, all_targets) {
-    using generic_format::mapping::container;
-    using generic_format::mapping::set_output;
+    using generic_format::dsl::container_format;
     using std::set;
-    using std::inserter;
-    using std::insert_iterator;
 
-    using format = container<set<uint8_t>, set_output, uint16_le_t, uint8_le_t>;
+    static constexpr auto format = container_format(uint16_le, uint8_le);
 
+    set<uint8_t> v {1,3,5,7,9};
     check_round_trip(2 + 5*1,
                      TARGET(),
-                     chunk(format(), {1,3,5,7,9}));
+                     inferred_chunk(format, v));
 }
+
+struct StructWithVector {
+    std::vector<uint8_t> data;
+};
+
+bool operator==(const StructWithVector & a, const StructWithVector & b) {
+    return a.data == b.data;
+}
+
+std::ostream& operator<<(std::ostream& os, const StructWithVector & p) {
+    os << "StructWithVector[data=" << p.data << "]";
+    return os;
+}
+
+
+BOOST_AUTO_TEST_CASE_TEMPLATE(struct_with_vector_test, TARGET, all_targets) {
+    using generic_format::dsl::container_format;
+    using generic_format::dsl::adapt_struct;
+
+    static constexpr auto format = adapt_struct(
+                GENERIC_FORMAT_MEMBER(StructWithVector, data, container_format(uint16_le, uint8_le)));
+    StructWithVector v { {1,3,5} };
+    check_round_trip(2 + 3*1,
+                     TARGET(),
+                     inferred_chunk(format, v));
+}
+
 
 struct Person {
     std::string first_name {}, last_name {};
