@@ -10,7 +10,6 @@
 
 #include <vector>
 
-#include "generic_format/ast/ast.hpp"
 #include "generic_format/mapping/container.hpp"
 
 namespace generic_format { namespace datastructures {
@@ -80,36 +79,54 @@ namespace format {
 
 template<class IndexFormat, class ValueFormat>
 struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
-
     using index_format = IndexFormat;
     using value_format = ValueFormat;
     using native_index_type = typename IndexFormat::native_type;
     using native_value_type = typename ValueFormat::native_type;
     using native_row_type = std::vector<native_index_type>;
     using native_matrix_type = std::vector<native_row_type>;
-    using output_type = generic_format::mapping::vector_output;
 
-    using row_format = mapping::container<native_row_type, output_type, index_format, value_format>;
-    using matrix_format = mapping::container<native_matrix_type, output_type, index_format, row_format>;
+    using matrix_format = decltype(dsl::container_format(index_format(), dsl::container_format(index_format(), value_format())));
 
     using native_type = dense_multimap<native_index_type, native_value_type>;
     static constexpr auto size = generic_format::ast::dynamic_size();
+
+    using format = typename generic_format::ast::infer_format<matrix_format, native_matrix_type>::type;
 
     static_assert(std::is_integral<native_index_type>::value, "index must be an integral type!");
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        matrix_format().write(raw_writer, state, t._data);
+        format().write(raw_writer, state, t._data);
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
-        matrix_format().read(raw_reader, state, t._data);
+        format().read(raw_reader, state, t._data);
     }
 
 };
 
 }
 
-}}
+}
+
+namespace dsl {
+/**
+ * @brief Serializer for a generic_format::datastructures::dense_multimap.
+ *
+ * The multimap will be encoded as the numbers of rows, and
+ * each row will subsequently be encoded as the number of items in the row,
+ * followed by the actual items.
+ *
+ * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row.
+ * @param ValueFormat the type which is used to serialize the values in the rows.
+ */
+template<class IndexFormat, class ValueFormat>
+constexpr datastructures::format::dense_multimap_format<IndexFormat, ValueFormat> dense_multimap_format(IndexFormat, ValueFormat) {
+    return {};
+}
+
+}
+}
 

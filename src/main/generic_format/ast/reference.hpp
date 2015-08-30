@@ -8,7 +8,9 @@
 */
 #pragma once
 
+#include "generic_format/ast/base.hpp"
 #include "generic_format/accessor/accessor.hpp"
+
 #include <type_traits>
 
 namespace generic_format {

@@ -14,6 +14,7 @@
 
 #include <generic_format/accessor/accessor.hpp>
 #include <generic_format/ast/reference.hpp>
+#include <generic_format/ast/inference.hpp>
 
 namespace generic_format { namespace mapping {
 
@@ -92,4 +93,46 @@ struct container : generic_format::ast::base<generic_format::ast::children_list<
 
 };
 
-}}
+}
+
+
+namespace dsl {
+
+template<class NativeType>
+struct _container_output_info;
+
+template<class T, class Allocator>
+struct _container_output_info<std::vector<T, Allocator>> {
+    using type = mapping::vector_output;
+};
+
+template<class Key, class Compare, class Allocator>
+struct _container_output_info<std::set<Key, Compare, Allocator>> {
+    using type = mapping::set_output;
+};
+
+template<class IndexFormat, class ValueFormat, class NativeType>
+struct _container_format_type_inferrer_helper {
+    using index_format = IndexFormat;
+    using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
+    using native_type = NativeType;
+
+    static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
+    static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
+
+    using type = mapping::container<native_type, typename _container_output_info<NativeType>::type, index_format, value_format>;
+};
+
+template<class IndexFormat, class ValueFormat>
+struct _container_format_type_inferrer {
+    template<class NativeType>
+    using infer = typename _container_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
+};
+
+template<class IndexFormat, class ValueFormat>
+constexpr typename ast::inferring_format<_container_format_type_inferrer<IndexFormat, ValueFormat>> container_format(IndexFormat, ValueFormat) {
+    return {};
+}
+
+}
+}

@@ -16,9 +16,6 @@
 #include "generic_format/mapping/struct_adaptor.hpp"
 #include "generic_format/helper.hpp"
 
-#include "generic_format/datastructures/dense_multimap.hpp"
-#include "generic_format/datastructures/dense_reversible_multimap.hpp"
-
 namespace generic_format{
 namespace dsl {
 
@@ -64,72 +61,6 @@ constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, For
  */
 template<class LengthFormat>
 constexpr ast::string<LengthFormat> string_format(LengthFormat) {
-    return {};
-}
-
-template<class NativeType>
-struct _container_output_info;
-
-template<class T, class Allocator>
-struct _container_output_info<std::vector<T, Allocator>> {
-    using type = mapping::vector_output;
-};
-
-template<class Key, class Compare, class Allocator>
-struct _container_output_info<std::set<Key, Compare, Allocator>> {
-    using type = mapping::set_output;
-};
-
-
-template<class IndexFormat, class ValueFormat, class NativeType>
-struct _container_format_type_inferrer_helper {
-    using index_format = IndexFormat;
-    using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
-    using native_type = NativeType;
-
-    static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
-    static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
-
-    using type = mapping::container<native_type, typename _container_output_info<NativeType>::type, index_format, value_format>;
-};
-
-template<class IndexFormat, class ValueFormat>
-struct _container_format_type_inferrer {
-    template<class NativeType>
-    using infer = typename _container_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
-};
-
-template<class IndexFormat, class ValueFormat>
-constexpr typename ast::inferring_format<_container_format_type_inferrer<IndexFormat, ValueFormat>> container_format(IndexFormat, ValueFormat) {
-    return {};
-}
-
-/**
- * @brief Serializer for a generic_format::datastructures::dense_multimap.
- *
- * The multimap will be encoded as the numbers of rows, and
- * each row will subsequently be encoded as the number of items in the row,
- * followed by the actual items.
- *
- * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row.
- * @param ValueFormat the type which is used to serialize the values in the rows.
- */
-template<class IndexFormat, class ValueFormat>
-constexpr datastructures::format::dense_multimap_format<IndexFormat, ValueFormat> dense_multimap_format(IndexFormat, ValueFormat) {
-    return {};
-}
-
-/**
- * @brief Serializer for a generic_format::datastructures::dense_reversible_multimap.
- *
- * The multimap will be encoded in its front representation, as the numbers of rows, and
- * each row will subsequently be encoded as the number of items in the row,
- * followed by the actual items.
- *
- * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row, as well as the values in the row.
- */
-template<class IndexFormat>
-constexpr datastructures::format::dense_reversible_multimap_format<IndexFormat> dense_reversible_multimap_format(IndexFormat) {
     return {};
 }
 

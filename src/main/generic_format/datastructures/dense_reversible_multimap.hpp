@@ -127,6 +127,24 @@ struct dense_reversible_multimap_format : generic_format::ast::base<generic_form
 
 };
 
+}}
+
+namespace dsl {
+
+/**
+ * @brief Serializer for a generic_format::datastructures::dense_reversible_multimap.
+ *
+ * The multimap will be encoded in its front representation, as the numbers of rows, and
+ * each row will subsequently be encoded as the number of items in the row,
+ * followed by the actual items.
+ *
+ * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row, as well as the values in the row.
+ */
+template<class IndexFormat>
+constexpr datastructures::format::dense_reversible_multimap_format<IndexFormat> dense_reversible_multimap_format(IndexFormat) {
+    return {};
 }
 
-}}
+}
+
+}
