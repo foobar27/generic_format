@@ -68,21 +68,21 @@ constexpr ast::string<LengthFormat> string_format(LengthFormat) {
 }
 
 template<class NativeType>
-struct _range_output_info;
+struct _container_output_info;
 
 template<class T, class Allocator>
-struct _range_output_info<std::vector<T, Allocator>> {
+struct _container_output_info<std::vector<T, Allocator>> {
     using type = mapping::vector_output;
 };
 
 template<class Key, class Compare, class Allocator>
-struct _range_output_info<std::set<Key, Compare, Allocator>> {
+struct _container_output_info<std::set<Key, Compare, Allocator>> {
     using type = mapping::set_output;
 };
 
 
 template<class IndexFormat, class ValueFormat, class NativeType>
-struct _range_format_type_inferrer_helper {
+struct _container_format_type_inferrer_helper {
     using index_format = IndexFormat;
     using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
     using native_type = NativeType;
@@ -90,17 +90,17 @@ struct _range_format_type_inferrer_helper {
     static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
     static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
 
-    using type = mapping::range<native_type, typename _range_output_info<NativeType>::type, index_format, value_format>;
+    using type = mapping::container<native_type, typename _container_output_info<NativeType>::type, index_format, value_format>;
 };
 
 template<class IndexFormat, class ValueFormat>
-struct _range_format_type_inferrer {
+struct _container_format_type_inferrer {
     template<class NativeType>
-    using infer = typename _range_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
+    using infer = typename _container_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
 };
 
 template<class IndexFormat, class ValueFormat>
-constexpr typename ast::inferring_format<_range_format_type_inferrer<IndexFormat, ValueFormat>> range_format(IndexFormat, ValueFormat) {
+constexpr typename ast::inferring_format<_container_format_type_inferrer<IndexFormat, ValueFormat>> container_format(IndexFormat, ValueFormat) {
     return {};
 }
 

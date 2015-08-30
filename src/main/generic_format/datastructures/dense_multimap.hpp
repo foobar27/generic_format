@@ -11,7 +11,7 @@
 #include <vector>
 
 #include "generic_format/ast/ast.hpp"
-#include "generic_format/mapping/range.hpp"
+#include "generic_format/mapping/container.hpp"
 
 namespace generic_format { namespace datastructures {
 
@@ -89,8 +89,8 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
     using native_matrix_type = std::vector<native_row_type>;
     using output_type = generic_format::mapping::vector_output;
 
-    using row_format = mapping::range<native_row_type, output_type, index_format, value_format>;
-    using matrix_format = mapping::range<native_matrix_type, output_type, index_format, row_format>;
+    using row_format = mapping::container<native_row_type, output_type, index_format, value_format>;
+    using matrix_format = mapping::container<native_matrix_type, output_type, index_format, row_format>;
 
     using native_type = dense_multimap<native_index_type, native_value_type>;
     static constexpr auto size = generic_format::ast::dynamic_size();

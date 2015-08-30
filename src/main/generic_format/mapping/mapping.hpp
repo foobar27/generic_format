@@ -9,6 +9,6 @@
 #pragma once
 
 #include "generic_format/mapping/tuple.hpp"
-#include "generic_format/mapping/range.hpp"
+#include "generic_format/mapping/container.hpp"
 #include "generic_format/mapping/vector.hpp"
 #include "generic_format/mapping/struct_adaptor.hpp"

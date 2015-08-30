@@ -255,11 +255,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
                      chunk(string_format(uint8_le), "?"));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(range_test, TARGET, all_targets) {
-    using generic_format::dsl::range_format;
+BOOST_AUTO_TEST_CASE_TEMPLATE(container_test, TARGET, all_targets) {
+    using generic_format::dsl::container_format;
     using std::vector;
 
-    static constexpr auto format = range_format(uint16_le, uint8_le);
+    static constexpr auto format = container_format(uint16_le, uint8_le);
 
     vector<uint8_t> v {1,3,5,7,8};
     check_round_trip(2 + 5*1,
@@ -267,11 +267,11 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(range_test, TARGET, all_targets) {
                      inferred_chunk(format, v));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(nested_range_test, TARGET, all_targets) {
-    using generic_format::dsl::range_format;
+BOOST_AUTO_TEST_CASE_TEMPLATE(nested_container_test, TARGET, all_targets) {
+    using generic_format::dsl::container_format;
     using std::vector;
 
-    static constexpr auto format = range_format(uint32_le, range_format(uint16_le, uint8_le));
+    static constexpr auto format = container_format(uint32_le, container_format(uint16_le, uint8_le));
 
     vector<vector<uint8_t>> v {{1}, {3,5,7}};
     check_round_trip(4 + (2 + 1*1) + (2 + 3*1),
@@ -279,14 +279,14 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(nested_range_test, TARGET, all_targets) {
                      inferred_chunk(format, v));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(set_range_test, TARGET, all_targets) {
-    using generic_format::mapping::range;
+BOOST_AUTO_TEST_CASE_TEMPLATE(set_container_test, TARGET, all_targets) {
+    using generic_format::mapping::container;
     using generic_format::mapping::set_output;
     using std::set;
     using std::inserter;
     using std::insert_iterator;
 
-    using format = range<set<uint8_t>, set_output, uint16_le_t, uint8_le_t>;
+    using format = container<set<uint8_t>, set_output, uint16_le_t, uint8_le_t>;
 
     check_round_trip(2 + 5*1,
                      TARGET(),
