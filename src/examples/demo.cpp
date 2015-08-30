@@ -21,6 +21,10 @@ struct Image {
     std::vector<std::uint8_t> data;
 };
 
+struct Document {
+    std::vector<std::string> words;
+};
+
 namespace {
 
 // TODO vector_size_accessor
@@ -116,8 +120,14 @@ int main() {
     static constexpr auto Image_format = adapt_struct(
                 GENERIC_FORMAT_MEMBER(Image, width,  width_var),
                 GENERIC_FORMAT_MEMBER(Image, height, height_var),
+                // TODO replace the following line by container_format (still need to find my way through the derefs...)
                 GENERIC_FORMAT_MEMBER(Image, data,   generic_format::mapping::vector(eval(width_var*height_var), uint8_le))
                 );
+
+    static constexpr auto Document_format = adapt_struct(
+                GENERIC_FORMAT_MEMBER(Document, words, container_format(uint32_le, string_format(uint8_le)))
+                );
+
 
     constexpr auto size_container = decltype(Packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size;
@@ -138,6 +148,9 @@ int main() {
                      {1, 2, 3,
                       4, 5, 6}};
         writer(image, Image_format);
+
+        Document document {{"hello", "world"}};
+        writer(document, Document_format);
     }
     {
         ifstream is {fileName, ios_base::in | ios_base::binary};
@@ -162,6 +175,13 @@ int main() {
             cout << " " << static_cast<int>(v);
         }
         cout << endl;
+
+        Document document;
+        reader(document, Document_format);
+        cout << "Document:" << endl;
+        for (auto word : document.words) {
+            cout << " " << word;
+        }
     }
 //    nested_vector_example();
 }
