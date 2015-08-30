@@ -246,6 +246,12 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
                      chunk(string_format(uint8_le), "?"));
 }
 
+BOOST_AUTO_TEST_CASE_TEMPLATE(range_test, TARGET, all_targets) {
+    check_round_trip(2 + 5*1,
+                     TARGET(),
+                     chunk(generic_format::mapping::range<std::vector<uint8_t>, std::back_insert_iterator<std::vector<uint8_t>>, uint16_le_t, uint8_le_t>(), {1,3,5,7,8}));
+}
+
 //BOOST_AUTO_TEST_CASE_TEMPLATE(nested_vector_test, TARGET, all_targets) {
 //    placeholder<0> _;
 //    constexpr auto outer_size = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint16_le);
