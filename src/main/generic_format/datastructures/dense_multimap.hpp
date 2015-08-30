@@ -11,6 +11,7 @@
 #include <vector>
 
 #include "generic_format/ast/ast.hpp"
+#include "generic_format/mapping/range.hpp"
 
 namespace generic_format { namespace datastructures {
 
@@ -79,10 +80,17 @@ namespace format {
 
 template<class IndexFormat, class ValueFormat>
 struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
+
     using index_format = IndexFormat;
     using value_format = ValueFormat;
-    using native_index_type = typename index_format::native_type;
-    using native_value_type = typename value_format::native_type;
+    using native_index_type = typename IndexFormat::native_type;
+    using native_value_type = typename ValueFormat::native_type;
+    using native_row_type = std::vector<native_index_type>;
+    using native_matrix_type = std::vector<native_row_type>;
+    using output_type = generic_format::mapping::vector_output;
+
+    using row_format = mapping::range<native_row_type, output_type, index_format, value_format>;
+    using matrix_format = mapping::range<native_matrix_type, output_type, index_format, row_format>;
 
     using native_type = dense_multimap<native_index_type, native_value_type>;
     static constexpr auto size = generic_format::ast::dynamic_size();
@@ -91,36 +99,12 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        // TODO verify integer overflow
-        int count = 0;
-        index_format().write(raw_writer, state, t._data.size());
-        for (auto & row : t._data) {
-            index_format().write(raw_writer, state, row.size());
-            for (auto v : row) {
-                value_format().write(raw_writer, state, v);
-                ++count;
-            }
-        }
+        matrix_format().write(raw_writer, state, t._data);
     }
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
-        // TODO verify integer overflow
-        int count = 0;
-        native_index_type nRows;
-        index_format().read(raw_reader, state, nRows);
-        for (native_index_type i=0; i<nRows; ++i) {
-            native_index_type n;
-            index_format().read(raw_reader, state, n);
-            std::vector<native_value_type> row;
-            for (native_index_type j=0; j<n; ++j) {
-                native_value_type v;
-                value_format().read(raw_reader, state, v);
-                row.push_back(v);
-                ++count;
-            }
-            t._data.push_back(std::move(row));
-        }
+        matrix_format().read(raw_reader, state, t._data);
     }
 
 };
