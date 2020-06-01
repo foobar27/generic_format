@@ -16,7 +16,7 @@
 namespace generic_format {
 namespace targets {
 
-namespace {
+namespace detail {
 
 template<class Format>
 struct map_for_format;
@@ -80,7 +80,7 @@ struct writer {
     void operator()(const T & t, F f) {
         using namespace ast;
         static_assert(is_format<F>::value, "F must be a format!");
-        placeholder_container<typename map_for_format<F>::type> state;
+        placeholder_container<typename detail::map_for_format<F>::type> state;
         f.write(raw_writer, state, t);
     }
 
@@ -107,7 +107,7 @@ struct reader {
     void operator()(T & t, F f) {
         using namespace ast;
         static_assert(is_format<F>::value, "F must be a format!");
-        placeholder_container<typename map_for_format<F>::type> state;
+        placeholder_container<typename detail::map_for_format<F>::type> state;
         f.read(raw_reader, state, t);
     }
 
