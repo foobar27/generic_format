@@ -95,7 +95,7 @@ template<class Map>
 struct placeholder_map_tuple_type;
 
 // Helper functions
-namespace {
+namespace detail {
 
 /// Helper operation for placeholder_map_put to check for duplicates.
 template<typename Placeholder, class... Entries>
@@ -112,7 +112,7 @@ struct placeholder_map_put_helper<Entry, Entries...> {
     static_assert(!placeholder_map_contains<typename Entry::placeholder, Entries...>::value, "Duplicate placeholder in placeholder map!");
 };
 
-}
+} // end namespace detail
 
 // Implementations of the placeholder_map functions.
 
@@ -128,7 +128,7 @@ struct placeholder_map_tuple_type<placeholder_map<Entries...>> {
 
 template<class Entry, class... Entries>
 struct placeholder_map_put<placeholder_map<Entries...>, Entry> {
-    using type = typename placeholder_map_put_helper<Entry, Entries...>::type;
+    using type = typename detail::placeholder_map_put_helper<Entry, Entries...>::type;
 };
 
 template<class Map2>

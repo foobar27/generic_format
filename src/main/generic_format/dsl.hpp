@@ -19,7 +19,7 @@
 namespace generic_format{
 namespace dsl {
 
-namespace {
+namespace detail {
 template<class... Members>
 struct first_class;
 
@@ -38,7 +38,7 @@ struct first_class<Member, Members...> {
  * All arguments must adapt members of the same class.
  */
 template<class... Fields>
-constexpr typename mapping::struct_adaptor<typename first_class<Fields...>::type, Fields...>::type adapt_struct(Fields...) {
+constexpr typename mapping::struct_adaptor<typename detail::first_class<Fields...>::type, Fields...>::type adapt_struct(Fields...) {
     // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO
     return {};
 }
@@ -135,7 +135,7 @@ struct is_unmapped_sequence<unmapped_sequence<variadic::generic_list<Formats...>
 // Helpers for constructing sequences.
 // They avoid creating nested sequences.
 
-namespace {
+namespace detail {
 
 // We need a dispatcher system in order to disambiguation partial template specializations.
 enum class Dispatcher {SCALAR, UNMAPPED_SEQUENCE, MAPPED_SEQUENCE};

@@ -16,7 +16,7 @@
 #include <set>
 #include <tuple>
 
-namespace {
+namespace detail {
 
 template<typename T, unsigned I, unsigned IS_LAST>
 struct tuple_printer {
@@ -36,14 +36,14 @@ struct tuple_printer<T, I, I> {
 
 };
 
-}
+} // end namespace detail
 
 namespace std {
 
 template<typename... TS>
 std::ostream& operator<<(std::ostream& out, const std::tuple<TS...>& value) {
     out << "(";
-    tuple_printer<std::tuple<TS...>, 0, sizeof...(TS) - 1>::print(out, value);
+    detail::tuple_printer<std::tuple<TS...>, 0, sizeof...(TS) - 1>::print(out, value);
     out << ")";
     return out;
 }

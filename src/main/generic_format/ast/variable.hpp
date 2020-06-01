@@ -23,7 +23,7 @@ struct variable;
 template<class T>
 struct is_variable;
 
-namespace {
+namespace detail {
 template<class Variable1, class Variable2, class Operator>
 struct binary_operator;
 }
@@ -38,11 +38,11 @@ struct is_variable<variable<Placeholder, ElementType>> {
 };
 
 template<class Variable1, class Variable2, class Operator>
-struct is_variable<binary_operator<Variable1, Variable2, Operator>> {
+struct is_variable<detail::binary_operator<Variable1, Variable2, Operator>> {
     static constexpr bool value = true;
 };
 
-namespace {
+namespace detail{
 template<class T1, class T2>
 struct sum_operator {
     using result_type = decltype((*(T1*)(nullptr)) + (*(T2*)(nullptr))); // TODO this looks really ugly
@@ -79,12 +79,12 @@ struct binary_operator : public base<children_list<Variable1, Variable2>>, varia
 }
 
 template<class Variable1, class Variable2>
-struct sum : public binary_operator<Variable1, Variable2, sum_operator<typename Variable1::native_type, typename Variable2::native_type>>
+struct sum : public detail::binary_operator<Variable1, Variable2, detail::sum_operator<typename Variable1::native_type, typename Variable2::native_type>>
 {};
 
 
 template<class Variable1, class Variable2>
-struct product : public binary_operator<Variable1, Variable2, product_operator<typename Variable1::native_type, typename Variable2::native_type>>
+struct product : public detail::binary_operator<Variable1, Variable2, detail::product_operator<typename Variable1::native_type, typename Variable2::native_type>>
 {};
 
 template<typename Placeholder, class ElementType>
@@ -155,14 +155,14 @@ struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
 template<class VariableEvaluator, class Accessor, class Enable = void>
 struct variable_accessor_binding;
 
-namespace {
+namespace detail {
 struct variable_accessor_binding_base : base<children_list<>> {
 
 };
 }
 
 template<class VariableEvaluator, class Accessor>
-struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enable_if<!Accessor::is_reference && !Accessor::is_indexed>::type> : variable_accessor_binding_base {
+struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enable_if<!Accessor::is_reference && !Accessor::is_indexed>::type> : detail::variable_accessor_binding_base {
     using variable_evaluator = VariableEvaluator;
     using accessor = Accessor;
     using native_type = void;

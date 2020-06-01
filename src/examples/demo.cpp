@@ -26,7 +26,7 @@ struct Document {
     std::vector<std::string> words;
 };
 
-namespace {
+namespace detail {
 
 // TODO(sw) vector_size_accessor
 

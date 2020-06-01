@@ -15,7 +15,7 @@
 namespace generic_format {
 namespace mapping {
 
-namespace {
+namespace detail {
 
 // TODO extract the (indexed) transformation logic into helper.hpp?
 template<std::size_t Index, class Acc, class TupleType, class... Formats>
@@ -44,7 +44,7 @@ struct sequence_helper {
 }
 
 template<class... Formats>
-constexpr typename sequence_helper<Formats...>::type tuple(Formats...) {
+constexpr typename detail::sequence_helper<Formats...>::type tuple(Formats...) {
     return {};
 }
 

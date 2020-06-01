@@ -15,7 +15,7 @@
 namespace generic_format {
 namespace mapping {
 
-namespace {
+namespace detail {
 
 
 // size is explicit
@@ -43,10 +43,10 @@ struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
     using type = ast::repeated<ast::variable_accessor_binding<size_variable, size_accessor>, ast::dereference<value_reference>>;
 };
 
-}
+} // end namespace detail
 
 template<class SizeVariable, class ValueFormat>
-static constexpr typename vector_helper<SizeVariable, ValueFormat>::type vector(SizeVariable, ValueFormat) {
+static constexpr typename detail::vector_helper<SizeVariable, ValueFormat>::type vector(SizeVariable, ValueFormat) {
     return {};
 }
 

@@ -24,7 +24,7 @@ struct conditional_type<false, T1, T2> {
     using type = T2;
 };
 
-namespace {
+namespace detail {
 
 // This will get easier with C++14.
 
@@ -71,12 +71,12 @@ struct constexpr_plus {
 
 template<class Operator, typename... Ts>
 constexpr typename Operator::result_type fold_left(Operator op, Ts... ts) {
-    return folder<Operator, Ts...>(op, ts...).result;
+    return detail::folder<Operator, Ts...>(op, ts...).result;
 }
 
 template<class T, typename... Ts>
 constexpr T sum(T initial_value, Ts... ts) {
-    return fold_left(constexpr_plus<T>(), initial_value, ts...);
+    return fold_left(detail::constexpr_plus<T>(), initial_value, ts...);
 }
 
 namespace variadic {
@@ -152,7 +152,7 @@ template<template<class> class Predicate, class Arg, class... Args>
 struct for_any<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value || for_any<Predicate, Args...>::value>
 {};
 
-namespace {
+namespace detail {
 
 template<template<class> class Predicate, std::size_t N, class... Args>
 struct index_of_helper : std::integral_constant<std::size_t, N>
@@ -171,7 +171,7 @@ struct index_of_helper<Predicate, N, Arg, Args...> : std::integral_constant<std:
  */
 template<template<class> class Predicate, class... Args>
 struct index_of {
-    static constexpr auto value = index_of_helper<Predicate, 0, Args...>::value;
+    static constexpr auto value = detail::index_of_helper<Predicate, 0, Args...>::value;
     static_assert(value < sizeof...(Args), "Item not found in variadic argument list!");
 };
 

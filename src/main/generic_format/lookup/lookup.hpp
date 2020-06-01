@@ -26,7 +26,7 @@ constexpr _lookup_type<IdFormat, ValueFormat> lookup_type(IdFormat, ValueFormat)
     return {};
 }
 
-namespace {
+namespace detail {
 
 struct lookup_table_placeholder {};
 static constexpr auto lookup_table_size_var = generic_format::dsl::var(lookup_table_placeholder(), generic_format::primitives::uint32_le);
@@ -74,7 +74,7 @@ struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
             generic_format::mapping::vector_mapping());
 };
 
-}
+} // end namespace detail
 
 /** @brief Create a format for a LookupType.
  *

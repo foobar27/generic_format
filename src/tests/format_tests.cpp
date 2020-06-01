@@ -172,7 +172,7 @@ void read_chunks(R& reader, C& c, CS... cs) {
     read_chunks(reader, cs...);
 }
 
-namespace {
+namespace detail {
 
 // TODO simplify via helper.hpp (sum function)
 template <class... CS>
@@ -187,11 +187,11 @@ template <class C, class... CS>
 struct sizes_sum<C, CS...> {
     using _current_format                  = typename C::format;
     static constexpr auto _current_value   = _current_format::size;
-    static constexpr auto _remaining_value = sizes_sum<CS...>::value;
+    static constexpr auto _remaining_value = detail::sizes_sum<CS...>::value;
     static constexpr auto value            = _current_value + _remaining_value;
 };
 
-}
+} // end namespace detail
 
 template <class TARGET, class C, class... CS>
 void check_round_trip(std::size_t expected_size, TARGET&& target, C c, CS... cs) {
@@ -209,7 +209,7 @@ void check_round_trip(std::size_t expected_size, TARGET&& target, C c, CS... cs)
 
 template <class TARGET, class C, class... CS>
 auto check_round_trip(TARGET&& target, C c, CS... cs) -> typename std::enable_if<!std::is_integral<TARGET>::value, void>::type {
-    constexpr auto total_size = sizes_sum<C, CS...>::value;
+    constexpr auto total_size = detail::sizes_sum<C, CS...>::value;
     static_assert(total_size.is_fixed(), "You need to provide expected_size for dynamic formats!");
     check_round_trip(total_size.size(), std::move(target), c, cs...);
 }
