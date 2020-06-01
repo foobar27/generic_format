@@ -16,8 +16,8 @@
 #include "generic_format/mapping/mapping.hpp"
 
 struct Image {
-    std::uint32_t width;
-    std::uint32_t height;
+    std::uint32_t             width;
+    std::uint32_t             height;
     std::vector<std::uint8_t> data;
 };
 
@@ -29,7 +29,7 @@ namespace {
 
 // TODO vector_size_accessor
 
-//struct push_back_visitor {
+// struct push_back_visitor {
 
 //    template<class DataStructure, class Element>
 //    void operator()(DataStructure & ds, const Element & element) const {
@@ -37,9 +37,8 @@ namespace {
 //    }
 //};
 
-
-//template<class Placeholder, class SizeFormat, class ElementFormat>
-//struct vector_format_helper {
+// template<class Placeholder, class SizeFormat, class ElementFormat>
+// struct vector_format_helper {
 //    using size_ref = generic_format::ast::reference<Placeholder, SizeFormat>;
 //    using native_element_type = typename ElementFormat::native_type;
 //    using type = decltype(
@@ -52,12 +51,13 @@ namespace {
 //};
 }
 
-//template<class Placeholder, class SizeFormat, class ElementFormat>
-//constexpr typename vector_format_helper<Placeholder, SizeFormat, ElementFormat>::type vector_format(Placeholder, SizeFormat, ElementFormat) {
+// template<class Placeholder, class SizeFormat, class ElementFormat>
+// constexpr typename vector_format_helper<Placeholder, SizeFormat, ElementFormat>::type vector_format(Placeholder, SizeFormat,
+// ElementFormat) {
 //    return {};
 //}
 
-//void nested_vector_example() {
+// void nested_vector_example() {
 //    using namespace generic_format::primitives;
 //    using namespace generic_format::dsl;
 //    using namespace generic_format::targets::iostream;
@@ -71,7 +71,6 @@ namespace {
 //                          vector_format(GENERIC_FORMAT_PLACEHOLDER(_, 1),
 //                                        uint32_le,
 //                                        string_format(uint32_le)))
-
 
 //    string fileName {"nested.out" };
 
@@ -96,7 +95,6 @@ namespace {
 //    }
 //}
 
-
 int main() {
     using namespace generic_format::primitives;
     using namespace generic_format::dsl;
@@ -104,57 +102,51 @@ int main() {
     using namespace std;
     using namespace demo;
 
-    string fileName {"demo.out" };
+    string fileName{"demo.out"};
 
-    static constexpr auto f = generic_format::mapping::tuple(uint16_le, uint32_le);
-    static constexpr auto words_format = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
-    static constexpr auto Packet_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
-                GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
-                GENERIC_FORMAT_MEMBER(Packet, port,   uint16_le));
+    static constexpr auto f             = generic_format::mapping::tuple(uint16_le, uint32_le);
+    static constexpr auto words_format  = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
+    static constexpr auto Packet_format = adapt_struct(GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
+                                                       GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
+                                                       GENERIC_FORMAT_MEMBER(Packet, port, uint16_le));
 
     placeholder<0> _;
 
-    static constexpr auto width_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
+    static constexpr auto width_var  = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
     static constexpr auto height_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-    static constexpr auto Image_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Image, width,  width_var),
-                GENERIC_FORMAT_MEMBER(Image, height, height_var),
-                // TODO replace the following line by container_format (still need to find my way through the derefs...)
-                GENERIC_FORMAT_MEMBER(Image, data,   generic_format::mapping::vector(eval(width_var*height_var), uint8_le))
-                );
+    static constexpr auto Image_format
+        = adapt_struct(GENERIC_FORMAT_MEMBER(Image, width, width_var),
+                       GENERIC_FORMAT_MEMBER(Image, height, height_var),
+                       // TODO replace the following line by container_format (still need to find my way through the derefs...)
+                       GENERIC_FORMAT_MEMBER(Image, data, generic_format::mapping::vector(eval(width_var * height_var), uint8_le)));
 
-    static constexpr auto Document_format = adapt_struct(
-                GENERIC_FORMAT_MEMBER(Document, words, container_format(uint32_le, string_format(uint8_le)))
-                );
+    static constexpr auto Document_format
+        = adapt_struct(GENERIC_FORMAT_MEMBER(Document, words, container_format(uint32_le, string_format(uint8_le))));
 
-
-    constexpr auto size_container = decltype(Packet_format)::size;
+    constexpr auto        size_container         = decltype(Packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size;
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
     {
-        ofstream os {fileName, ios_base::out | ios_base::binary};
-        auto writer = iostream_target::writer {&os};
-        tuple<uint16_t, uint32_t> v {42, 99};
+        ofstream                  os{fileName, ios_base::out | ios_base::binary};
+        auto                      writer = iostream_target::writer{&os};
+        tuple<uint16_t, uint32_t> v{42, 99};
         writer(v, f);
 
-        Packet packet { 1, 2, 3 };
+        Packet packet{1, 2, 3};
         writer(packet, Packet_format);
-        tuple<string, string> words {"hello", "world"};
+        tuple<string, string> words{"hello", "world"};
         writer(words, words_format);
 
-        Image image {2, 3,
-                     {1, 2, 3,
-                      4, 5, 6}};
+        Image image{2, 3, {1, 2, 3, 4, 5, 6}};
         writer(image, Image_format);
 
-        Document document {{"hello", "world"}};
+        Document document{{"hello", "world"}};
         writer(document, Document_format);
     }
     {
-        ifstream is {fileName, ios_base::in | ios_base::binary};
-        auto reader = iostream_target::reader {&is};
+        ifstream is{fileName, ios_base::in | ios_base::binary};
+        auto     reader = iostream_target::reader{&is};
 
         tuple<uint16_t, uint32_t> v;
         reader(v, f);
@@ -183,5 +175,5 @@ int main() {
             cout << " " << word;
         }
     }
-//    nested_vector_example();
+    //    nested_vector_example();
 }

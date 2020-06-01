@@ -14,12 +14,10 @@
 
 #include "generic_format/lookup/lookup_table.hpp"
 
-
 using namespace std;
 using namespace generic_format::lookup;
 
-BOOST_AUTO_TEST_CASE( population )
-{
+BOOST_AUTO_TEST_CASE(population) {
     lookup_table_builder<uint, string> builder0(0, 2);
     builder0.push_back("0");
     builder0.push_back("1");
@@ -35,7 +33,6 @@ BOOST_AUTO_TEST_CASE( population )
     lookup_table_builder<uint, string> builder3(5, 1);
     builder3.push_back("5");
 
-
     vector<lookup_table_builder<uint, string>> builders;
     builders.push_back(builder2);
     builders.push_back(builder0);
@@ -44,7 +41,7 @@ BOOST_AUTO_TEST_CASE( population )
 
     lookup_table<uint, string> table(builders.begin(), builders.end());
 
-    vector<string> expected {"0", "1", "2", "3", "4", "5"};
+    vector<string>                      expected{"0", "1", "2", "3", "4", "5"};
     lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
     BOOST_CHECK_EQUAL(snapshot.values(), expected);
 
@@ -53,10 +50,10 @@ BOOST_AUTO_TEST_CASE( population )
     BOOST_CHECK_EQUAL(snapshot.values(), expected);
 }
 
-BOOST_AUTO_TEST_CASE( lookup ) {
+BOOST_AUTO_TEST_CASE(lookup) {
     lookup_table<uint, string> table;
 
-    vector<string> expected {};
+    vector<string>                      expected{};
     lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
     BOOST_CHECK_EQUAL(snapshot.values(), expected);
 

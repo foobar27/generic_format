@@ -18,7 +18,7 @@ struct Packet {
 
 }
 
-std::ostream& operator<<(std::ostream& os, const demo::Packet & p) {
+std::ostream& operator<<(std::ostream& os, const demo::Packet& p) {
     os << "Packet[source=" << p.source << ", target=" << p.target << ", port=" << p.port << "]";
     return os;
 }
