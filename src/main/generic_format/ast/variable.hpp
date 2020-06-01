@@ -45,7 +45,7 @@ struct is_variable<binary_operator<Variable1, Variable2, Operator>> {
 namespace {
 template<class T1, class T2>
 struct sum_operator {
-    using result_type = decltype((*(T1*)0) + (*(T2*)0)); // TODO this looks really ugly
+    using result_type = decltype((*(T1*)(nullptr)) + (*(T2*)(nullptr))); // TODO this looks really ugly
     result_type operator()(const T1 & t1, const T2 & t2) const {
         return t1 + t2;
     }
@@ -53,7 +53,7 @@ struct sum_operator {
 
 template<class T1, class T2>
 struct product_operator {
-    using result_type = decltype((*(T1*)0) * (*(T2*)0)); // TODO this looks really ugly
+    using result_type = decltype((*(T1*)(nullptr)) * (*(T2*)(nullptr))); // TODO this looks really ugly
     result_type operator()(const T1 & t1, const T2 & t2) const {
         return t1 * t2;
     }

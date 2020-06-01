@@ -9,9 +9,9 @@
 #define BOOST_TEST_MODULE "COMPILE_TESTS"
 #include "test_common.hpp"
 
+#include "generic_format/dsl.hpp"
 #include "generic_format/generic_format.hpp"
 #include "generic_format/primitives.hpp"
-#include "generic_format/dsl.hpp"
 
 #include <type_traits>
 
@@ -23,10 +23,10 @@ BOOST_AUTO_TEST_CASE( dummy )
 
 //
 // helper.hpp
-// TODO move tests to separate file?
+// TODO(sw) move tests to separate file?
 //
 
-void test_conditional_type() {
+static void test_conditional_type() {
     using namespace std;
     using namespace generic_format;
 
@@ -37,20 +37,20 @@ void test_conditional_type() {
     static_assert(t_true::value, "true");
 }
 
-void test_sum() {
+static void test_sum() {
     using generic_format::sum;
     static_assert(sum(0) == 0, "empty sum");
     static_assert(sum(0, 1, 2, 3) == 6, "sum");
 }
 
-void test_index_of() {
+static void test_index_of() {
     using generic_format::variadic::index_of;
     using std::is_integral;
     static_assert(index_of<is_integral, int>::value == 0, "first");
     static_assert(index_of<is_integral, double, int>::value == 1, "second");
 }
 
-void test_for_all() {
+static void test_for_all() {
     using namespace std;
     using namespace generic_format::variadic;
     static_assert(for_all<is_integral>::value, "[]");
@@ -61,7 +61,7 @@ void test_for_all() {
     static_assert(for_all<is_integral, int, int>::value, "[true, true]");
 }
 
-void test_for_any() {
+static void test_for_any() {
     using namespace std;
     using namespace generic_format::variadic;
     static_assert(!for_any<is_integral>::value, "[]");
@@ -77,19 +77,19 @@ struct into_tuple {
     using type = std::tuple<T>;
 };
 
-void test_transform() {
+static void test_transform() {
     using namespace generic_format::variadic;
     using T = transform<into_tuple, generic_list<int, double, char>>::type;
     generic_list<std::tuple<int>, std::tuple<double>, std::tuple<char>> t = T();
 }
 
-void test_is_format() {
+static void test_is_format() {
     using namespace generic_format::ast;
     static_assert(is_format<uint8_le_t>::value, "positive is_format");
     static_assert(!is_format<uint8_t>::value, "negaitve is_format");
 }
 
-void test_generic_list() {
+static void test_generic_list() {
     using namespace generic_format::variadic;
 
     using X1 = append_element<generic_list<>, int>::type;
@@ -106,7 +106,7 @@ void test_generic_list() {
 
 }
 
-void test_is_unmapped_sequence() {
+static void test_is_unmapped_sequence() {
     using namespace generic_format::variadic;
     using namespace generic_format::dsl;
     using namespace generic_format::ast;

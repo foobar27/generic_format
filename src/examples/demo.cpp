@@ -8,12 +8,13 @@
 */
 #include <fstream>
 #include <vector>
+
 #include "packet.hpp"
 
-#include "generic_format/generic_format.hpp"
-#include "generic_format/targets/iostream.hpp"
 #include "generic_format/dsl.hpp"
+#include "generic_format/generic_format.hpp"
 #include "generic_format/mapping/mapping.hpp"
+#include "generic_format/targets/iostream.hpp"
 
 struct Image {
     std::uint32_t             width;
@@ -27,7 +28,7 @@ struct Document {
 
 namespace {
 
-// TODO vector_size_accessor
+// TODO(sw) vector_size_accessor
 
 // struct push_back_visitor {
 
@@ -102,7 +103,7 @@ int main() {
     using namespace std;
     using namespace demo;
 
-    string fileName{"demo.out"};
+    string file_name{"demo.out"};
 
     static constexpr auto f             = generic_format::mapping::tuple(uint16_le, uint32_le);
     static constexpr auto words_format  = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
@@ -117,7 +118,7 @@ int main() {
     static constexpr auto Image_format
         = adapt_struct(GENERIC_FORMAT_MEMBER(Image, width, width_var),
                        GENERIC_FORMAT_MEMBER(Image, height, height_var),
-                       // TODO replace the following line by container_format (still need to find my way through the derefs...)
+                       // TODO(sw) replace the following line by container_format (still need to find my way through the derefs...)
                        GENERIC_FORMAT_MEMBER(Image, data, generic_format::mapping::vector(eval(width_var * height_var), uint8_le)));
 
     static constexpr auto Document_format
@@ -128,7 +129,7 @@ int main() {
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
     {
-        ofstream                  os{fileName, ios_base::out | ios_base::binary};
+        ofstream                  os{file_name, ios_base::out | ios_base::binary};
         auto                      writer = iostream_target::writer{&os};
         tuple<uint16_t, uint32_t> v{42, 99};
         writer(v, f);
@@ -145,14 +146,14 @@ int main() {
         writer(document, Document_format);
     }
     {
-        ifstream is{fileName, ios_base::in | ios_base::binary};
+        ifstream is{file_name, ios_base::in | ios_base::binary};
         auto     reader = iostream_target::reader{&is};
 
         tuple<uint16_t, uint32_t> v;
         reader(v, f);
         cout << "read: " << get<0>(v) << " " << get<1>(v) << endl;
 
-        Packet packet;
+        Packet packet{};
         reader(packet, Packet_format);
         cout << "read: " << packet << endl;
 
@@ -171,7 +172,7 @@ int main() {
         Document document;
         reader(document, Document_format);
         cout << "Document:" << endl;
-        for (auto word : document.words) {
+        for (const auto& word : document.words) {
             cout << " " << word;
         }
     }

@@ -6,15 +6,15 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#include <sstream>
+#include <array>
 #include <cassert>
 #include <chrono>
-#include <array>
+#include <sstream>
 
-#include "packet.hpp"
-#include "generic_format/generic_format.hpp"
 #include "generic_format/dsl.hpp"
+#include "generic_format/generic_format.hpp"
 #include "generic_format/targets/unbounded_memory.hpp"
+#include "packet.hpp"
 
 using namespace std;
 using namespace demo;
@@ -29,12 +29,12 @@ static constexpr auto Packet_format = adapt_struct(GENERIC_FORMAT_MEMBER(Packet,
 int main() {
     constexpr unsigned int number_of_iterations = 100000;
     constexpr unsigned int number_of_packets    = 10000;
-    Packet                 packet;
+    Packet                 packet{};
     auto                   start = chrono::high_resolution_clock::now();
 
     static constexpr auto                                                size_container         = decltype(Packet_format)::size;
     static constexpr std::size_t                                         serialized_packet_size = size_container.size;
-    std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer;
+    std::array<std::uint8_t, number_of_packets * serialized_packet_size> buffer{};
     void*                                                                data = static_cast<void*>(buffer.data());
 
     int tmp = 0;
@@ -45,7 +45,7 @@ int main() {
             packet.source = i;
             packet.target = p;
             packet.port   = p;
-            // TODO we should be able to register the mapping Packet -> Packet_format as a default format, somehow? At some intermediate
+            // TODO(sw) we should be able to register the mapping Packet -> Packet_format as a default format, somehow? At some intermediate
             // layer?
             writer(packet, Packet_format);
         }
