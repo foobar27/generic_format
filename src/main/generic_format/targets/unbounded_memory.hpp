@@ -19,40 +19,40 @@ namespace unbounded_memory {
 
 struct unbounded_memory_raw_writer : base_raw_writer {
 
-    explicit unbounded_memory_raw_writer(void * data) : data{reinterpret_cast<unsigned char*>(data)} {}
+    explicit unbounded_memory_raw_writer(void * data) : m_data{reinterpret_cast<unsigned char*>(data)} {}
 
     void operator()(const void * p, std::size_t size) {
-        std::memcpy(data, p, size);
-        data += size;
+        std::memcpy(m_data, p, size);
+        m_data += size;
     }
 
     template<class T>
     void operator()(const T & v) {
-        *reinterpret_cast<T*>(data) = v;
-        data += sizeof(T);
+        *reinterpret_cast<T*>(m_data) = v;
+        m_data += sizeof(T);
     }
 
 private:
-    unsigned char * data;
+    unsigned char * m_data;
 };
 
 struct unbounded_memory_raw_reader : base_raw_reader {
 
-    explicit unbounded_memory_raw_reader(const void * data) : data{reinterpret_cast<const unsigned char*>(data)} {}
+    explicit unbounded_memory_raw_reader(const void * data) : m_data{reinterpret_cast<const unsigned char*>(data)} {}
 
     void operator()(void * p, std::size_t size) {
-        std::memcpy(p, data, size);
-        data += size;
+        std::memcpy(p, m_data, size);
+        m_data += size;
     }
 
     template<class T>
     void operator()(T & v) {
-        v = *reinterpret_cast<const T*>(data);
-        data += sizeof(T);
+        v = *reinterpret_cast<const T*>(m_data);
+        m_data += sizeof(T);
     }
 
 private:
-    const unsigned char * data;
+    const unsigned char * m_data;
 };
 
 
