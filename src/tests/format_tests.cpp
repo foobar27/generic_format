@@ -220,8 +220,8 @@ template<class TARGET, class C, class... CS>
 auto check_round_trip(TARGET && target, C c, CS... cs)
 -> typename std::enable_if<!std::is_integral<TARGET>::value, void>::type {
     constexpr auto total_size = sizes_sum<C, CS...>::value;
-    static_assert(total_size.is_fixed, "You need to provide expected_size for dynamic formats!");
-    check_round_trip(total_size.size, std::move(target), c, cs...);
+    static_assert(total_size.is_fixed(), "You need to provide expected_size for dynamic formats!");
+    check_round_trip(total_size.size(), std::move(target), c, cs...);
 }
 
 using namespace generic_format::dsl;

@@ -7,28 +7,37 @@
         http://www.boost.org/LICENSE_1_0.txt)
 */
 #pragma once
+
+#include <cstddef>
+
 namespace generic_format {
 namespace ast {
 
 struct size_container {
-    bool is_fixed;
-    std::size_t size;
 
     constexpr size_container()
-        : is_fixed(true)
-        , size(0)
-    {}
+        : m_is_fixed(true)
+        , m_size(0) { }
+
+    constexpr auto is_fixed() const noexcept {
+        return m_is_fixed;
+    }
+
+    constexpr auto size() const noexcept {
+        return m_size;
+    }
 
     constexpr size_container(bool is_fixed, std::size_t size)
-        : is_fixed(is_fixed)
-        , size(size)
-    {}
+        : m_is_fixed(is_fixed)
+        , m_size(size) { }
 
     constexpr size_container operator+(size_container other) const {
-        return this->is_fixed && other.is_fixed
-                ? size_container(true,  this->size + other.size)
-                : size_container(false, 0);
+        return this->m_is_fixed && other.m_is_fixed ? size_container(true, this->m_size + other.m_size) : size_container(false, 0);
     }
+
+private:
+    bool        m_is_fixed;
+    std::size_t m_size;
 };
 
 constexpr size_container fixed_size(std::size_t size) {

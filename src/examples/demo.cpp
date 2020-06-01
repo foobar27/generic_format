@@ -125,7 +125,7 @@ int main() {
         = adapt_struct(GENERIC_FORMAT_MEMBER(Document, words, container_format(uint32_le, string_format(uint8_le))));
 
     constexpr auto        size_container         = decltype(Packet_format)::size;
-    constexpr std::size_t serialized_packet_size = size_container.size;
+    constexpr std::size_t serialized_packet_size = size_container.size();
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
     {
