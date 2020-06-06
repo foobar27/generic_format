@@ -22,9 +22,6 @@ struct infer_format {
     using type               = Format;
     using native_type        = NativeType;
     using format_native_type = typename Format::native_type;
-
-    static_assert(std::is_convertible<native_type, format_native_type>::value && std::is_convertible<format_native_type, native_type>::value,
-                  "Conflicting types!");
 };
 
 template <class Inferrer, class NativeType>

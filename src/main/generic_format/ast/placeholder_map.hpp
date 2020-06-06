@@ -32,6 +32,9 @@ struct is_placeholder_map_entry : std::false_type { };
 template <class T, typename Placeholder>
 struct is_placeholder_map_entry<placeholder_map_entry<T, Placeholder>> : std::true_type { };
 
+template <class T>
+concept PlaceholderMapEntry = is_placeholder_map_entry<T>::value;
+
 template <typename Placeholder>
 struct placeholder_matcher {
 
@@ -46,10 +49,8 @@ struct placeholder_matcher {
  * deserialization.
  * @tparam Entries variadic argument representing the entries of type placeholder_map_entry.
  */
-template <class... Entries>
-struct placeholder_map {
-    static_assert(variadic::for_all<is_placeholder_map_entry, Entries...>::value, "A placeholder_map must have valid entries!");
-};
+template <PlaceholderMapEntry... Entries>
+struct placeholder_map { };
 
 template <class Map>
 struct is_placeholder_map : std::false_type { };

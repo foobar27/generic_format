@@ -22,11 +22,6 @@ struct variable;
 template <class T>
 struct is_variable;
 
-namespace detail {
-template <class Variable1, class Variable2, class Operator>
-struct binary_operator;
-} // end namespace detail
-
 template <class T>
 struct is_variable : std::integral_constant<bool, std::is_base_of<variable_base, T>::value> { };
 
@@ -34,6 +29,14 @@ template <typename Placeholder, class ElementType>
 struct is_variable<variable<Placeholder, ElementType>> {
     static constexpr bool value = true;
 };
+
+template <class T>
+concept Variable = is_variable<T>::value;
+
+namespace detail {
+template <Variable Variable1, Variable Variable2, class Operator>
+struct binary_operator;
+} // end namespace detail
 
 template <class Variable1, class Variable2, class Operator>
 struct is_variable<detail::binary_operator<Variable1, Variable2, Operator>> {
@@ -57,15 +60,13 @@ struct product_operator {
     }
 };
 
-template <class Variable1, class Variable2, class Operator>
+template <Variable Variable1, Variable Variable2, class Operator>
 struct binary_operator : public base<children_list<Variable1, Variable2>>, variable_base {
     using left_type         = Variable1;
     using right_type        = Variable2;
     using left_native_type  = typename Variable1::native_type;
     using right_native_type = typename Variable2::native_type;
     using native_type       = typename Operator::result_type;
-    static_assert(is_variable<Variable1>::value, "Variable2 must be a variable!");
-    static_assert(is_variable<Variable2>::value, "Variable2 must be a variable!");
 
     template <class State>
     auto operator()(State& state) const {

@@ -75,9 +75,7 @@ struct merge_children_lists<List1, children_list<Element2, Elements2...>> {
 };
 
 template <class Children>
-struct base : base_base {
-    static_assert(is_children_list<Children>::value, "'Children' needs to be a children_list");
-
+requires is_children_list<Children>::value struct base : base_base {
     using children = Children;
 };
 

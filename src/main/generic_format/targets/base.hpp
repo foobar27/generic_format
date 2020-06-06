@@ -46,9 +46,9 @@ requires(!ast::is_variable<Format>::value) struct helper<Format> {
     using type = ast::placeholder_map<>;
 };
 
-template <class Variable>
-requires ast::is_variable<Variable>::value struct helper<Variable> {
-    using type = ast::placeholder_map<ast::placeholder_map_entry<typename Variable::native_type, typename Variable::placeholder>>;
+template <ast::Variable V>
+struct helper<V> {
+    using type = ast::placeholder_map<ast::placeholder_map_entry<typename V::native_type, typename V::placeholder>>;
 };
 
 template <class Format>
