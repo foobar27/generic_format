@@ -93,7 +93,7 @@ struct container : generic_format::ast::base<generic_format::ast::children_list<
 
 };
 
-}
+} // end namespace mapping
 
 
 namespace dsl {
@@ -134,5 +134,5 @@ constexpr typename ast::inferring_format<_container_format_type_inferrer<IndexFo
     return {};
 }
 
-}
-}
+} // end namespace dsl
+} // end namespace generic_format

@@ -50,7 +50,7 @@ namespace detail {
 
 //    );
 //};
-}
+} // end namespace detail
 
 // template<class Placeholder, class SizeFormat, class ElementFormat>
 // constexpr typename vector_format_helper<Placeholder, SizeFormat, ElementFormat>::type vector_format(Placeholder, SizeFormat,

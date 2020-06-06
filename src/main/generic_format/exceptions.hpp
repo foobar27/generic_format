@@ -21,4 +21,4 @@ public:
     virtual char const * what() const noexcept { return "Deserialization exception."; }
 };
 
-}
+} // end namespace generic_format

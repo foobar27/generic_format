@@ -79,5 +79,5 @@ struct versioned : base<children_list<VersionFormat, BaseFormat>> {
 };
 
 
-}
-}
+} // end namespace ast
+} // end namespace generic_format

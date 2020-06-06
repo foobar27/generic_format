@@ -13,8 +13,7 @@
 #include "generic_format/ast/base.hpp"
 #include "generic_format/ast/variable.hpp"
 
-namespace generic_format {
-namespace targets {
+namespace generic_format::targets {
 
 namespace detail {
 
@@ -59,7 +58,7 @@ struct map_for_format {
     using type = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
 };
 
-}
+} // end namespace detail
 
 /** @brief An operation to write a type according to a specific format.
  *
@@ -141,5 +140,4 @@ struct base_target {
     using reader = targets::reader<RawReader>;
 };
 
-}
-}
+} // end namespace generic_format::targets

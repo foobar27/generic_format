@@ -13,9 +13,7 @@
 
 #include "generic_format/targets/base.hpp"
 
-namespace generic_format {
-namespace targets {
-namespace unbounded_memory {
+namespace generic_format::targets::unbounded_memory {
 
 struct unbounded_memory_raw_writer : base_raw_writer {
 
@@ -64,6 +62,4 @@ private:
 struct unbounded_memory_target : base_target<unbounded_memory_raw_writer, unbounded_memory_raw_reader>
 {};
 
-}
-}
-}
+} // end namespace generic_format::targets::unbounded_memory

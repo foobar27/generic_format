@@ -10,9 +10,7 @@
 
 #include "generic_format/targets/base.hpp"
 
-namespace generic_format {
-namespace targets {
-namespace iostream {
+namespace generic_format::targets::iostream {
 
 struct iostream_raw_writer : base_raw_writer {
 
@@ -54,6 +52,4 @@ private:
 struct iostream_target : base_target<iostream_raw_writer, iostream_raw_reader>
 {};
 
-}
-}
-}
+} // end namespace generic_format::targets::iostream

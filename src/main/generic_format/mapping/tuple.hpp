@@ -12,8 +12,7 @@
 
 #include <tuple>
 
-namespace generic_format {
-namespace mapping {
+namespace generic_format::mapping {
 
 namespace detail {
 
@@ -41,13 +40,11 @@ struct sequence_helper {
     using type = ast::sequence<tuple_type, children_list>;
 };
 
-}
+} // end namespace detail
 
 template<class... Formats>
 constexpr typename detail::sequence_helper<Formats...>::type tuple(Formats...) {
     return {};
 }
 
-
-}
-}
+} // end namespace generic_format::mapping

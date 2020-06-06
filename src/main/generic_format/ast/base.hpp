@@ -18,8 +18,7 @@
 #include "generic_format/ast/size_container.hpp"
 #include "generic_format/ast/placeholder_container.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 struct base_base
 {};
@@ -83,5 +82,4 @@ struct base : base_base {
     using children = ChildrenList;
 };
 
-}
-}
+} // end namespace generic_format::ast

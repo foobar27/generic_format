@@ -10,8 +10,7 @@
 
 #include <cstddef>
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 struct size_container {
 
@@ -48,5 +47,4 @@ constexpr size_container dynamic_size() {
     return {false, 0};
 }
 
-}
-}
+} // end namespace generic_format::ast

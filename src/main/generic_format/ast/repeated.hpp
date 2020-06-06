@@ -11,8 +11,7 @@
 #include "generic_format/ast/base.hpp"
 #include <vector>
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 /** @brief
  *
@@ -49,5 +48,4 @@ struct repeated : base<children_list<SizeReference, ValueFormat>> {
 
 };
 
-}
-}
+} // end namespace generic_format::ast

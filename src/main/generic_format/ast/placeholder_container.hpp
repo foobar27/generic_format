@@ -13,14 +13,13 @@
 
 #include "placeholder_map.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 /** @brief A container for the values of placeholders.
  *
  * @tparam Map a placeholder_map
  */
-template<class Map>
+template<class Map> // TODO(sw) requires is_placeholder_map<Map>
 class placeholder_container {
 public:
     static_assert(is_placeholder_map<Map>::value, "Map needs to be a placeholder map!");
@@ -41,5 +40,4 @@ private:
     tuple_type _tuple;
 };
 
-}
-}
+} // end namespace generic_format::ast

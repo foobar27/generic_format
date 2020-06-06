@@ -19,7 +19,7 @@ namespace generic_format { namespace datastructures {
 namespace format {
 template<class IndexFormat>
 struct dense_reversible_multimap_format;
-}
+} // end namespace format
 
 template<class IndexType>
 class dense_reversible_multimap {
@@ -127,7 +127,8 @@ struct dense_reversible_multimap_format : generic_format::ast::base<generic_form
 
 };
 
-}}
+} // end namespace format
+} // end namespace datastructures
 
 namespace dsl {
 
@@ -145,6 +146,5 @@ constexpr datastructures::format::dense_reversible_multimap_format<IndexFormat> 
     return {};
 }
 
-}
-
-}
+} // end namespace dsl
+} // end namespace generic_format

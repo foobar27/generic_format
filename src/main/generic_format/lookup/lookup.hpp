@@ -12,7 +12,7 @@
 #include "generic_format/mapping/mapping.hpp"
 #include "generic_format/primitives.hpp"
 
-namespace generic_format{
+namespace generic_format {
 namespace lookup {
 
 template<class IdFormat, class ValueFormat>
@@ -86,5 +86,5 @@ constexpr lookup_table_format(const LookupType) {
     return {};
 }
 
-}
-}
+} // end namespace lookup
+} // end namespace generic_format

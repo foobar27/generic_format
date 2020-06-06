@@ -12,8 +12,7 @@
 #include "generic_format/ast/reference.hpp"
 #include "generic_format/helper.hpp"
 
-namespace generic_format {
-namespace mapping {
+namespace generic_format::mapping {
 
 namespace detail {
 
@@ -41,5 +40,4 @@ struct struct_adaptor {
     using type = ast::sequence<class_type, children_list>;
 };
 
-}
-}
+} // end namespace generic_format::mapping

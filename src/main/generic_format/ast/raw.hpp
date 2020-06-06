@@ -10,8 +10,7 @@
 
 #include "generic_format/ast/base.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 template<class T>
 struct raw : base<children_list<>> {
@@ -29,5 +28,4 @@ struct raw : base<children_list<>> {
     }
 };
 
-}
-}
+} // end namespace generic_format::ast

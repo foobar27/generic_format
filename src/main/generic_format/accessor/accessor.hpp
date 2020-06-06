@@ -10,8 +10,7 @@
 
 #include <tuple>
 
-namespace generic_format {
-namespace accessor {
+namespace generic_format::accessor {
 
 struct accessor_base { };
 
@@ -104,5 +103,4 @@ struct vector_item_accessor : indexed_reference_accessor<VectorType, ValueType> 
     }
 };
 
-}
-}
+} // end namespace generic_format::accessor

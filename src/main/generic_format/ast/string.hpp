@@ -10,8 +10,7 @@
 
 #include "generic_format/ast/base.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 
 /** @brief A format representing a string which is serialized via its length followed by its data.
@@ -48,5 +47,4 @@ struct string : base<children_list<LengthFormat>> {
 };
 
 
-}
-}
+} // end namespace generic_format::ast

@@ -17,8 +17,7 @@
 
 #include "generic_format/exceptions.hpp"
 
-namespace generic_format {
-namespace lookup{
+namespace generic_format::lookup {
 
 template<class IdType, class ValueType, bool thread_safe = true>
 class lookup_table;
@@ -176,5 +175,4 @@ private:
     mutable mutex_type _mutex;
 };
 
-}
-}
+} // end namespace generic_format::lookup

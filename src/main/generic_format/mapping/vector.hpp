@@ -12,8 +12,7 @@
 #include <generic_format/accessor/accessor.hpp>
 #include <generic_format/ast/reference.hpp>
 
-namespace generic_format {
-namespace mapping {
+namespace generic_format::mapping {
 
 namespace detail {
 
@@ -50,5 +49,4 @@ static constexpr typename detail::vector_helper<SizeVariable, ValueFormat>::type
     return {};
 }
 
-}
-}
+} // end namespace generic_format::mapping

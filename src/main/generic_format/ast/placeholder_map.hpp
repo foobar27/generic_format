@@ -13,8 +13,7 @@
 
 #include "generic_format/helper.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 /** @brief Type specifying an entry of a placeholder_map.
  *
@@ -141,5 +140,4 @@ struct merge_placeholder_maps<placeholder_map<Entry, Entries...>, Map2> {
     using type = typename merge_placeholder_maps<placeholder_map<Entries...>, typename placeholder_map_put<Map2, Entry>::type>::type;
 };
 
-}
-}
+} // end namespace generic_format::ast

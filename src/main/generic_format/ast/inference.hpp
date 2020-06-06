@@ -12,7 +12,7 @@
 
 #include "generic_format/ast/base.hpp"
 
-namespace generic_format { namespace ast {
+namespace generic_format::ast {
 
 template<class Inferrer>
 struct inferring_format {};
@@ -32,4 +32,4 @@ struct infer_format<inferring_format<Inferrer>, NativeType> {
     using type = typename Inferrer::template infer<NativeType>;
 };
 
-}}
+} // end namespace generic_format::ast

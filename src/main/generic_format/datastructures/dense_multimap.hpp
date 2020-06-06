@@ -17,7 +17,7 @@ namespace generic_format { namespace datastructures {
 namespace format {
 template<class IndexFormat, class ValueFormat>
 struct dense_multimap_format;
-}
+} // end namespace format
 
 template<class IndexType, class ValueType>
 class dense_multimap {
@@ -107,9 +107,8 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
 
 };
 
-}
-
-}
+} // end namespace format
+} // end namespace datastructures
 
 namespace dsl {
 /**
@@ -127,6 +126,6 @@ constexpr datastructures::format::dense_multimap_format<IndexFormat, ValueFormat
     return {};
 }
 
-}
-}
+} // end namespace dsl
+} // end namespace generic_format
 

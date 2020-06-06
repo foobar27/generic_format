@@ -12,8 +12,7 @@
 
 #include <tuple>
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 template<class NativeType, class ChildrenList>
 struct sequence;
@@ -67,5 +66,4 @@ template<class NativeType, class... Formats>
 struct is_sequence<ast::sequence<NativeType, children_list<Formats...>>> : public std::true_type
 {};
 
-}
-}
+} // end namespace generic_format::ast

@@ -12,8 +12,7 @@
 
 #include "generic_format/ast/base.hpp"
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 struct variable_base {};
 
@@ -26,7 +25,7 @@ struct is_variable;
 namespace detail {
 template<class Variable1, class Variable2, class Operator>
 struct binary_operator;
-}
+} // end namespace detail
 
 template<class T>
 struct is_variable : std::integral_constant<bool, std::is_base_of<variable_base, T>::value>
@@ -42,7 +41,7 @@ struct is_variable<detail::binary_operator<Variable1, Variable2, Operator>> {
     static constexpr bool value = true;
 };
 
-namespace detail{
+namespace detail {
 template<class T1, class T2>
 struct sum_operator {
     using result_type = decltype((*(T1*)(nullptr)) + (*(T2*)(nullptr))); // TODO this looks really ugly
@@ -76,7 +75,7 @@ struct binary_operator : public base<children_list<Variable1, Variable2>>, varia
 
 };
 
-}
+} // end namespace detail
 
 template<class Variable1, class Variable2>
 struct sum : public detail::binary_operator<Variable1, Variable2, detail::sum_operator<typename Variable1::native_type, typename Variable2::native_type>>
@@ -159,7 +158,7 @@ namespace detail {
 struct variable_accessor_binding_base : base<children_list<>> {
 
 };
-}
+} // end namespace detail
 
 template<class VariableEvaluator, class Accessor>
 struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enable_if<!Accessor::is_reference && !Accessor::is_indexed>::type> : detail::variable_accessor_binding_base {
@@ -183,5 +182,4 @@ struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enab
 
 };
 
-}
-}
+} // end namespace generic_format::ast

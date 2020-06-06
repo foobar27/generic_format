@@ -67,7 +67,7 @@ struct constexpr_plus {
   typedef T result_type;
 };
 
-}
+} // end namespace detail
 
 template<class Operator, typename... Ts>
 constexpr typename Operator::result_type fold_left(Operator op, Ts... ts) {
@@ -162,7 +162,7 @@ template<template<class> class Predicate, std::size_t N, class Arg, class... Arg
 struct index_of_helper<Predicate, N, Arg, Args...> : std::integral_constant<std::size_t, Predicate<Arg>::value ? N : index_of_helper<Predicate, N + 1, Args...>::value>
 {};
 
-}
+} // end namespace detail
 
 /** @brief Finds an argument matching a predicate.
  *
@@ -175,6 +175,6 @@ struct index_of {
     static_assert(value < sizeof...(Args), "Item not found in variadic argument list!");
 };
 
-}
-}
+} // end namespace variadic
+} // end namespace generic_format
 

@@ -76,6 +76,6 @@ std::ostream& operator<<(std::ostream& out, const std::set<T>& xs) {
     return out;
 }
 
-}
+} // end namespace std
 
 

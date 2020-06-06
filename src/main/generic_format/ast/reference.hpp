@@ -13,8 +13,7 @@
 
 #include <type_traits>
 
-namespace generic_format {
-namespace ast {
+namespace generic_format::ast {
 
 template<class Accessor, class Format>
 struct formatted_accessor {
@@ -61,16 +60,16 @@ struct is_reference<reference<FormattedAccessor>> : std::true_type {};
 template<class Reference, class Enable = void>
 struct dereference; // no implementation
 
-namespace impl {
+namespace detail {
 template<class FormattedAccessor>
 struct dereference_base : base<children_list<typename FormattedAccessor::format>> {
     using format = typename FormattedAccessor::format;
     static constexpr auto size = format::size;
 };
-}
+} // end namespace detail
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor, typename std::enable_if<FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type>> : impl::dereference_base<FormattedAccessor> {
+struct dereference<reference<FormattedAccessor, typename std::enable_if<FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type>> : detail::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -92,7 +91,7 @@ struct dereference<reference<FormattedAccessor, typename std::enable_if<Formatte
 };
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type> : impl::dereference_base<FormattedAccessor> {
+struct dereference<reference<FormattedAccessor>, typename std::enable_if<!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type> : detail::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -114,7 +113,7 @@ struct dereference<reference<FormattedAccessor>, typename std::enable_if<!Format
 };
 
 template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<FormattedAccessor::is_reference && FormattedAccessor::is_indexed>::type> : impl::dereference_base<FormattedAccessor>  {
+struct dereference<reference<FormattedAccessor>, typename std::enable_if<FormattedAccessor::is_reference && FormattedAccessor::is_indexed>::type> : detail::dereference_base<FormattedAccessor>  {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using big_type = typename acc::big_type;
@@ -144,5 +143,4 @@ struct is_dereference : std::false_type {};
 template<class FormattedAccessor, class Enable>
 struct is_dereference<reference<FormattedAccessor, Enable>> : std::true_type {};
 
-}
-}
+} // end namespace generic_format::ast

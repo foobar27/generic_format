@@ -16,7 +16,7 @@
 #include "generic_format/mapping/struct_adaptor.hpp"
 #include "generic_format/helper.hpp"
 
-namespace generic_format{
+namespace generic_format {
 namespace dsl {
 
 namespace detail {
@@ -130,7 +130,7 @@ struct is_unmapped_sequence : std::false_type {};
 template<class... Formats>
 struct is_unmapped_sequence<unmapped_sequence<variadic::generic_list<Formats...>>> : std::true_type {};
 
-}
+} // end namespace dsl
 
 // Helpers for constructing sequences.
 // They avoid creating nested sequences.
@@ -214,8 +214,8 @@ struct merged_sequence<ast::sequence<NativeType1, List1>, dsl::unmapped_sequence
     using type = ast::sequence<NativeType1, merged_list>;
 };
 
-}
-}
+} // end namespace detail
+} // end namespace generic_format
 /**
  *@brief Concatenate two formats.
  *
