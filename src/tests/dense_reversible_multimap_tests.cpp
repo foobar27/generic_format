@@ -9,9 +9,9 @@
 #define BOOST_TEST_MODULE "DENSE_REVERSIBLE_MULTIMAP_TESTS"
 #include "test_common.hpp"
 
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #include "generic_format/datastructures/dense_reversible_multimap.hpp"
 
