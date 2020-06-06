@@ -55,15 +55,15 @@ public:
         _data.resize(sz);
     }
 
-    typename matrix_type::const_iterator begin() const {
+    auto begin() const {
         return _data.begin();
     }
 
-    typename matrix_type::const_iterator end() const {
+    auto end() const {
         return _data.end();
     }
 
-    const row_type & operator[](uint32_t i) const {
+    const auto & operator[](uint32_t i) const {
         return _data[i];
     }
 

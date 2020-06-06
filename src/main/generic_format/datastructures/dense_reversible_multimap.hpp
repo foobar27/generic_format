@@ -50,7 +50,7 @@ public:
         (*_reverse)[value].push_back(key);
     }
 
-    index_type size() const {
+    auto size() const {
         return _forward->size();
     }
 
@@ -58,11 +58,11 @@ public:
         return {_reverse, _forward};
     }
 
-    const_iterator_type begin() const {
+    auto begin() const {
         return _forward->begin();
     }
 
-    const_iterator_type end() const {
+    auto end() const {
         return _forward->end();
     }
 

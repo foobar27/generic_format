@@ -28,11 +28,11 @@ public:
 //        return c.str().c_str();
 //    }
 
-    T expected_version() const {
+    auto expected_version() const {
         return _expected_version;
     }
 
-    T actual_version() const {
+    auto actual_version() const {
         return _actual_version;
     }
 

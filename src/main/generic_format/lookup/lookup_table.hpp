@@ -55,11 +55,11 @@ public:
         , _values(values)
     {}
 
-    id_type initial_id() const {
+    auto initial_id() const {
         return _initial_id;
     }
 
-    const std::vector<value_type> & values() const {
+    const auto & values() const {
         return _values;
     }
 
@@ -164,7 +164,7 @@ public:
     }
 
     // TODO(sw) for internal use (serialization) only
-    lookup_table_snapshot<id_type, value_type> snapshot_from_id(id_type initial_id) const {
+    auto snapshot_from_id(id_type initial_id) const {
         assert(initial_id <= _values.size());
         return lookup_table_snapshot<id_type, value_type>(initial_id, std::vector<value_type>(_values.begin() + initial_id, _values.end()));
     }

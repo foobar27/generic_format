@@ -46,11 +46,11 @@ struct tuple_get : reference_accessor<TupleType, typename std::tuple_element<Ind
 
     using element_type = typename std::tuple_element<Index, TupleType>::type;
 
-    element_type& operator()(TupleType& t) const {
+    auto& operator()(TupleType& t) const {
         return std::get<Index>(t);
     }
 
-    const element_type& operator()(const TupleType& t) const {
+    const auto& operator()(const TupleType& t) const {
         return std::get<Index>(t);
     }
 };
@@ -61,11 +61,11 @@ struct member_ptr : reference_accessor<Class, Type> {
     using class_type             = Class;
     using member_type            = Type;
 
-    member_type& operator()(class_type& t) const {
+    auto& operator()(class_type& t) const {
         return t.*(member);
     }
 
-    const member_type& operator()(const class_type& t) const {
+    const auto& operator()(const class_type& t) const {
         return t.*(member);
     }
 };
@@ -84,7 +84,7 @@ struct vector_resize_accessor : copy_accessor<VectorType, std::size_t> {
         v.resize(size);
     }
 
-    std::size_t get(vector_type& v) const {
+    auto get(vector_type& v) const {
         return v.size();
     }
 };
@@ -94,11 +94,11 @@ struct vector_item_accessor : indexed_reference_accessor<VectorType, ValueType> 
     using vector_type = VectorType;
     using value_type  = ValueType;
 
-    value_type& operator()(vector_type& v, std::size_t index) const {
+    auto& operator()(vector_type& v, std::size_t index) const {
         return v[index];
     }
 
-    const value_type& operator()(const vector_type& v, std::size_t index) const {
+    const auto& operator()(const vector_type& v, std::size_t index) const {
         return v[index];
     }
 };

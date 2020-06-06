@@ -39,10 +39,10 @@ struct lookup_table_format_helper;
 template<class IdType, class ValueType>
 struct initial_id_reference : public generic_format::ast::reference<lookup_table_builder<IdType, ValueType>, IdType> {
     using builder_type = lookup_table_builder<IdType, ValueType>;
-    IdType operator()(const builder_type & table) const {
+    auto operator()(const builder_type & table) const {
         return table.initial_id();
     }
-    IdType & operator()(builder_type & table, IdType id) const {
+    auto & operator()(builder_type & table, IdType id) const {
         return table.initial_id(id);
     }
 };
@@ -50,10 +50,10 @@ struct initial_id_reference : public generic_format::ast::reference<lookup_table
 template<class IdType, class ValueType>
 struct values_reference : public generic_format::ast::reference<lookup_table_builder<IdType, ValueType>, std::vector<ValueType>&>{
     using builder_type = lookup_table_builder<IdType, ValueType>;
-    const std::vector<ValueType> & operator()(const builder_type & table) const {
+    const auto & operator()(const builder_type & table) const {
         return table.values(); // TODO(sw) what are re going to return? A reference?
     }
-    std::vector<ValueType> & operator()(builder_type & table) const {
+    auto & operator()(builder_type & table) const {
         return table.values();
     }
 };

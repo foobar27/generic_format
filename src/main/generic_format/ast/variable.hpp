@@ -45,7 +45,7 @@ namespace detail {
 template<class T1, class T2>
 struct sum_operator {
     using result_type = decltype((*(T1*)(nullptr)) + (*(T2*)(nullptr))); // TODO(sw) this looks really ugly
-    result_type operator()(const T1 & t1, const T2 & t2) const {
+    auto operator()(const T1 & t1, const T2 & t2) const {
         return t1 + t2;
     }
 };
@@ -53,7 +53,7 @@ struct sum_operator {
 template<class T1, class T2>
 struct product_operator {
     using result_type = decltype((*(T1*)(nullptr)) * (*(T2*)(nullptr))); // TODO(sw) this looks really ugly
-    result_type operator()(const T1 & t1, const T2 & t2) const {
+    auto operator()(const T1 & t1, const T2 & t2) const {
         return t1 * t2;
     }
 };
@@ -69,7 +69,7 @@ struct binary_operator : public base<children_list<Variable1, Variable2>>, varia
     static_assert(is_variable<Variable2>::value, "Variable2 must be a variable!");
 
     template<class State>
-    native_type operator()(State & state) const {
+    auto operator()(State & state) const {
         return Operator()(Variable1()(state), Variable2()(state));
     }
 
@@ -120,7 +120,7 @@ struct variable : base<children_list<ElementType>>, variable_base {
     }
 
     template<class State>
-    native_type operator()(State & state) const {
+    auto operator()(State & state) const {
         return state.template get<placeholder>();
     }
 
@@ -133,7 +133,7 @@ struct evaluator : base<children_list<>> {
     using native_type = typename type::native_type;
 
     template<class State>
-    native_type operator()(State & state) const {
+    auto operator()(State & state) const {
         return type()(state);
     }
 
@@ -146,7 +146,7 @@ struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
     using native_type = typename type::native_type;
 
     template<class State>
-    native_type operator()(State & state) const {
+    auto operator()(State & state) const {
         return type()(state);
     }
 };
@@ -169,12 +169,12 @@ struct variable_accessor_binding<VariableEvaluator, Accessor> : detail::variable
     using small_type = typename Accessor::small_type;
 
     template<class RawWriter, class State, class NativeType>
-    const small_type write(RawWriter &, State & state, const NativeType &) const {
+    const auto write(RawWriter &, State & state, const NativeType &) const {
         return variable_evaluator()(state);
     }
 
     template<class RawReader, class State>
-    const small_type read(RawReader &, State & state, big_type & t) const {
+    const auto read(RawReader &, State & state, big_type & t) const {
         small_type result = variable_evaluator()(state);
         accessor().set(t, result);
         return result;

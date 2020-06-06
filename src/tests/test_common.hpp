@@ -41,7 +41,7 @@ struct tuple_printer<T, I, I> {
 namespace std {
 
 template<typename... TS>
-std::ostream& operator<<(std::ostream& out, const std::tuple<TS...>& value) {
+auto& operator<<(std::ostream& out, const std::tuple<TS...>& value) {
     out << "(";
     detail::tuple_printer<std::tuple<TS...>, 0, sizeof...(TS) - 1>::print(out, value);
     out << ")";
@@ -49,7 +49,7 @@ std::ostream& operator<<(std::ostream& out, const std::tuple<TS...>& value) {
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, const std::vector<T>& xs) {
+auto& operator<<(std::ostream& out, const std::vector<T>& xs) {
     out << "[";
     bool first = true;
     for (auto & x : xs) {
@@ -63,7 +63,7 @@ std::ostream& operator<<(std::ostream& out, const std::vector<T>& xs) {
 }
 
 template<typename T>
-std::ostream& operator<<(std::ostream& out, const std::set<T>& xs) {
+auto& operator<<(std::ostream& out, const std::set<T>& xs) {
     out << "[";
     bool first = true;
     for (auto & x : xs) {
