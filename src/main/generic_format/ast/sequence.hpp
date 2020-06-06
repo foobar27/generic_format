@@ -14,7 +14,7 @@
 
 namespace generic_format::ast {
 
-template <class NativeType, class ChildrenList>
+template <class NativeType, class Children>
 struct sequence;
 
 template <class NativeType, class... Formats>

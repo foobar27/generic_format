@@ -50,7 +50,7 @@ struct is_children_list<children_list<Children...>> {
     static constexpr auto value = true;
 };
 
-template <class ChildrenList, class Child>
+template <class CL, class Child>
 struct append_child;
 
 template <class Child, class... Children>
@@ -74,11 +74,11 @@ struct merge_children_lists<List1, children_list<Element2, Elements2...>> {
     using type      = typename merge_children_lists<new_list1, new_list2>::type;
 };
 
-template <class ChildrenList>
+template <class Children>
 struct base : base_base {
-    static_assert(is_children_list<ChildrenList>::value, "'ChildrenList' needs to be a children_list");
+    static_assert(is_children_list<Children>::value, "'Children' needs to be a children_list");
 
-    using children = ChildrenList;
+    using children = Children;
 };
 
 } // end namespace generic_format::ast
