@@ -12,30 +12,29 @@
 
 namespace generic_format::ast {
 
-
 /** @brief A format representing a string which is serialized via its length followed by its data.
  *
  * @tparam LengthFormat the format used to serialize the length.
  */
-template<class LengthFormat>
+template <class LengthFormat>
 struct string : base<children_list<LengthFormat>> {
-    using native_type = std::string;
-    using length_format = LengthFormat;
-    using native_length_type = typename length_format::native_type;
+    using native_type          = std::string;
+    using length_format        = LengthFormat;
+    using native_length_type   = typename length_format::native_type;
     static constexpr auto size = dynamic_size();
 
     static_assert(std::is_integral<native_length_type>::value, "string length must be an integral type!");
 
-    template<class RawWriter, class State>
-    void write(RawWriter & raw_writer, State & state, const std::string & s) const {
+    template <class RawWriter, class State>
+    void write(RawWriter& raw_writer, State& state, const std::string& s) const {
         if (s.length() > std::numeric_limits<native_length_type>::max())
             throw serialization_exception();
         length_format().write(raw_writer, state, static_cast<native_length_type>(s.length()));
         raw_writer(reinterpret_cast<const void*>(s.data()), s.length());
     }
 
-    template<class RawReader, class State>
-    void read(RawReader & raw_reader, State & state, std::string & s) const {
+    template <class RawReader, class State>
+    void read(RawReader& raw_reader, State& state, std::string& s) const {
         native_length_type length;
         length_format().read(raw_reader, state, length);
         if (length > std::numeric_limits<std::size_t>::max())
@@ -43,8 +42,6 @@ struct string : base<children_list<LengthFormat>> {
         s = std::string(static_cast<std::size_t>(length), 0); // TODO(sw) we don't need to fill the string
         raw_reader(const_cast<void*>(reinterpret_cast<const void*>(s.data())), s.length());
     }
-
 };
-
 
 } // end namespace generic_format::ast

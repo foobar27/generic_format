@@ -18,8 +18,7 @@
 using namespace generic_format::primitives;
 
 // Just a dummy unit test - actually all the testing in this file should be done at compile-time.
-BOOST_AUTO_TEST_CASE( dummy )
-{}
+BOOST_AUTO_TEST_CASE(dummy) { }
 
 //
 // helper.hpp
@@ -31,7 +30,7 @@ static void test_conditional_type() {
     using namespace generic_format;
 
     using t_false = typename conditional_type<false, true_type, false_type>::type;
-    using t_true  = typename conditional_type<true,  true_type, false_type>::type;
+    using t_true  = typename conditional_type<true, true_type, false_type>::type;
 
     static_assert(!t_false::value, "false");
     static_assert(t_true::value, "true");
@@ -72,14 +71,14 @@ static void test_for_any() {
     static_assert(for_any<is_integral, int, int>::value, "[true, true]");
 }
 
-template<typename T>
+template <typename T>
 struct into_tuple {
     using type = std::tuple<T>;
 };
 
 static void test_transform() {
     using namespace generic_format::variadic;
-    using T = transform<into_tuple, generic_list<int, double, char>>::type;
+    using T                                                               = transform<into_tuple, generic_list<int, double, char>>::type;
     generic_list<std::tuple<int>, std::tuple<double>, std::tuple<char>> t = T();
 }
 
@@ -92,18 +91,17 @@ static void test_is_format() {
 static void test_generic_list() {
     using namespace generic_format::variadic;
 
-    using X1 = append_element<generic_list<>, int>::type;
+    using X1             = append_element<generic_list<>, int>::type;
     generic_list<int> x1 = X1();
 
-    using X2 = append_element<X1, double>::type;
+    using X2                     = append_element<X1, double>::type;
     generic_list<int, double> x2 = X2();
 
-    using X3 = merge_generic_lists<X2, X1>::type;
+    using X3                          = merge_generic_lists<X2, X1>::type;
     generic_list<int, double, int> x3 = X3();
 
-    using X4 = merge_generic_lists<X2, generic_list<>>::type;
+    using X4                     = merge_generic_lists<X2, generic_list<>>::type;
     generic_list<int, double> x4 = X4();
-
 }
 
 static void test_is_unmapped_sequence() {
@@ -115,7 +113,7 @@ static void test_is_unmapped_sequence() {
 }
 
 // Flattening of unmapped_sequence via << operator
-//void test_unmapped_flattening() {
+// void test_unmapped_flattening() {
 //    using namespace generic_format::variadic;
 //    using namespace generic_format::dsl;
 //    using namespace generic_format::ast;
@@ -147,7 +145,7 @@ static void test_is_unmapped_sequence() {
 //    X1234 x1_23_4 = X1() << X23() << X4();
 //}
 
-//void test_mapped_flattening() {
+// void test_mapped_flattening() {
 //    using namespace generic_format::variadic;
 //    using namespace generic_format::dsl;
 //    using namespace generic_format::ast;
@@ -158,6 +156,7 @@ static void test_is_unmapped_sequence() {
 //    using X5 = uint16_le_t;
 
 //    using X34 = unmapped_sequence<generic_list<X3, X4>>;
-//    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() << (seq(uint64_le) << X5());
+//    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() <<
+//    (seq(uint64_le) << X5());
 
 //}

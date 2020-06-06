@@ -14,11 +14,15 @@ namespace generic_format {
 
 struct serialization_exception : public std::exception {
 public:
-    virtual char const * what() const noexcept { return "Serialization exception."; }
+    virtual char const* what() const noexcept {
+        return "Serialization exception.";
+    }
 };
 struct deserialization_exception : public std::exception {
 public:
-    virtual char const * what() const noexcept { return "Deserialization exception."; }
+    virtual char const* what() const noexcept {
+        return "Deserialization exception.";
+    }
 };
 
 } // end namespace generic_format

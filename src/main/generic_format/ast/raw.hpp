@@ -12,18 +12,18 @@
 
 namespace generic_format::ast {
 
-template<class T>
+template <class T>
 struct raw : base<children_list<>> {
-    using native_type = T;
+    using native_type          = T;
     static constexpr auto size = fixed_size(sizeof(T));
 
-    template<class RawWriter, class State>
-    void write(RawWriter & raw_writer, State &, const native_type & t) const {
+    template <class RawWriter, class State>
+    void write(RawWriter& raw_writer, State&, const native_type& t) const {
         raw_writer(t);
     }
 
-    template<class RawReader, class State>
-    void read(RawReader & raw_reader, State &, T & t) const {
+    template <class RawReader, class State>
+    void read(RawReader& raw_reader, State&, T& t) const {
         raw_reader(t);
     }
 };

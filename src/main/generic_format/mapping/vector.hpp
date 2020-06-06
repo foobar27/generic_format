@@ -16,27 +16,28 @@ namespace generic_format::mapping {
 
 namespace detail {
 
-
 // size is explicit
-template<class SizeVariable, class ValueFormat>
+template <class SizeVariable, class ValueFormat>
 struct vector_helper {
     static_assert(ast::is_variable<SizeVariable>::value, "SizeVariable needs to be a variable, or an evaluated variable!");
     using native_element_type = typename ValueFormat::native_type;
-    using vector_type = std::vector<native_element_type>;
+    using vector_type         = std::vector<native_element_type>;
 
-    using type = ast::sequence<vector_type, ast::children_list<SizeVariable, typename vector_helper<ast::evaluator<SizeVariable>, ValueFormat>::type>>;
+    using type
+        = ast::sequence<vector_type, ast::children_list<SizeVariable, typename vector_helper<ast::evaluator<SizeVariable>, ValueFormat>::type>>;
 };
 
 // size is implicit
-template<class SizeVariable, class ValueFormat>
+template <class SizeVariable, class ValueFormat>
 struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
-    using size_variable = SizeVariable;
-    using value_format = ValueFormat;
+    using size_variable       = SizeVariable;
+    using value_format        = ValueFormat;
     using native_element_type = typename value_format::native_type;
-    using vector_type = std::vector<native_element_type>;
+    using vector_type         = std::vector<native_element_type>;
 
     using size_accessor = accessor::vector_resize_accessor<vector_type>;
-    using value_reference = ast::reference<ast::formatted_accessor<accessor::vector_item_accessor<vector_type, native_element_type>, ValueFormat>>;
+    using value_reference
+        = ast::reference<ast::formatted_accessor<accessor::vector_item_accessor<vector_type, native_element_type>, ValueFormat>>;
 
     // TODO(sw) simplify by using dsl::repeated & co
     using type = ast::repeated<ast::variable_accessor_binding<size_variable, size_accessor>, ast::dereference<value_reference>>;
@@ -44,7 +45,7 @@ struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
 
 } // end namespace detail
 
-template<class SizeVariable, class ValueFormat>
+template <class SizeVariable, class ValueFormat>
 static constexpr typename detail::vector_helper<SizeVariable, ValueFormat>::type vector(SizeVariable, ValueFormat) {
     return {};
 }

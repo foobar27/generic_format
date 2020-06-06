@@ -12,7 +12,11 @@
 
 namespace generic_format::primitives {
 
-#define __GENERIC_FORMAT_PRIMITIVE_TYPE(name, type) struct name##_t : ast::raw<type> { constexpr name##_t() {} }; static constexpr name##_t name;
+#define __GENERIC_FORMAT_PRIMITIVE_TYPE(name, type) \
+    struct name##_t : ast::raw<type> {              \
+        constexpr name##_t() { }                    \
+    };                                              \
+    static constexpr name##_t name;
 __GENERIC_FORMAT_PRIMITIVE_TYPE(int8_le, std::int8_t)
 __GENERIC_FORMAT_PRIMITIVE_TYPE(int16_le, std::int16_t)
 __GENERIC_FORMAT_PRIMITIVE_TYPE(int32_le, std::int32_t)

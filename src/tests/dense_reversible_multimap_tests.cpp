@@ -15,21 +15,19 @@
 
 #include "generic_format/datastructures/dense_reversible_multimap.hpp"
 
-
 using namespace std;
 using namespace generic_format::datastructures;
 
-void checkVectors(const std::vector<uint32_t> & actual, const std::vector<uint32_t> & expected) {
+void checkVectors(const std::vector<uint32_t>& actual, const std::vector<uint32_t>& expected) {
     // TODO(sw) reenable
-//    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(),
-//                                  expected.begin(), expected.end());
+    //    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(),
+    //                                  expected.begin(), expected.end());
     for (uint32_t a : actual)
-        std::cout << a << " " ;
+        std::cout << a << " ";
     std::cout << " END" << std::endl;
 }
 
-BOOST_AUTO_TEST_CASE(ReversibleMultimapTest)
-{
+BOOST_AUTO_TEST_CASE(ReversibleMultimapTest) {
     dense_reversible_multimap<uint32_t> forward;
     dense_reversible_multimap<uint32_t> reverse = forward.reverse();
     forward.put(3, 8);
@@ -50,7 +48,7 @@ BOOST_AUTO_TEST_CASE(ReversibleMultimapTest)
     checkVectors(reverse[9], {3});
     checkVectors(reverse[10], {2});
     checkVectors(reverse[11], {1});
-    checkVectors(reverse[12], {4,5});
+    checkVectors(reverse[12], {4, 5});
 
     // TODO(sw) also test storage
 }

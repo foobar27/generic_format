@@ -14,7 +14,6 @@
 
 #include "generic_format/datastructures/dense_multimap.hpp"
 
-
 using namespace std;
 using namespace generic_format::datastructures;
 

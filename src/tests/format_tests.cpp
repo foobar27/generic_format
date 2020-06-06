@@ -124,7 +124,7 @@ struct _chunk {
         : input_value(input_value) { }
 
     _chunk(_chunk&&) noexcept = default;
-    _chunk(_chunk&) noexcept = default;
+    _chunk(_chunk&) noexcept  = default;
 
     const native_type input_value;
     native_type       actual_value;
@@ -207,8 +207,8 @@ void check_round_trip(std::size_t expected_size, TARGET&& target, C c, CS... cs)
     target.final_verify();
 }
 
-template <class TARGET, class C, class... CS> requires (!std::is_integral<TARGET>::value)
-auto check_round_trip(TARGET&& target, C c, CS... cs) {
+template <class TARGET, class C, class... CS>
+requires(!std::is_integral<TARGET>::value) auto check_round_trip(TARGET&& target, C c, CS... cs) {
     constexpr auto total_size = detail::sizes_sum<C, CS...>::value;
     static_assert(total_size.is_fixed(), "You need to provide expected_size for dynamic formats!");
     check_round_trip(total_size.size(), std::move(target), c, cs...);

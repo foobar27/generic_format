@@ -17,32 +17,32 @@ namespace generic_format::mapping {
 namespace detail {
 
 // TODO(sw) extract the (indexed) transformation logic into helper.hpp?
-template<std::size_t Index, class Acc, class TupleType, class... Formats>
+template <std::size_t Index, class Acc, class TupleType, class... Formats>
 struct tuple_mapping_accessors;
 
-template<std::size_t Index, class Acc, class TupleType>
+template <std::size_t Index, class Acc, class TupleType>
 struct tuple_mapping_accessors<Index, Acc, TupleType> {
     using type = Acc;
 };
 
-template<std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
+template <std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
 struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
     using current_element = ast::dereference<ast::reference<ast::formatted_accessor<accessor::tuple_get<TupleType, Index>, Format>>>;
-    using new_acc = typename variadic::append_element<Acc, current_element >::type;
-    using type = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
+    using new_acc         = typename variadic::append_element<Acc, current_element>::type;
+    using type            = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };
 
-template<class... Formats>
+template <class... Formats>
 struct sequence_helper {
-    using tuple_type = std::tuple<typename Formats::native_type...>;
-    using element_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
+    using tuple_type    = std::tuple<typename Formats::native_type...>;
+    using element_list  = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
     using children_list = typename ast::create_children_list<element_list>::type;
-    using type = ast::sequence<tuple_type, children_list>;
+    using type          = ast::sequence<tuple_type, children_list>;
 };
 
 } // end namespace detail
 
-template<class... Formats>
+template <class... Formats>
 constexpr typename detail::sequence_helper<Formats...>::type tuple(Formats...) {
     return {};
 }

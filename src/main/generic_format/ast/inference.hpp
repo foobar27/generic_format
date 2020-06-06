@@ -14,20 +14,20 @@
 
 namespace generic_format::ast {
 
-template<class Inferrer>
-struct inferring_format {};
+template <class Inferrer>
+struct inferring_format { };
 
-template<class Format, class NativeType>
+template <class Format, class NativeType>
 struct infer_format {
-    using type = Format;
-    using native_type = NativeType;
+    using type               = Format;
+    using native_type        = NativeType;
     using format_native_type = typename Format::native_type;
 
     static_assert(std::is_convertible<native_type, format_native_type>::value && std::is_convertible<format_native_type, native_type>::value,
                   "Conflicting types!");
 };
 
-template<class Inferrer, class NativeType>
+template <class Inferrer, class NativeType>
 struct infer_format<inferring_format<Inferrer>, NativeType> {
     using type = typename Inferrer::template infer<NativeType>;
 };

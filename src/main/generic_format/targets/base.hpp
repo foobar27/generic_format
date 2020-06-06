@@ -17,45 +17,45 @@ namespace generic_format::targets {
 
 namespace detail {
 
-template<class Format>
+template <class Format>
 struct map_for_format;
 
-template<class... Children>
+template <class... Children>
 struct map_for_children {
     using type = ast::placeholder_map<>;
 };
 
-template<class Child, class... Children>
+template <class Child, class... Children>
 struct map_for_children<Child, Children...> {
     using type = typename ast::merge_placeholder_maps<typename map_for_format<Child>::type, typename map_for_children<Children...>::type>::type;
 };
 
-template<class Format>
+template <class Format>
 struct map_for_children_list;
 
-template<class... Children>
+template <class... Children>
 struct map_for_children_list<ast::children_list<Children...>> {
     using type = typename map_for_children<Children...>::type;
 };
 
-template<class Format, class Enabled = void>
+template <class Format, class Enabled = void>
 struct helper;
 
-template<class Format> requires (!ast::is_variable<Format>::value)
-struct helper<Format> {
+template <class Format>
+requires(!ast::is_variable<Format>::value) struct helper<Format> {
     using type = ast::placeholder_map<>;
 };
 
-template<class Variable> requires ast::is_variable<Variable>::value
-struct helper<Variable> {
+template <class Variable>
+requires ast::is_variable<Variable>::value struct helper<Variable> {
     using type = ast::placeholder_map<ast::placeholder_map_entry<typename Variable::native_type, typename Variable::placeholder>>;
 };
 
-template<class Format>
+template <class Format>
 struct map_for_format {
-    using _current_map = typename helper<Format>::type;
+    using _current_map  = typename helper<Format>::type;
     using _children_map = typename map_for_children_list<typename Format::children>::type;
-    using type = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
+    using type          = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
 };
 
 } // end namespace detail
@@ -66,17 +66,16 @@ struct map_for_format {
  *
  * @tparam RawWriter the raw_writer sub-class which is delegated to
  */
-template<class RawWriter>
+template <class RawWriter>
 struct writer {
 
     /// Constructor which delegates all its arguments to the RawWriter.
-    template<class... Args>
+    template <class... Args>
     writer(Args... args)
-        : raw_writer{args...}
-    {}
+        : raw_writer{args...} { }
 
-    template<class T, class F>
-    void operator()(const T & t, F f) {
+    template <class T, class F>
+    void operator()(const T& t, F f) {
         using namespace ast;
         static_assert(is_format<F>::value, "F must be a format!");
         placeholder_container<typename detail::map_for_format<F>::type> state;
@@ -93,17 +92,16 @@ private:
  *
  * @tparam RawReader the raw_reader sub-class which is delegated to
  */
-template<class RawReader>
+template <class RawReader>
 struct reader {
 
     /// Constructor which delegates all its arguments to the RawReader.
-    template<class... Args>
+    template <class... Args>
     reader(Args... args)
-        : raw_reader{args...}
-    {}
+        : raw_reader{args...} { }
 
-    template<class T, class F>
-    void operator()(T & t, F f) {
+    template <class T, class F>
+    void operator()(T& t, F f) {
         using namespace ast;
         static_assert(is_format<F>::value, "F must be a format!");
         placeholder_container<typename detail::map_for_format<F>::type> state;
@@ -119,14 +117,14 @@ private:
  *
  * If you implement your own target, use this class as a public base class for the writer-specific part.
  */
-struct base_raw_writer {};
+struct base_raw_writer { };
 
 /**
  * @brief Base class for a type-agnostic reader.
  *
  * If you implement your own target, use this class as a public base class for the reader-specific part.
  */
-struct base_raw_reader {};
+struct base_raw_reader { };
 
 /** @brief Base class for a target.
  *
@@ -134,7 +132,7 @@ struct base_raw_reader {};
  * @tparam RawWriter a child class of raw_writer
  * @tparam RawReader a child class of raw_reader
  */
-template<class RawWriter, class RawReader>
+template <class RawWriter, class RawReader>
 struct base_target {
     using writer = targets::writer<RawWriter>;
     using reader = targets::reader<RawReader>;

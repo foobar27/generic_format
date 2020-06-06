@@ -19,22 +19,21 @@ namespace generic_format::ast {
  *
  * @tparam Map a placeholder_map
  */
-template<class Map> // TODO(sw) requires is_placeholder_map<Map>
+template <class Map> // TODO(sw) requires is_placeholder_map<Map>
 class placeholder_container {
 public:
     static_assert(is_placeholder_map<Map>::value, "Map needs to be a placeholder map!");
-    using tuple_type  = typename placeholder_map_tuple_type<Map>::type;
+    using tuple_type = typename placeholder_map_tuple_type<Map>::type;
 
-    template<typename Placeholder>
-    const auto & get() const {
+    template <typename Placeholder>
+    const auto& get() const {
         return std::get<placeholder_map_get_index<Map, Placeholder>::value>(_tuple);
     }
 
-    template<typename Placeholder>
-    auto & get() {
+    template <typename Placeholder>
+    auto& get() {
         return std::get<placeholder_map_get_index<Map, Placeholder>::value>(_tuple);
     }
-
 
 private:
     tuple_type _tuple;
