@@ -130,7 +130,7 @@ struct _chunk {
     native_type       actual_value;
 };
 
-// TODO merge back with 'chunk()'
+// TODO(sw) merge back with 'chunk()'
 template <class F, class NativeType>
 _chunk<typename generic_format::ast::infer_format<F, NativeType>::type> inferred_chunk(F, NativeType t) {
     return {t};
@@ -174,7 +174,7 @@ void read_chunks(R& reader, C& c, CS... cs) {
 
 namespace detail {
 
-// TODO simplify via helper.hpp (sum function)
+// TODO(sw) simplify via helper.hpp (sum function)
 template <class... CS>
 struct sizes_sum;
 

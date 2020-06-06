@@ -40,7 +40,7 @@ struct string : base<children_list<LengthFormat>> {
         length_format().read(raw_reader, state, length);
         if (length > std::numeric_limits<std::size_t>::max())
             throw deserialization_exception();
-        s = std::string(static_cast<std::size_t>(length), 0); // TODO we don't need to fill the string
+        s = std::string(static_cast<std::size_t>(length), 0); // TODO(sw) we don't need to fill the string
         raw_reader(const_cast<void*>(reinterpret_cast<const void*>(s.data())), s.length());
     }
 

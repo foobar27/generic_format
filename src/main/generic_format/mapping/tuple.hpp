@@ -16,7 +16,7 @@ namespace generic_format::mapping {
 
 namespace detail {
 
-// TODO extract the (indexed) transformation logic into helper.hpp?
+// TODO(sw) extract the (indexed) transformation logic into helper.hpp?
 template<std::size_t Index, class Acc, class TupleType, class... Formats>
 struct tuple_mapping_accessors;
 

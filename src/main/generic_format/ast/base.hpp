@@ -27,7 +27,7 @@ template<class T>
 struct is_format : public std::integral_constant<bool, std::is_base_of<base_base, T>::value>
 {};
 
-// TODO somehow inherit from generic_list?
+// TODO(sw) somehow inherit from generic_list?
 template<class... Children>
 struct children_list {
     static_assert(variadic::for_all<is_format, Children...>::value, "All children must be formats!");

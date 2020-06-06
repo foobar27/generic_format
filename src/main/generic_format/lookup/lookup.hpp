@@ -51,7 +51,7 @@ template<class IdType, class ValueType>
 struct values_reference : public generic_format::ast::reference<lookup_table_builder<IdType, ValueType>, std::vector<ValueType>&>{
     using builder_type = lookup_table_builder<IdType, ValueType>;
     const std::vector<ValueType> & operator()(const builder_type & table) const {
-        return table.values(); // TODO what are re going to return? A reference?
+        return table.values(); // TODO(sw) what are re going to return? A reference?
     }
     std::vector<ValueType> & operator()(builder_type & table) const {
         return table.values();
@@ -63,7 +63,7 @@ struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
     using id_type = typename IdFormat::native_type;
     using value_type = typename IdFormat::native_type;
     using builder_type = lookup_table_builder<id_type, value_type>;
-    // TODO how do we get out of std::tuple??? And how to provide the lookup_table_builder instead?
+    // TODO(sw) how do we get out of std::tuple??? And how to provide the lookup_table_builder instead?
     using format = decltype(
         implicit_sequence<builder_type>()
         << implicit(lookup_table_size_var)

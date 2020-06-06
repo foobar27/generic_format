@@ -70,4 +70,4 @@ BOOST_AUTO_TEST_CASE(lookup) {
     BOOST_CHECK_EQUAL(snapshot.values(), expected);
 }
 
-// TODO test that contiguity check is working
+// TODO(sw) test that contiguity check is working

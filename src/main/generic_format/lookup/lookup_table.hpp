@@ -150,20 +150,20 @@ public:
      * @brief Maps a value to an id. If no id exists, creates a new id.
      */
     id_type lookup_by_value(const value_type & value) {
-        // TODO fast-path: thread-local copy of map?
+        // TODO(sw) fast-path: thread-local copy of map?
         guard_type lock(_mutex);
         if (_map.count(value)) {
             return _map[value];
         } else {
             int id = _values.size();
-            // TODO handle overflow of id_type!
+            // TODO(sw) handle overflow of id_type!
             _values.push_back(value);
             _map[value] = id;
             return id;
         }
     }
 
-    // TODO for internal use (serialization) only
+    // TODO(sw) for internal use (serialization) only
     lookup_table_snapshot<id_type, value_type> snapshot_from_id(id_type initial_id) const {
         assert(initial_id <= _values.size());
         return lookup_table_snapshot<id_type, value_type>(initial_id, std::vector<value_type>(_values.begin() + initial_id, _values.end()));

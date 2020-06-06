@@ -109,7 +109,7 @@ struct merge_generic_lists<List1, generic_list<Element2, Elements2...>> {
     using type = typename merge_generic_lists<new_list1, new_list2>::type;
 };
 
-// TODO document
+// TODO(sw) document
 template<template<class> class Function, class List, class Acc = generic_list<>>
 struct transform;
 

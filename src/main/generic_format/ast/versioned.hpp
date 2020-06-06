@@ -13,7 +13,7 @@
 
 namespace generic_format {
 
-// TODO make optionally configurable (in case there are several version checks)
+// TODO(sw) make optionally configurable (in case there are several version checks)
 template<class T>
 class invalid_version : public std::runtime_error {
 public:
@@ -23,7 +23,7 @@ public:
         , _actual_version(actual_version)
     {}
 
-    // TODO implement:
+    // TODO(sw) implement:
 //    virtual const char* what() const throw() {
 //        return c.str().c_str();
 //    }

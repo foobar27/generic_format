@@ -38,7 +38,7 @@ struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
     using size_accessor = accessor::vector_resize_accessor<vector_type>;
     using value_reference = ast::reference<ast::formatted_accessor<accessor::vector_item_accessor<vector_type, native_element_type>, ValueFormat>>;
 
-    // TODO simplify by using dsl::repeated & co
+    // TODO(sw) simplify by using dsl::repeated & co
     using type = ast::repeated<ast::variable_accessor_binding<size_variable, size_accessor>, ast::dereference<value_reference>>;
 };
 

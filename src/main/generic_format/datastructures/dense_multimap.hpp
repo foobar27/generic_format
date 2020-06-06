@@ -26,7 +26,7 @@ class dense_multimap {
     using row_type = std::vector<value_type>;
     using matrix_type = std::vector<row_type>;
 
-    static_assert(std::is_integral<index_type>::value, "IndexType must be integral."); // TODO and fit into size_t?
+    static_assert(std::is_integral<index_type>::value, "IndexType must be integral."); // TODO(sw) and fit into size_t?
 public:
     void put(index_type key, const value_type & value) {
         if (key >= _data.size())

@@ -8,7 +8,7 @@
 */
 #pragma once
 
-// TODO the following two includes won't be needed later on
+// TODO(sw) the following two includes won't be needed later on
 #include <vector>
 #include <set>
 
@@ -18,7 +18,7 @@
 
 namespace generic_format { namespace mapping {
 
-// TODO move this to default-mappings
+// TODO(sw) move this to default-mappings
 struct vector_output {
 
     template<class T, typename SizeType>
@@ -32,7 +32,7 @@ struct vector_output {
     }
 };
 
-// TODO move this to default-mappings
+// TODO(sw) move this to default-mappings
 struct set_output {
 
     template<class T, typename SizeType>
@@ -65,11 +65,11 @@ struct container : generic_format::ast::base<generic_format::ast::children_list<
                   && std::is_convertible<native_value_type, native_element_type>::value,
                   "Element types must be convertible!");
 
-    static constexpr auto size = generic_format::ast::dynamic_size(); // TODO except if index_format is a constant?
+    static constexpr auto size = generic_format::ast::dynamic_size(); // TODO(sw) except if index_format is a constant?
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        // TODO verify overflow
+        // TODO(sw) verify overflow
         native_index_type sz = static_cast<native_index_type>(t.size());
         index_format().write(raw_writer, state, sz);
         for (const auto & v : t) {
@@ -79,7 +79,7 @@ struct container : generic_format::ast::base<generic_format::ast::children_list<
 
     template<class RawReader, class State>
     void read(RawReader & raw_reader, State & state, native_type & t) const {
-        // TODO verify overflow
+        // TODO(sw) verify overflow
         native_index_type sz;
         index_format().read(raw_reader, state, sz);
         output_info().initialize(t, sz);

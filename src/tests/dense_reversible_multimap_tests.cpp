@@ -20,7 +20,7 @@ using namespace std;
 using namespace generic_format::datastructures;
 
 void checkVectors(const std::vector<uint32_t> & actual, const std::vector<uint32_t> & expected) {
-    // TODO reenable
+    // TODO(sw) reenable
 //    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(),
 //                                  expected.begin(), expected.end());
     for (uint32_t a : actual)
@@ -52,5 +52,5 @@ BOOST_AUTO_TEST_CASE(ReversibleMultimapTest)
     checkVectors(reverse[11], {1});
     checkVectors(reverse[12], {4,5});
 
-    // TODO also test storage
+    // TODO(sw) also test storage
 }

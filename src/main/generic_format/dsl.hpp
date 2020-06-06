@@ -39,7 +39,7 @@ struct first_class<Member, Members...> {
  */
 template<class... Fields>
 constexpr typename mapping::struct_adaptor<typename detail::first_class<Fields...>::type, Fields...>::type adapt_struct(Fields...) {
-    // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO
+    // static_assert(same_class<Fields>::value, "The fields must all belong to the same struct!"); // TODO(sw)
     return {};
 }
 
@@ -99,7 +99,7 @@ constexpr ast::repeated<Variable, Format> repeated(Variable, Format) {
     return {};
 }
 
-// TODO documentation
+// TODO(sw) documentation
 
 template<class VersionFormat, class BaseFormat>
 struct version_helper {
@@ -117,7 +117,7 @@ constexpr version_helper<VersionFormat, BaseFormat> versioned(VersionFormat, Bas
     return {};
 }
 
-// TODO documentation
+// TODO(sw) documentation
 template<class List>
 struct unmapped_sequence;
 

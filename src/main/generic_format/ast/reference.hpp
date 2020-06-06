@@ -132,7 +132,7 @@ struct dereference<reference<FormattedAccessor>> : detail::dereference_base<Form
         small_type value;
         format().read(raw_reader, state, value);
         acc()(t, i) = value;
-        return value; // TODO why not a reference? Because it would break, I know. But wouldn't it make sense?
+        return value; // TODO(sw) why not a reference? Because it would break, I know. But wouldn't it make sense?
     }
 
 };

@@ -28,7 +28,7 @@ struct repeated : base<children_list<SizeReference, ValueFormat>> {
 
     using native_type = typename value_format::native_type;
 
-    static constexpr auto size = dynamic_size(); // TODO fixed if format is fixed and count_reference points to constant
+    static constexpr auto size = dynamic_size(); // TODO(sw) fixed if format is fixed and count_reference points to constant
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {

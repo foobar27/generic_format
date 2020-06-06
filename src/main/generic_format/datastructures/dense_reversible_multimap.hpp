@@ -30,7 +30,7 @@ public:
     using matrix_type = std::vector<row_type>;
     using const_iterator_type = typename matrix_type::iterator;
 
-    static_assert(std::is_integral<index_type>::value, "IndexType must be an integral type"); // TODO and must fit into size_t?
+    static_assert(std::is_integral<index_type>::value, "IndexType must be an integral type"); // TODO(sw) and must fit into size_t?
 
     dense_reversible_multimap()
         : _forward(std::make_shared<matrix_type>())
@@ -99,10 +99,10 @@ struct dense_reversible_multimap_format : generic_format::ast::base<generic_form
 
     template<class RawWriter, class State>
     void write(RawWriter & raw_writer, State & state, const native_type & t) const {
-        // TODO verify integer overflow
+        // TODO(sw) verify integer overflow
         index_format().write(raw_writer, state, static_cast<native_index_type>(t._forward->size()));
         for (const auto & row : *t._forward) {
-            // TODO verify integer overflow
+            // TODO(sw) verify integer overflow
             index_format().write(raw_writer, state, static_cast<native_index_type>(row.size()));
             for (auto v : row) {
                 index_format().write(raw_writer, state, v);
@@ -120,7 +120,7 @@ struct dense_reversible_multimap_format : generic_format::ast::base<generic_form
             for (native_index_type j=0; j<n; ++j) {
                 native_index_type v;
                 index_format().read(raw_reader, state, v);
-                t.put(i, v); // TODO can be optimized
+                t.put(i, v); // TODO(sw) can be optimized
             }
         }
     }
