@@ -15,13 +15,13 @@
 namespace generic_format {
 namespace lookup {
 
-template <class IdFormat, class ValueFormat>
+template <ast::Format IdFormat, ast::Format ValueFormat>
 struct _lookup_type {
     using id_format    = IdFormat;
     using value_format = ValueFormat;
 };
 
-template <class IdFormat, class ValueFormat>
+template <ast::Format IdFormat, ast::Format ValueFormat>
 constexpr _lookup_type<IdFormat, ValueFormat> lookup_type(IdFormat, ValueFormat) {
     return {};
 }
@@ -58,7 +58,7 @@ struct values_reference : public generic_format::ast::reference<lookup_table_bui
     }
 };
 
-template <class IdFormat, class ValueFormat>
+template <ast::Format IdFormat, ast::Format ValueFormat>
 struct lookup_table_format_helper<_lookup_type<IdFormat, ValueFormat>> {
     using id_type      = typename IdFormat::native_type;
     using value_type   = typename IdFormat::native_type;

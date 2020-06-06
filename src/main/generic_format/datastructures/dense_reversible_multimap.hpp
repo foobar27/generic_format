@@ -18,7 +18,7 @@ namespace generic_format {
 namespace datastructures {
 
 namespace format {
-template <class IndexFormat>
+template <ast::Format IndexFormat>
 struct dense_reversible_multimap_format;
 } // end namespace format
 
@@ -73,7 +73,7 @@ public:
     }
 
 private:
-    template <class IndexFormat>
+    template <ast::Format IndexFormat>
     friend struct format::dense_reversible_multimap_format;
 
     dense_reversible_multimap(std::shared_ptr<matrix_type> forward, std::shared_ptr<matrix_type> reverse)
@@ -86,7 +86,7 @@ private:
 
 namespace format {
 
-template <class IndexFormat>
+template <ast::Format IndexFormat>
 struct dense_reversible_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat>> {
     using index_format      = IndexFormat;
     using native_index_type = typename index_format::native_type;
@@ -140,7 +140,7 @@ namespace dsl {
  * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row, as well as the values in the
  * row.
  */
-template <class IndexFormat>
+template <ast::Format IndexFormat>
 constexpr datastructures::format::dense_reversible_multimap_format<IndexFormat> dense_reversible_multimap_format(IndexFormat) {
     return {};
 }

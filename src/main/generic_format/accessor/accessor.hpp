@@ -41,6 +41,9 @@ struct indexed_reference_accessor : accessor<BigType, SmallType> {
 template <class T>
 struct is_accessor : public std::integral_constant<bool, std::is_base_of<accessor_base, T>::value> { };
 
+template <class T>
+concept Accessor = is_accessor<T>::value;
+
 template <class TupleType, std::size_t Index>
 struct tuple_get : reference_accessor<TupleType, typename std::tuple_element<Index, TupleType>::type> {
 

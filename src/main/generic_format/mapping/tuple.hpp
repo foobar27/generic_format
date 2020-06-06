@@ -8,7 +8,9 @@
 */
 #pragma once
 
+#include "generic_format/ast/base.hpp"
 #include "generic_format/accessor/accessor.hpp"
+#include "generic_format/ast/reference.hpp"
 
 #include <tuple>
 
@@ -17,7 +19,7 @@ namespace generic_format::mapping {
 namespace detail {
 
 // TODO(sw) extract the (indexed) transformation logic into helper.hpp?
-template <std::size_t Index, class Acc, class TupleType, class... Formats>
+template <std::size_t Index, class Acc, class TupleType, ast::Format... Formats>
 struct tuple_mapping_accessors;
 
 template <std::size_t Index, class Acc, class TupleType>
@@ -25,14 +27,14 @@ struct tuple_mapping_accessors<Index, Acc, TupleType> {
     using type = Acc;
 };
 
-template <std::size_t Index, class Acc, class TupleType, class Format, class... Formats>
+template <std::size_t Index, class Acc, class TupleType, ast::Format Format, ast::Format... Formats>
 struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
     using current_element = ast::dereference<ast::reference<ast::formatted_accessor<accessor::tuple_get<TupleType, Index>, Format>>>;
     using new_acc         = typename variadic::append_element<Acc, current_element>::type;
     using type            = typename tuple_mapping_accessors<Index + 1, new_acc, TupleType, Formats...>::type;
 };
 
-template <class... Formats>
+template <ast::Format... Formats>
 struct sequence_helper {
     using tuple_type    = std::tuple<typename Formats::native_type...>;
     using element_list  = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
@@ -42,7 +44,7 @@ struct sequence_helper {
 
 } // end namespace detail
 
-template <class... Formats>
+template <ast::Format... Formats>
 constexpr typename detail::sequence_helper<Formats...>::type tuple(Formats...) {
     return {};
 }

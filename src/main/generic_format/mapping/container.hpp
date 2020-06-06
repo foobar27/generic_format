@@ -107,7 +107,7 @@ struct _container_output_info<std::set<Key, Compare, Allocator>> {
     using type = mapping::set_output;
 };
 
-template <class IndexFormat, class ValueFormat, class NativeType>
+template <ast::Format IndexFormat, ast::Format ValueFormat, class NativeType>
 struct _container_format_type_inferrer_helper {
     using index_format = IndexFormat;
     using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
@@ -119,13 +119,13 @@ struct _container_format_type_inferrer_helper {
     using type = mapping::container<native_type, typename _container_output_info<NativeType>::type, index_format, value_format>;
 };
 
-template <class IndexFormat, class ValueFormat>
+template <ast::Format IndexFormat, ast::Format ValueFormat>
 struct _container_format_type_inferrer {
     template <class NativeType>
     using infer = typename _container_format_type_inferrer_helper<IndexFormat, ValueFormat, NativeType>::type;
 };
 
-template <class IndexFormat, class ValueFormat>
+template <ast::Format IndexFormat, ast::Format ValueFormat>
 constexpr typename ast::inferring_format<_container_format_type_inferrer<IndexFormat, ValueFormat>> container_format(IndexFormat, ValueFormat) {
     return {};
 }

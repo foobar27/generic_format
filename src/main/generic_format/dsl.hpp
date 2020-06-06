@@ -48,8 +48,8 @@ constexpr typename mapping::struct_adaptor<typename detail::first_class<Fields..
  *
  * To be used as an argument for #adapt_struct.
  */
-template <class Class, class Type, Type Class::*Member, class Format>
-constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, typename ast::infer_format<Format, Type>::type> formatted_member() {
+template <class Class, class Type, Type Class::*Member, ast::Format F>
+constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, typename ast::infer_format<F, Type>::type> formatted_member() {
     return {};
 }
 
@@ -59,7 +59,7 @@ constexpr ast::formatted_accessor<accessor::member_ptr<Class, Type, Member>, typ
  * The string will be encoded as the length and the data of the string as UTF-8.
  * @param LengthType the type which is used to serialize the length.
  */
-template <class LengthFormat>
+template <ast::Format LengthFormat>
 constexpr ast::string<LengthFormat> string_format(LengthFormat) {
     return {};
 }
@@ -74,8 +74,8 @@ struct placeholder {
     using create = placeholder<Id, Ids...>;
 };
 
-template <class Placeholder, class Format>
-constexpr ast::variable<Placeholder, Format> var(Placeholder, Format) {
+template <class Placeholder, ast::Format F>
+constexpr ast::variable<Placeholder, F> var(Placeholder, F) {
     return {};
 }
 
@@ -94,14 +94,14 @@ constexpr ast::reference<Accessor> ref(Accessor) {
     return {};
 }
 
-template <class Variable, class Format>
-constexpr ast::repeated<Variable, Format> repeated(Variable, Format) {
+template <class Variable, ast::Format F>
+constexpr ast::repeated<Variable, F> repeated(Variable, F) {
     return {};
 }
 
 // TODO(sw) documentation
 
-template <class VersionFormat, class BaseFormat>
+template <ast::Format VersionFormat, ast::Format BaseFormat>
 struct version_helper {
 
     using native_version_type = typename VersionFormat::native_type;
@@ -112,7 +112,7 @@ struct version_helper {
     }
 };
 
-template <class VersionFormat, class BaseFormat>
+template <ast::Format VersionFormat, ast::Format BaseFormat>
 constexpr version_helper<VersionFormat, BaseFormat> versioned(VersionFormat, BaseFormat) {
     return {};
 }

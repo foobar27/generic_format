@@ -15,13 +15,13 @@
 namespace generic_format::ast {
 
 template <class Inferrer>
-struct inferring_format { };
+struct inferring_format : base_base { }; // TODO(sw) This is not really a format? It doesn't have children etc.
 
-template <class Format, class NativeType>
+template <class F, class NativeType> // TODO(sw) why can't enforce the concept Format?
 struct infer_format {
-    using type               = Format;
+    using type               = F;
     using native_type        = NativeType;
-    using format_native_type = typename Format::native_type;
+    using format_native_type = typename F::native_type;
 };
 
 template <class Inferrer, class NativeType>

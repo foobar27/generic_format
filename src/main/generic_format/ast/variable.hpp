@@ -10,6 +10,7 @@
 
 #include <functional>
 
+#include "generic_format/accessor/accessor.hpp"
 #include "generic_format/ast/base.hpp"
 
 namespace generic_format::ast {
@@ -25,7 +26,7 @@ struct is_variable;
 template <class T>
 struct is_variable : std::integral_constant<bool, std::is_base_of<variable_base, T>::value> { };
 
-template <typename Placeholder, class ElementType>
+template <typename Placeholder, Format ElementType>
 struct is_variable<variable<Placeholder, ElementType>> {
     static constexpr bool value = true;
 };
@@ -76,15 +77,11 @@ struct binary_operator : public base<children_list<Variable1, Variable2>>, varia
 
 } // end namespace detail
 
-template <class Variable1, class Variable2>
-struct sum
-    : public detail::binary_operator<Variable1, Variable2, detail::sum_operator<typename Variable1::native_type, typename Variable2::native_type>> {
-};
+template <Variable V1, Variable V2>
+struct sum : public detail::binary_operator<V1, V2, detail::sum_operator<typename V1::native_type, typename V2::native_type>> { };
 
-template <class Variable1, class Variable2>
-struct product
-    : public detail::binary_operator<Variable1, Variable2, detail::product_operator<typename Variable1::native_type, typename Variable2::native_type>> {
-};
+template <Variable V1, Variable V2>
+struct product : public detail::binary_operator<V1, V2, detail::product_operator<typename V1::native_type, typename V2::native_type>> { };
 
 template <typename Placeholder, Format ElementType>
 struct variable : base<children_list<ElementType>>, variable_base {
@@ -124,10 +121,10 @@ struct variable : base<children_list<ElementType>>, variable_base {
     }
 };
 
-template <class Variable>
+template <Variable V>
 struct evaluator : base<children_list<>> {
-    static_assert(is_variable<Variable>::value, "Can only evaluate variables or combinations of variables!");
-    using type        = Variable;
+    static_assert(is_variable<V>::value, "Can only evaluate variables or combinations of variables!");
+    using type        = V;
     using native_type = typename type::native_type;
 
     template <class State>
@@ -137,7 +134,7 @@ struct evaluator : base<children_list<>> {
 };
 
 /// partial specialization to make evaluation idempotent
-template <typename Placeholder, class ElementType>
+template <typename Placeholder, Format ElementType>
 struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
     using type        = variable<Placeholder, ElementType>;
     using native_type = typename type::native_type;
@@ -148,7 +145,7 @@ struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
     }
 };
 
-template <class VariableEvaluator, class Accessor, class Enable = void>
+template <class VariableEvaluator, accessor::Accessor A, class Enable = void>
 struct variable_accessor_binding;
 
 namespace detail {
@@ -165,12 +162,12 @@ requires(!Accessor::is_reference && !Accessor::is_indexed) struct variable_acces
     using small_type         = typename Accessor::small_type;
 
     template <class RawWriter, class State, class NativeType>
-    const auto write(RawWriter&, State& state, const NativeType&) const {
+    auto write(RawWriter&, State& state, const NativeType&) const {
         return variable_evaluator()(state);
     }
 
     template <class RawReader, class State>
-    const auto read(RawReader&, State& state, big_type& t) const {
+    auto read(RawReader&, State& state, big_type& t) const {
         small_type result = variable_evaluator()(state);
         accessor().set(t, result);
         return result;

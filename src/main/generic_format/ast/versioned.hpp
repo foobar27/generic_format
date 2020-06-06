@@ -46,7 +46,7 @@ namespace ast {
  *
  * @tparam VersionFormat the format used to serialize the length.
  */
-template <class VersionFormat, class BaseFormat, typename VersionFormat::native_type CurrentVersion>
+template <Format VersionFormat, Format BaseFormat, typename VersionFormat::native_type CurrentVersion>
 struct versioned : base<children_list<VersionFormat, BaseFormat>> {
     using native_type         = typename BaseFormat::native_type;
     using version_format      = VersionFormat;

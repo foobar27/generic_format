@@ -17,7 +17,7 @@ namespace generic_format::targets {
 
 namespace detail {
 
-template <class Format>
+template <ast::Format F>
 struct map_for_format;
 
 template <class... Children>
@@ -38,11 +38,11 @@ struct map_for_children_list<ast::children_list<Children...>> {
     using type = typename map_for_children<Children...>::type;
 };
 
-template <class Format, class Enabled = void>
+template <ast::Format F, class Enabled = void>
 struct helper;
 
-template <class Format>
-requires(!ast::is_variable<Format>::value) struct helper<Format> {
+template <ast::Format F>
+requires(!ast::is_variable<F>::value) struct helper<F> {
     using type = ast::placeholder_map<>;
 };
 
@@ -51,10 +51,10 @@ struct helper<V> {
     using type = ast::placeholder_map<ast::placeholder_map_entry<typename V::native_type, typename V::placeholder>>;
 };
 
-template <class Format>
+template <ast::Format F>
 struct map_for_format {
-    using _current_map  = typename helper<Format>::type;
-    using _children_map = typename map_for_children_list<typename Format::children>::type;
+    using _current_map  = typename helper<F>::type;
+    using _children_map = typename map_for_children_list<typename F::children>::type;
     using type          = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
 };
 

@@ -16,8 +16,10 @@ namespace generic_format {
 namespace datastructures {
 
 namespace format {
-template <class IndexFormat, class ValueFormat>
+
+template <ast::Format IndexFormat, ast::Format ValueFormat>
 struct dense_multimap_format;
+
 } // end namespace format
 
 template <class IndexType, class ValueType>
@@ -69,7 +71,7 @@ public:
     }
 
 private:
-    template <class IndexFormat, class ValueFormat>
+    template <ast::Format IndexFormat, ast::Format ValueFormat>
     friend struct format::dense_multimap_format;
 
     matrix_type _data;
@@ -77,7 +79,7 @@ private:
 
 namespace format {
 
-template <class IndexFormat, class ValueFormat>
+template <ast::Format IndexFormat, ast::Format ValueFormat>
 struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using index_format       = IndexFormat;
     using value_format       = ValueFormat;
@@ -120,7 +122,7 @@ namespace dsl {
  * @param IndexFormat the type which is used to serialize the number of rows and the number of items in a row.
  * @param ValueFormat the type which is used to serialize the values in the rows.
  */
-template <class IndexFormat, class ValueFormat>
+template <ast::Format IndexFormat, ast::Format ValueFormat>
 constexpr datastructures::format::dense_multimap_format<IndexFormat, ValueFormat> dense_multimap_format(IndexFormat, ValueFormat) {
     return {};
 }

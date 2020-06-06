@@ -16,7 +16,7 @@ namespace generic_format::ast {
  *
  * @tparam LengthFormat the format used to serialize the length.
  */
-template <class LengthFormat>
+template <Format LengthFormat>
 struct string : base<children_list<LengthFormat>> {
     using native_type          = std::string;
     using length_format        = LengthFormat;
