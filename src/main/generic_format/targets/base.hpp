@@ -41,13 +41,13 @@ struct map_for_children_list<ast::children_list<Children...>> {
 template<class Format, class Enabled = void>
 struct helper;
 
-template<class Format>
-struct helper<Format, typename std::enable_if<!ast::is_variable<Format>::value, void>::type> {
+template<class Format> requires (!ast::is_variable<Format>::value)
+struct helper<Format> {
     using type = ast::placeholder_map<>;
 };
 
-template<class Variable>
-struct helper<Variable, typename std::enable_if<ast::is_variable<Variable>::value, void>::type> {
+template<class Variable> requires ast::is_variable<Variable>::value
+struct helper<Variable> {
     using type = ast::placeholder_map<ast::placeholder_map_entry<typename Variable::native_type, typename Variable::placeholder>>;
 };
 

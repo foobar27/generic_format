@@ -68,8 +68,8 @@ struct dereference_base : base<children_list<typename FormattedAccessor::format>
 };
 } // end namespace detail
 
-template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor, typename std::enable_if<FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type>> : detail::dereference_base<FormattedAccessor> {
+template<class FormattedAccessor> requires (FormattedAccessor::is_reference && !FormattedAccessor::is_indexed)
+struct dereference<reference<FormattedAccessor>> : detail::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -90,8 +90,8 @@ struct dereference<reference<FormattedAccessor, typename std::enable_if<Formatte
 
 };
 
-template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed>::type> : detail::dereference_base<FormattedAccessor> {
+template<class FormattedAccessor> requires (!FormattedAccessor::is_reference && !FormattedAccessor::is_indexed)
+struct dereference<reference<FormattedAccessor>> : detail::dereference_base<FormattedAccessor> {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using native_type = typename acc::big_type;
@@ -112,8 +112,8 @@ struct dereference<reference<FormattedAccessor>, typename std::enable_if<!Format
     }
 };
 
-template<class FormattedAccessor>
-struct dereference<reference<FormattedAccessor>, typename std::enable_if<FormattedAccessor::is_reference && FormattedAccessor::is_indexed>::type> : detail::dereference_base<FormattedAccessor>  {
+template<class FormattedAccessor> requires (FormattedAccessor::is_reference && FormattedAccessor::is_indexed)
+struct dereference<reference<FormattedAccessor>> : detail::dereference_base<FormattedAccessor>  {
     using acc = typename FormattedAccessor::accessor;
     using format = typename FormattedAccessor::format;
     using big_type = typename acc::big_type;

@@ -160,8 +160,8 @@ struct variable_accessor_binding_base : base<children_list<>> {
 };
 } // end namespace detail
 
-template<class VariableEvaluator, class Accessor>
-struct variable_accessor_binding<VariableEvaluator, Accessor, typename std::enable_if<!Accessor::is_reference && !Accessor::is_indexed>::type> : detail::variable_accessor_binding_base {
+template<class VariableEvaluator, class Accessor> requires (!Accessor::is_reference && !Accessor::is_indexed)
+struct variable_accessor_binding<VariableEvaluator, Accessor> : detail::variable_accessor_binding_base {
     using variable_evaluator = VariableEvaluator;
     using accessor = Accessor;
     using native_type = void;
