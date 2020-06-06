@@ -16,7 +16,7 @@ namespace generic_format::ast {
 
 struct variable_base { };
 
-template <typename Placeholder, class ElementType>
+template <typename Placeholder, Format ElementType>
 struct variable;
 
 template <class T>
@@ -85,9 +85,8 @@ struct product
     : public detail::binary_operator<Variable1, Variable2, detail::product_operator<typename Variable1::native_type, typename Variable2::native_type>> {
 };
 
-template <typename Placeholder, class ElementType>
+template <typename Placeholder, Format ElementType>
 struct variable : base<children_list<ElementType>>, variable_base {
-    static_assert(is_format<ElementType>::value, "Can only take variable from formats!");
     static_assert(!is_variable<ElementType>::value, "Cannot take variables of variables!");
     using placeholder          = Placeholder;
     using element_type         = ElementType;
