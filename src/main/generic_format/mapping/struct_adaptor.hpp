@@ -29,10 +29,11 @@ struct is_formatted_member_ptr<ast::formatted_accessor<accessor::member_ptr<Clas
 
 } // end namespace detail
 
-template <class Class, class... Members>
-struct struct_adaptor {
-    static_assert(variadic::for_all<detail::is_formatted_member_ptr, Members...>::value, "All children must be member_ptrs!");
+template <class T>
+concept FormattedMemberPtr = detail::is_formatted_member_ptr<T>::value;
 
+template <class Class, FormattedMemberPtr... Members>
+struct struct_adaptor {
     using class_type    = Class;
     using element_list  = typename generic_format::variadic::transform<detail::reference_ctor, variadic::generic_list<Members...>>::type;
     using children_list = typename ast::create_children_list<element_list>::type;

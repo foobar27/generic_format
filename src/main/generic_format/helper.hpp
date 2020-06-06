@@ -127,16 +127,6 @@ public:
     using type = typename transform<Function, new_list, new_acc>::type;
 };
 
-/** @brief Tests whether a predicate holds for all variadic arguments.
- *
- * Provides the member constant value equal true if Predicate holds for every argument, else value is false.
- */
-template <template <class> class Predicate, class... Args>
-struct for_all : std::true_type { };
-
-template <template <class> class Predicate, class Arg, class... Args>
-struct for_all<Predicate, Arg, Args...> : std::integral_constant<bool, Predicate<Arg>::value && for_all<Predicate, Args...>::value> { };
-
 /** @brief Tests whether a predicate holds for some variadic arguments.
  *
  * Provides the member constant value equal true if Predicate holds for at least one argument, else value is false.

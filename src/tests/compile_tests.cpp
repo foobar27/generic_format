@@ -49,17 +49,6 @@ static void test_index_of() {
     static_assert(index_of<is_integral, double, int>::value == 1, "second");
 }
 
-static void test_for_all() {
-    using namespace std;
-    using namespace generic_format::variadic;
-    static_assert(for_all<is_integral>::value, "[]");
-    static_assert(for_all<is_integral, int>::value, "[true]");
-    static_assert(!for_all<is_integral, double>::value, "[false]");
-    static_assert(!for_all<is_integral, int, double>::value, "[true, false]");
-    static_assert(!for_all<is_integral, double, int>::value, "[false, true]");
-    static_assert(for_all<is_integral, int, int>::value, "[true, true]");
-}
-
 static void test_for_any() {
     using namespace std;
     using namespace generic_format::variadic;

@@ -47,15 +47,12 @@ struct set_output {
     }
 };
 
-template <class NativeType, class OutputInfo, class IndexFormat, class ValueFormat>
+template <class NativeType, class OutputInfo, ast::Format IndexFormat, ast::Format ValueFormat>
 struct container : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using native_type  = NativeType;
     using output_info  = OutputInfo;
     using index_format = IndexFormat;
     using value_format = ValueFormat;
-
-    static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
-    static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
 
     using native_index_type   = typename index_format::native_type;
     using native_value_type   = typename value_format::native_type;

@@ -17,9 +17,8 @@ namespace generic_format::ast {
 template <class NativeType, class Children>
 struct sequence;
 
-template <class NativeType, class... Formats>
+template <class NativeType, Format... Formats>
 struct sequence<NativeType, children_list<Formats...>> : base<children_list<Formats...>> {
-    static_assert(variadic::for_all<is_format, Formats...>::value, "All components must be formats!");
 
     using native_type = NativeType;
 
