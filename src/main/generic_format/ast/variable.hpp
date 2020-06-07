@@ -31,7 +31,6 @@ struct binary_operator;
 namespace detail {
 template <class T1, class T2>
 struct sum_operator {
-    using result_type = decltype((*(T1*)(nullptr)) + (*(T2*)(nullptr))); // TODO(sw) this looks really ugly
     auto operator()(const T1& t1, const T2& t2) const {
         return t1 + t2;
     }
@@ -39,7 +38,6 @@ struct sum_operator {
 
 template <class T1, class T2>
 struct product_operator {
-    using result_type = decltype((*(T1*)(nullptr)) * (*(T2*)(nullptr))); // TODO(sw) this looks really ugly
     auto operator()(const T1& t1, const T2& t2) const {
         return t1 * t2;
     }
@@ -51,7 +49,7 @@ struct binary_operator : public base<format_list<Variable1, Variable2>>, variabl
     using right_type        = Variable2;
     using left_native_type  = typename Variable1::native_type;
     using right_native_type = typename Variable2::native_type;
-    using native_type       = typename Operator::result_type;
+    using native_type       = decltype(Operator().operator()({}, {}));
 
     template <class State>
     auto operator()(State& state) const {
