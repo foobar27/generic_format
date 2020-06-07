@@ -17,13 +17,13 @@
 #include "generic_format/targets/iostream.hpp"
 
 struct Image {
-    std::uint32_t             width;
-    std::uint32_t             height;
-    std::vector<std::uint8_t> data;
+    std::uint32_t             width{};
+    std::uint32_t             height{};
+    std::vector<std::uint8_t> data{};
 };
 
 struct Document {
-    std::vector<std::string> words;
+    std::vector<std::string> words{};
 };
 
 namespace detail {
@@ -107,7 +107,7 @@ int main() {
 
     static constexpr auto f             = generic_format::mapping::tuple(uint16_le, uint32_le);
     static constexpr auto words_format  = generic_format::mapping::tuple(string_format(uint16_le), string_format(uint32_le));
-    static constexpr auto Packet_format = adapt_struct(GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
+    static constexpr auto packet_format = adapt_struct(GENERIC_FORMAT_MEMBER(Packet, source, uint32_le),
                                                        GENERIC_FORMAT_MEMBER(Packet, target, uint32_le),
                                                        GENERIC_FORMAT_MEMBER(Packet, port, uint16_le));
 
@@ -115,16 +115,16 @@ int main() {
 
     static constexpr auto width_var  = var(GENERIC_FORMAT_PLACEHOLDER(_, 1), uint32_le);
     static constexpr auto height_var = var(GENERIC_FORMAT_PLACEHOLDER(_, 0), uint32_le);
-    static constexpr auto Image_format
+    static constexpr auto image_format
         = adapt_struct(GENERIC_FORMAT_MEMBER(Image, width, width_var),
                        GENERIC_FORMAT_MEMBER(Image, height, height_var),
                        // TODO(sw) replace the following line by container_format (still need to find my way through the derefs...)
                        GENERIC_FORMAT_MEMBER(Image, data, generic_format::mapping::vector(eval(width_var * height_var), uint8_le)));
 
-    static constexpr auto Document_format
+    static constexpr auto document_format
         = adapt_struct(GENERIC_FORMAT_MEMBER(Document, words, container_format(uint32_le, string_format(uint8_le))));
 
-    constexpr auto        size_container         = decltype(Packet_format)::size;
+    constexpr auto        size_container         = decltype(packet_format)::size;
     constexpr std::size_t serialized_packet_size = size_container.size();
     std::cout << "size of a serialized packet: " << serialized_packet_size << std::endl;
 
@@ -135,15 +135,15 @@ int main() {
         writer(v, f);
 
         Packet packet{1, 2, 3};
-        writer(packet, Packet_format);
+        writer(packet, packet_format);
         tuple<string, string> words{"hello", "world"};
         writer(words, words_format);
 
         Image image{2, 3, {1, 2, 3, 4, 5, 6}};
-        writer(image, Image_format);
+        writer(image, image_format);
 
         Document document{{"hello", "world"}};
-        writer(document, Document_format);
+        writer(document, document_format);
     }
     {
         ifstream is{file_name, ios_base::in | ios_base::binary};
@@ -154,7 +154,7 @@ int main() {
         cout << "read: " << get<0>(v) << " " << get<1>(v) << endl;
 
         Packet packet{};
-        reader(packet, Packet_format);
+        reader(packet, packet_format);
         cout << "read: " << packet << endl;
 
         tuple<string, string> words;
@@ -162,15 +162,15 @@ int main() {
         cout << get<0>(words) << " " << get<1>(words) << endl;
 
         Image image;
-        reader(image, Image_format);
+        reader(image, image_format);
         cout << "Image: width=" << image.width << " height=" << image.height << " data=";
-        for (auto v : image.data) {
-            cout << " " << static_cast<int>(v);
+        for (auto vv : image.data) {
+            cout << " " << static_cast<int>(vv);
         }
         cout << endl;
 
         Document document;
-        reader(document, Document_format);
+        reader(document, document_format);
         cout << "Document:" << endl;
         for (const auto& word : document.words) {
             cout << " " << word;

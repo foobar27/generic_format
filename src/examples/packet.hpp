@@ -12,8 +12,9 @@
 namespace demo {
 
 struct Packet {
-    std::uint32_t source, target;
-    std::uint16_t port;
+    std::uint32_t source{};
+    std::uint32_t target{};
+    std::uint16_t port{};
 };
 
 }
