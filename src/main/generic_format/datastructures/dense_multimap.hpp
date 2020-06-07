@@ -17,7 +17,7 @@ namespace datastructures {
 
 namespace format {
 
-template <ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
+template <class IndexFormat, class ValueFormat>
 struct dense_multimap_format;
 
 } // end namespace format
@@ -71,7 +71,7 @@ public:
     }
 
 private:
-    template <ast::Format IndexFormat, ast::Format ValueFormat>
+    template <class IndexFormat, class ValueFormat>
     friend struct format::dense_multimap_format;
 
     matrix_type _data;
@@ -79,7 +79,7 @@ private:
 
 namespace format {
 
-template <ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
+template <class IndexFormat, class ValueFormat>
 struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using index_format       = IndexFormat;
     using value_format       = ValueFormat;
