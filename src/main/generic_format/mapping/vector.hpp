@@ -26,7 +26,7 @@ struct vector_helper {
     using vector_type         = std::vector<native_element_type>;
 
     using type
-        = ast::sequence<vector_type, ast::children_list<SizeVariable, typename vector_helper<ast::evaluator<SizeVariable>, ValueFormat>::type>>;
+        = ast::sequence<vector_type, ast::format_list<SizeVariable, typename vector_helper<ast::evaluator<SizeVariable>, ValueFormat>::type>>;
 };
 
 // size is implicit

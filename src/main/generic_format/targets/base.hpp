@@ -20,22 +20,22 @@ namespace detail {
 template <ast::Format F>
 struct map_for_format;
 
-template <class... Children>
-struct map_for_children {
+template <class... Formats>
+struct map_for_formats {
     using type = ast::placeholder_map<>;
 };
 
-template <class Child, class... Children>
-struct map_for_children<Child, Children...> {
-    using type = typename ast::merge_placeholder_maps<typename map_for_format<Child>::type, typename map_for_children<Children...>::type>::type;
+template <class Format, class... Formats>
+struct map_for_formats<Format, Formats...> {
+    using type = typename ast::merge_placeholder_maps<typename map_for_format<Format>::type, typename map_for_formats<Formats...>::type>::type;
 };
 
 template <class Format>
-struct map_for_children_list;
+struct map_for_format_list;
 
-template <class... Children>
-struct map_for_children_list<ast::children_list<Children...>> {
-    using type = typename map_for_children<Children...>::type;
+template <class... Formats>
+struct map_for_format_list<ast::format_list<Formats...>> {
+    using type = typename map_for_formats<Formats...>::type;
 };
 
 template <ast::Format F, class Enabled = void>
@@ -54,7 +54,7 @@ struct helper<V> {
 template <ast::Format F>
 struct map_for_format {
     using _current_map  = typename helper<F>::type;
-    using _children_map = typename map_for_children_list<typename F::children>::type;
+    using _children_map = typename map_for_format_list<typename F::children>::type;
     using type          = typename ast::merge_placeholder_maps<_current_map, _children_map>::type;
 };
 

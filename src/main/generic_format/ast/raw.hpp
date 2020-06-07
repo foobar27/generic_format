@@ -13,7 +13,7 @@
 namespace generic_format::ast {
 
 template <class T>
-struct raw : base<children_list<>> {
+struct raw : base<format_list<>> {
     using native_type          = T;
     static constexpr auto size = fixed_size(sizeof(T));
 

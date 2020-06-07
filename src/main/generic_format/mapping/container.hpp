@@ -48,7 +48,7 @@ struct set_output {
 };
 
 template <class NativeType, class OutputInfo, ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
-struct container : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
+struct container : generic_format::ast::base<generic_format::ast::format_list<IndexFormat, ValueFormat>> {
     using native_type  = NativeType;
     using output_info  = OutputInfo;
     using index_format = IndexFormat;

@@ -35,11 +35,10 @@ concept FormattedMemberPtr = detail::is_formatted_member_ptr<T>::value;
 
 template <class Class, FormattedMemberPtr... Members>
 struct struct_adaptor {
-    using class_type    = Class;
-    using element_list  = typename generic_format::variadic::transform<detail::reference_ctor, variadic::generic_list<Members...>>::type;
-    using children_list = typename ast::create_children_list<element_list>::type;
+    using class_type  = Class;
+    using format_list = typename generic_format::variadic::transform<detail::reference_ctor, variadic::generic_list<Members...>>::type;
 
-    using type = ast::sequence<class_type, children_list>;
+    using type = ast::sequence<class_type, format_list>;
 };
 
 } // end namespace generic_format::mapping

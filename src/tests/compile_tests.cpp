@@ -150,7 +150,7 @@ static void test_is_unmapped_sequence() {
 //    using X5 = uint16_le_t;
 
 //    using X34 = unmapped_sequence<generic_list<X3, X4>>;
-//    sequence<uint32_le_t, children_list<X2, X3, X4, sequence<uint64_le_t, children_list<X5>>>> s = seq(uint32_le) << X2() << X34() <<
+//    sequence<uint32_le_t, format_list<X2, X3, X4, sequence<uint64_le_t, format_list<X5>>>> s = seq(uint32_le) << X2() << X34() <<
 //    (seq(uint64_le) << X5());
 
 //}

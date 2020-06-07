@@ -46,7 +46,7 @@ struct product_operator {
 };
 
 template <Variable Variable1, Variable Variable2, class Operator>
-struct binary_operator : public base<children_list<Variable1, Variable2>>, variable_base {
+struct binary_operator : public base<format_list<Variable1, Variable2>>, variable_base {
     using left_type         = Variable1;
     using right_type        = Variable2;
     using left_native_type  = typename Variable1::native_type;
@@ -68,7 +68,7 @@ template <Variable V1, Variable V2>
 struct product : public detail::binary_operator<V1, V2, detail::product_operator<typename V1::native_type, typename V2::native_type>> { };
 
 template <typename Placeholder, Format ElementType>
-requires(!Variable<ElementType>) struct variable : base<children_list<ElementType>>, variable_base {
+requires(!Variable<ElementType>) struct variable : base<format_list<ElementType>>, variable_base {
     using placeholder          = Placeholder;
     using element_type         = ElementType;
     using native_type          = typename ElementType::native_type;
@@ -105,7 +105,7 @@ requires(!Variable<ElementType>) struct variable : base<children_list<ElementTyp
 };
 
 template <Variable V>
-struct evaluator : base<children_list<>>, variable_base {
+struct evaluator : base<format_list<>>, variable_base {
     using type        = V;
     using native_type = typename type::native_type;
 
@@ -117,7 +117,7 @@ struct evaluator : base<children_list<>>, variable_base {
 
 /// partial specialization to make evaluation idempotent
 template <typename Placeholder, Format ElementType>
-struct evaluator<variable<Placeholder, ElementType>> : base<children_list<>> {
+struct evaluator<variable<Placeholder, ElementType>> : base<format_list<>> {
     using type        = variable<Placeholder, ElementType>;
     using native_type = typename type::native_type;
 
@@ -131,7 +131,7 @@ template <class VariableEvaluator, accessor::Accessor A, class Enable = void>
 struct variable_accessor_binding;
 
 namespace detail {
-struct variable_accessor_binding_base : base<children_list<>> { };
+struct variable_accessor_binding_base : base<format_list<>> { };
 } // end namespace detail
 
 template <class VariableEvaluator, class Accessor>

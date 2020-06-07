@@ -37,10 +37,9 @@ struct tuple_mapping_accessors<Index, Acc, TupleType, Format, Formats...> {
 
 template <ast::Format... Formats>
 struct sequence_helper {
-    using tuple_type    = std::tuple<typename Formats::native_type...>;
-    using element_list  = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
-    using children_list = typename ast::create_children_list<element_list>::type;
-    using type          = ast::sequence<tuple_type, children_list>;
+    using tuple_type  = std::tuple<typename Formats::native_type...>;
+    using format_list = typename tuple_mapping_accessors<0, variadic::generic_list<>, tuple_type, Formats...>::type;
+    using type        = ast::sequence<tuple_type, format_list>;
 };
 
 } // end namespace detail

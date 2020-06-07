@@ -63,7 +63,7 @@ struct dereference; // no implementation
 
 namespace detail {
 template <FormattedAccessor FA>
-struct dereference_base : base<children_list<typename FA::format>> {
+struct dereference_base : base<format_list<typename FA::format>> {
     using format               = typename FA::format;
     static constexpr auto size = format::size;
 };

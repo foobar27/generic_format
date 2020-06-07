@@ -28,54 +28,24 @@ concept Format = std::is_base_of<base_base, T>::value;
 template <class T>
 concept IntegralFormat = Format<T>&& std::is_integral<typename T::native_type>::value;
 
-// TODO(sw) somehow inherit from generic_list?
-template <Format... Children>
-struct children_list { };
+template <Format... Formats>
+using format_list = variadic::generic_list<Formats...>;
 
-template <class List>
-struct create_children_list;
-
-template <class... Children>
-struct create_children_list<variadic::generic_list<Children...>> {
-    using type = children_list<Children...>;
-};
+namespace detail {
 
 template <class T>
-struct is_children_list {
-    static constexpr auto value = false;
-};
+struct is_format_list : std::false_type { };
 
-template <class... Children>
-struct is_children_list<children_list<Children...>> {
-    static constexpr auto value = true;
-};
+template <Format... Formats>
+struct is_format_list<variadic::generic_list<Formats...>> : std::true_type { };
 
-template <class CL, class Child>
-struct append_child;
+} // end namespace detail
 
-template <class Child, class... Children>
-struct append_child<children_list<Children...>, Child> {
-    using type = children_list<Children..., Child>;
-};
+template <class T>
+concept FormatList = detail::is_format_list<T>::value;
 
-/// @brief Merge two children lists
-template <class List1, class List2>
-struct merge_children_lists;
-
-template <class... Elements>
-struct merge_children_lists<children_list<Elements...>, children_list<>> {
-    using type = children_list<Elements...>;
-};
-
-template <class List1, class Element2, class... Elements2>
-struct merge_children_lists<List1, children_list<Element2, Elements2...>> {
-    using new_list1 = typename append_child<List1, Element2>::type;
-    using new_list2 = children_list<Elements2...>;
-    using type      = typename merge_children_lists<new_list1, new_list2>::type;
-};
-
-template <class Children>
-requires is_children_list<Children>::value struct base : base_base {
+template <FormatList Children>
+struct base : base_base {
     using children = Children;
 };
 

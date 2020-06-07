@@ -80,7 +80,7 @@ private:
 namespace format {
 
 template <ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
-struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
+struct dense_multimap_format : generic_format::ast::base<generic_format::ast::format_list<IndexFormat, ValueFormat>> {
     using index_format       = IndexFormat;
     using value_format       = ValueFormat;
     using native_index_type  = typename IndexFormat::native_type;

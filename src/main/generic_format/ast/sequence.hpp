@@ -18,7 +18,7 @@ template <class NativeType, class Children>
 struct sequence;
 
 template <class NativeType, Format... Formats>
-struct sequence<NativeType, children_list<Formats...>> : base<children_list<Formats...>> {
+struct sequence<NativeType, format_list<Formats...>> : base<format_list<Formats...>> {
 
     using native_type = NativeType;
 
@@ -59,6 +59,6 @@ template <class Format>
 struct is_sequence : public std::false_type { };
 
 template <class NativeType, class... Formats>
-struct is_sequence<ast::sequence<NativeType, children_list<Formats...>>> : public std::true_type { };
+struct is_sequence<ast::sequence<NativeType, format_list<Formats...>>> : public std::true_type { };
 
 } // end namespace generic_format::ast

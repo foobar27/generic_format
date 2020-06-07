@@ -87,7 +87,7 @@ namespace format {
 
 template <ast::IntegralFormat IndexFormat>
 
-struct dense_reversible_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat>> {
+struct dense_reversible_multimap_format : generic_format::ast::base<generic_format::ast::format_list<IndexFormat>> {
     using index_format      = IndexFormat;
     using native_index_type = typename index_format::native_type;
 

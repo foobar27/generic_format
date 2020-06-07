@@ -17,7 +17,7 @@ namespace generic_format::ast {
  *
  */
 template <class SizeReference, Format ValueFormat>
-struct repeated : base<children_list<SizeReference, ValueFormat>> {
+struct repeated : base<format_list<SizeReference, ValueFormat>> {
     using size_reference = SizeReference;
     //    static_assert(ast::is_reference<size_reference>::value, "SizeReference must be a reference.");
     using size_accessor    = typename size_reference::accessor;
