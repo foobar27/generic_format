@@ -10,6 +10,8 @@
 
 #include "generic_format/targets/base.hpp"
 
+#include <iostream>
+
 namespace generic_format::targets::iostream {
 
 struct iostream_raw_writer : base_raw_writer {

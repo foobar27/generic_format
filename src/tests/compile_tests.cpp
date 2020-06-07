@@ -21,7 +21,7 @@ using namespace generic_format::primitives;
 // TODO(sw) move tests to separate file?
 //
 
-static void test_conditional_type() {
+TEST_CASE("conditional types") {
     using namespace std;
     using namespace generic_format;
 
@@ -32,20 +32,20 @@ static void test_conditional_type() {
     static_assert(t_true::value, "true");
 }
 
-static void test_sum() {
+TEST_CASE("sums") {
     using generic_format::sum;
     static_assert(sum(0) == 0, "empty sum");
     static_assert(sum(0, 1, 2, 3) == 6, "sum");
 }
 
-static void test_index_of() {
+TEST_CASE("index_of") {
     using generic_format::variadic::index_of;
     using std::is_integral;
     static_assert(index_of<is_integral, int>::value == 0, "first");
     static_assert(index_of<is_integral, double, int>::value == 1, "second");
 }
 
-static void test_for_any() {
+TEST_CASE("for_any") {
     using namespace std;
     using namespace generic_format::variadic;
     static_assert(!for_any<is_integral>::value, "[]");
@@ -61,28 +61,19 @@ struct into_tuple {
     using type = std::tuple<T>;
 };
 
-static void test_transform() {
+TEST_CASE("transform") {
     using namespace generic_format::variadic;
     using T                                                               = transform<into_tuple, generic_list<int, double, char>>::type;
     generic_list<std::tuple<int>, std::tuple<double>, std::tuple<char>> t = T();
 }
 
-template <class T>
-constexpr bool is_format() noexcept {
-    if constexpr (generic_format::ast::Format<T>) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
-static void test_is_format() {
+TEST_CASE("is_format") {
     using namespace generic_format::ast;
-    static_assert(is_format<uint8_le_t>(), "positive is_format");
-    static_assert(!is_format<uint8_t>(), "negaitve is_format");
+    static_assert(Format<uint8_le_t>, "positive is_format");
+    static_assert(!Format<uint8_t>, "negative is_format");
 }
 
-static void test_generic_list() {
+TEST_CASE("generic_list") {
     using namespace generic_format::variadic;
 
     using X1             = append_element<generic_list<>, int>::type;
@@ -98,7 +89,7 @@ static void test_generic_list() {
     generic_list<int, double> x4 = X4();
 }
 
-static void test_is_unmapped_sequence() {
+TEST_CASE("is_unmapped_sequence") {
     using namespace generic_format::variadic;
     using namespace generic_format::dsl;
     using namespace generic_format::ast;

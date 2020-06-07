@@ -17,7 +17,7 @@
 using namespace std;
 using namespace generic_format::datastructures;
 
-void checkVectors(const std::vector<uint32_t>& actual, const std::vector<uint32_t>& expected) {
+static void check_vectors(const std::vector<uint32_t>& actual, const std::vector<uint32_t>& expected) {
     // TODO(sw) reenable
     //    BOOST_CHECK_EQUAL_COLLECTIONS(actual.begin(), actual.end(),
     //                                  expected.begin(), expected.end());
@@ -35,19 +35,19 @@ TEST_CASE("ReversibleMultimap") {
     forward.put(1, 11);
     forward.put(4, 12);
     forward.put(5, 12);
-    checkVectors(forward[0], {});
-    checkVectors(forward[1], {11});
-    checkVectors(forward[2], {10});
-    checkVectors(forward[3], {8, 9});
-    checkVectors(forward[4], {12});
-    checkVectors(forward[5], {12});
+    check_vectors(forward[0], {});
+    check_vectors(forward[1], {11});
+    check_vectors(forward[2], {10});
+    check_vectors(forward[3], {8, 9});
+    check_vectors(forward[4], {12});
+    check_vectors(forward[5], {12});
 
-    checkVectors(reverse[0], {});
-    checkVectors(reverse[8], {3});
-    checkVectors(reverse[9], {3});
-    checkVectors(reverse[10], {2});
-    checkVectors(reverse[11], {1});
-    checkVectors(reverse[12], {4, 5});
+    check_vectors(reverse[0], {});
+    check_vectors(reverse[8], {3});
+    check_vectors(reverse[9], {3});
+    check_vectors(reverse[10], {2});
+    check_vectors(reverse[11], {1});
+    check_vectors(reverse[12], {4, 5});
 
     // TODO(sw) also test storage
 }

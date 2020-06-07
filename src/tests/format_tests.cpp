@@ -105,8 +105,8 @@ public:
     void final_verify() const { }
 
 private:
-    std::size_t m_expected_size;
-    void*       m_data;
+    std::size_t m_expected_size{};
+    void*       m_data{nullptr};
 };
 
 using all_targets = std::tuple<mock_target_iostream, mock_target_unbounded_memory>;
