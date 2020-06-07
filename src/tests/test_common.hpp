@@ -7,10 +7,9 @@
         http://www.boost.org/LICENSE_1_0.txt)
 */
 #pragma once
-#define BOOST_TEST_MAIN
-#define BOOST_TEST_DYN_LINK
 
-#include <boost/test/unit_test.hpp>
+#define CATCH_CONFIG_MAIN
+#include "catch.hpp"
 
 #include <vector>
 #include <set>

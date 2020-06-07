@@ -6,7 +6,6 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#define BOOST_TEST_MODULE "DENSE_REVERSIBLE_MULTIMAP_TESTS"
 #include "test_common.hpp"
 
 #include <iostream>
@@ -27,7 +26,7 @@ void checkVectors(const std::vector<uint32_t>& actual, const std::vector<uint32_
     std::cout << " END" << std::endl;
 }
 
-BOOST_AUTO_TEST_CASE(ReversibleMultimapTest) {
+TEST_CASE("ReversibleMultimap") {
     dense_reversible_multimap<uint32_t> forward;
     dense_reversible_multimap<uint32_t> reverse = forward.reverse();
     forward.put(3, 8);

@@ -6,7 +6,6 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#define BOOST_TEST_MODULE "FORMAT_TESTS"
 #include "test_common.hpp"
 
 #include <algorithm>
@@ -16,9 +15,6 @@
 #include <sstream>
 #include <tuple>
 #include <vector>
-
-#include <boost/mpl/list.hpp>
-#include <boost/test/test_case_template.hpp>
 
 #include "generic_format/dsl.hpp"
 #include "generic_format/generic_format.hpp"
@@ -65,7 +61,7 @@ public:
 
     void final_verify() const {
         std::string s = m_ss->str();
-        BOOST_CHECK_EQUAL(m_expected_size, s.length());
+        REQUIRE(m_expected_size == s.length());
     }
 
 private:
@@ -113,7 +109,7 @@ private:
     void*       m_data;
 };
 
-using all_targets = boost::mpl::list<mock_target_iostream, mock_target_unbounded_memory>;
+using all_targets = std::tuple<mock_target_iostream, mock_target_unbounded_memory>;
 
 template <class F>
 struct _chunk {
@@ -151,7 +147,7 @@ template <class R, class C>
 static void read_chunk(R& reader, C c) {
     using format = typename C::format;
     reader(c.actual_value, format());
-    BOOST_CHECK_EQUAL(c.input_value, c.actual_value);
+    REQUIRE(c.input_value == c.actual_value);
 }
 
 template <class TARGET>
@@ -217,57 +213,57 @@ requires(!std::is_integral<TARGET>::value) auto check_round_trip(TARGET&& target
 using namespace generic_format::dsl;
 using namespace generic_format::primitives;
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(primitives_test, TARGET, all_targets) {
-    check_round_trip(TARGET(), chunk(uint64_le, 42), chunk(uint32_le, 1), chunk(int8_le, -1));
+TEMPLATE_LIST_TEST_CASE("primitives", "[template][list]", all_targets) {
+    check_round_trip(TestType(), chunk(uint64_le, 42), chunk(uint32_le, 1), chunk(int8_le, -1));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(strings_test, TARGET, all_targets) {
-    check_round_trip((1 + 5) + (2 + 5), TARGET(), chunk(string_format(uint8_le), "hello"), chunk(string_format(uint16_le), "world"));
+TEMPLATE_LIST_TEST_CASE("strings", "[template][list]", all_targets) {
+    check_round_trip((1 + 5) + (2 + 5), TestType(), chunk(string_format(uint8_le), "hello"), chunk(string_format(uint16_le), "world"));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_2, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("sequence 2", "[template][list]", all_targets) {
     check_round_trip((1 + 5) + (2 + 5) + (1 + 1),
-                     TARGET(),
+                     TestType(),
                      chunk(generic_format::mapping::tuple(string_format(uint8_le), string_format(uint16_le)), std::make_tuple("hello", "world")),
                      chunk(string_format(uint8_le), "!"));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(sequence_test_3, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("sequence test", "[template][list]", all_targets) {
     check_round_trip((1 + 5) + (2 + 5) + (4 + 1) + (1 + 1),
-                     TARGET(),
+                     TestType(),
                      chunk(generic_format::mapping::tuple(string_format(uint8_le), string_format(uint16_le), string_format(uint32_le)),
                            std::make_tuple("hello", "world", "!")),
                      chunk(string_format(uint8_le), "?"));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(container_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("container", "[template][list]", all_targets) {
     using generic_format::dsl::container_format;
     using std::vector;
 
     static constexpr auto format = container_format(uint16_le, uint8_le);
 
     vector<uint8_t> v{1, 3, 5, 7, 8};
-    check_round_trip(2 + 5 * 1, TARGET(), inferred_chunk(format, v));
+    check_round_trip(2 + 5 * 1, TestType(), inferred_chunk(format, v));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(nested_container_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("nested container", "[template][list]", all_targets) {
     using generic_format::dsl::container_format;
     using std::vector;
 
     static constexpr auto format = container_format(uint32_le, container_format(uint16_le, uint8_le));
 
     vector<vector<uint8_t>> v{{1}, {3, 5, 7}};
-    check_round_trip(4 + (2 + 1 * 1) + (2 + 3 * 1), TARGET(), inferred_chunk(format, v));
+    check_round_trip(4 + (2 + 1 * 1) + (2 + 3 * 1), TestType(), inferred_chunk(format, v));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(set_container_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("set container", "[template][list]", all_targets) {
     using generic_format::dsl::container_format;
     using std::set;
 
     static constexpr auto format = container_format(uint16_le, uint8_le);
 
     set<uint8_t> v{1, 3, 5, 7, 9};
-    check_round_trip(2 + 5 * 1, TARGET(), inferred_chunk(format, v));
+    check_round_trip(2 + 5 * 1, TestType(), inferred_chunk(format, v));
 }
 
 struct StructWithVector {
@@ -283,13 +279,13 @@ std::ostream& operator<<(std::ostream& os, const StructWithVector& p) {
     return os;
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(struct_with_vector_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("struct with vector", "[template][list]", all_targets) {
     using generic_format::dsl::adapt_struct;
     using generic_format::dsl::container_format;
 
     static constexpr auto format = adapt_struct(GENERIC_FORMAT_MEMBER(StructWithVector, data, container_format(uint16_le, uint8_le)));
     StructWithVector      v{{1, 3, 5}};
-    check_round_trip(2 + 3 * 1, TARGET(), inferred_chunk(format, v));
+    check_round_trip(2 + 3 * 1, TestType(), inferred_chunk(format, v));
 }
 
 struct Person {
@@ -370,20 +366,20 @@ std::ostream& operator<<(std::ostream& os, const User& p) {
     return os;
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(struct_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("struct", "[template][list]", all_targets) {
     check_round_trip((1 + 4) + (1 + 4) + 1 + (1 + 4) + (1 + 4) + 1,
-                     TARGET(),
+                     TestType(),
                      chunk(Person_format, {"foo1", "bar1", 42}),
                      chunk(Person_format, {"foo2", "bar2", 24}));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(struct_sequence_test, TARGET, all_targets) {
+TEMPLATE_LIST_TEST_CASE("struct_sequence", "[template][list]", all_targets) {
     check_round_trip((1 + 4) + (1 + 4) + 1 + (4 + 4 + 2),
-                     TARGET(),
+                     TestType(),
                      chunk(generic_format::mapping::tuple(Person_format, Packet_format),
                            std::make_tuple<Person, Packet>({"foo1", "bar1", 42}, {1, 2, 3})));
 }
 
-BOOST_AUTO_TEST_CASE_TEMPLATE(nested_struct_test, TARGET, all_targets) {
-    check_round_trip((4 + 4) + (4 + 4) + 2 + (4 + 14), TARGET(), chunk(User_format, {"foo1", "bar1", {10, "Downing Street"}}));
+TEMPLATE_LIST_TEST_CASE("nested struct", "[template][list]", all_targets) {
+    check_round_trip((4 + 4) + (4 + 4) + 2 + (4 + 14), TestType(), chunk(User_format, {"foo1", "bar1", {10, "Downing Street"}}));
 }

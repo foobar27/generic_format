@@ -6,7 +6,6 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#define BOOST_TEST_MODULE "LOOKUP_TABLE_TESTS"
 #include "test_common.hpp"
 
 #include <string>
@@ -17,7 +16,7 @@
 using namespace std;
 using namespace generic_format::lookup;
 
-BOOST_AUTO_TEST_CASE(population) {
+TEST_CASE("population") {
     lookup_table_builder<uint, string> builder0(0, 2);
     builder0.push_back("0");
     builder0.push_back("1");
@@ -43,31 +42,31 @@ BOOST_AUTO_TEST_CASE(population) {
 
     vector<string>                      expected{"0", "1", "2", "3", "4", "5"};
     lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
-    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+    REQUIRE(snapshot.values() == expected);
 
     expected = {"1", "2", "3", "4", "5"};
     snapshot = table.snapshot_from_id(1);
-    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+    REQUIRE(snapshot.values() == expected);
 }
 
-BOOST_AUTO_TEST_CASE(lookup) {
+TEST_CASE("lookup") {
     lookup_table<uint, string> table;
 
     vector<string>                      expected{};
     lookup_table_snapshot<uint, string> snapshot = table.snapshot_from_id(0);
-    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+    REQUIRE(snapshot.values() == expected);
 
-    BOOST_CHECK_EQUAL(table.lookup_by_value("0"), 0);
-    BOOST_CHECK_EQUAL(table.lookup_by_id(0), "0");
+    REQUIRE(table.lookup_by_value("0") == 0);
+    REQUIRE(table.lookup_by_id(0) == "0");
     expected = {"0"};
     snapshot = table.snapshot_from_id(0);
-    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+    REQUIRE(snapshot.values() == expected);
 
-    BOOST_CHECK_EQUAL(table.lookup_by_value("1"), 1);
-    BOOST_CHECK_EQUAL(table.lookup_by_id(1), "1");
+    REQUIRE(table.lookup_by_value("1") == 1);
+    REQUIRE(table.lookup_by_id(1) == "1");
     expected = {"0", "1"};
     snapshot = table.snapshot_from_id(0);
-    BOOST_CHECK_EQUAL(snapshot.values(), expected);
+    REQUIRE(snapshot.values() == expected);
 }
 
 // TODO(sw) test that contiguity check is working

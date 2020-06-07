@@ -6,7 +6,6 @@
         (See accompanying file LICENSE_1_0.txt or copy at
         http://www.boost.org/LICENSE_1_0.txt)
 */
-#define BOOST_TEST_MODULE "COMPILE_TESTS"
 #include "test_common.hpp"
 
 #include "generic_format/dsl.hpp"
@@ -16,9 +15,6 @@
 #include <type_traits>
 
 using namespace generic_format::primitives;
-
-// Just a dummy unit test - actually all the testing in this file should be done at compile-time.
-BOOST_AUTO_TEST_CASE(dummy) { }
 
 //
 // helper.hpp
