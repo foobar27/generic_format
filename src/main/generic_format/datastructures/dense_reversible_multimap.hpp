@@ -18,7 +18,7 @@ namespace generic_format {
 namespace datastructures {
 
 namespace format {
-template <class IndexFormat>
+template <ast::IntegralFormat IndexFormat>
 struct dense_reversible_multimap_format;
 } // end namespace format
 
@@ -72,7 +72,7 @@ public:
     }
 
 private:
-    template <class IndexFormat>
+    template <ast::IntegralFormat IndexFormat>
     friend struct format::dense_reversible_multimap_format;
 
     dense_reversible_multimap(std::shared_ptr<matrix_type> forward, std::shared_ptr<matrix_type> reverse)
@@ -85,7 +85,7 @@ private:
 
 namespace format {
 
-template <class IndexFormat>
+template <ast::IntegralFormat IndexFormat>
 
 struct dense_reversible_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat>> {
     using index_format      = IndexFormat;
