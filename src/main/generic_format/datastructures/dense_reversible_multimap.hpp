@@ -18,20 +18,19 @@ namespace generic_format {
 namespace datastructures {
 
 namespace format {
-template <ast::Format IndexFormat>
+template <ast::IntegralFormat IndexFormat>
 struct dense_reversible_multimap_format;
 } // end namespace format
 
 template <class IndexType>
-class dense_reversible_multimap {
+requires std::is_integral<IndexType>::value // TODO(sw) and must fit into size_t?
+    class dense_reversible_multimap {
 
 public:
     using index_type          = IndexType;
     using row_type            = std::vector<IndexType>;
     using matrix_type         = std::vector<row_type>;
     using const_iterator_type = typename matrix_type::iterator;
-
-    static_assert(std::is_integral<index_type>::value, "IndexType must be an integral type"); // TODO(sw) and must fit into size_t?
 
     dense_reversible_multimap()
         : _forward(std::make_shared<matrix_type>())
@@ -73,7 +72,7 @@ public:
     }
 
 private:
-    template <ast::Format IndexFormat>
+    template <ast::IntegralFormat IndexFormat>
     friend struct format::dense_reversible_multimap_format;
 
     dense_reversible_multimap(std::shared_ptr<matrix_type> forward, std::shared_ptr<matrix_type> reverse)
@@ -86,15 +85,14 @@ private:
 
 namespace format {
 
-template <ast::Format IndexFormat>
+template <ast::IntegralFormat IndexFormat>
+
 struct dense_reversible_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat>> {
     using index_format      = IndexFormat;
     using native_index_type = typename index_format::native_type;
 
     using native_type          = dense_reversible_multimap<native_index_type>;
     static constexpr auto size = generic_format::ast::dynamic_size();
-
-    static_assert(std::is_integral<native_index_type>::value, "index must be an integral type!");
 
     template <class RawWriter, class State>
     void write(RawWriter& raw_writer, State& state, const native_type& t) const {

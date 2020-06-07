@@ -10,6 +10,7 @@
 
 #include "generic_format/accessor/accessor.hpp"
 #include "generic_format/ast/reference.hpp"
+#include "generic_format/ast/sequence.hpp"
 #include "generic_format/helper.hpp"
 
 namespace generic_format::mapping {

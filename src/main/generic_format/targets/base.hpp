@@ -42,7 +42,7 @@ template <ast::Format F, class Enabled = void>
 struct helper;
 
 template <ast::Format F>
-requires(!ast::is_variable<F>::value) struct helper<F> {
+requires(!ast::Variable<F>) struct helper<F> {
     using type = ast::placeholder_map<>;
 };
 

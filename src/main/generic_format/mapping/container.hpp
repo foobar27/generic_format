@@ -47,7 +47,7 @@ struct set_output {
     }
 };
 
-template <class NativeType, class OutputInfo, ast::Format IndexFormat, ast::Format ValueFormat>
+template <class NativeType, class OutputInfo, ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
 struct container : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using native_type  = NativeType;
     using output_info  = OutputInfo;
@@ -58,7 +58,6 @@ struct container : generic_format::ast::base<generic_format::ast::children_list<
     using native_value_type   = typename value_format::native_type;
     using native_element_type = typename native_type::value_type;
 
-    static_assert(std::is_integral<native_index_type>::value, "IndexFormat must be an integral type!");
     static_assert(std::is_convertible<native_element_type, native_value_type>::value
                       && std::is_convertible<native_value_type, native_element_type>::value,
                   "Element types must be convertible!");
@@ -112,9 +111,6 @@ struct _container_format_type_inferrer_helper {
     using index_format = IndexFormat;
     using value_format = typename ast::infer_format<ValueFormat, typename NativeType::value_type>::type;
     using native_type  = NativeType;
-
-    static_assert(ast::is_format<index_format>::value, "IndexFormat must be a valid format!");
-    static_assert(ast::is_format<value_format>::value, "ValueFormat must be a valid format!");
 
     using type = mapping::container<native_type, typename _container_output_info<NativeType>::type, index_format, value_format>;
 };

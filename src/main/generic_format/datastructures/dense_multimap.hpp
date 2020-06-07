@@ -17,19 +17,19 @@ namespace datastructures {
 
 namespace format {
 
-template <ast::Format IndexFormat, ast::Format ValueFormat>
+template <ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
 struct dense_multimap_format;
 
 } // end namespace format
 
 template <class IndexType, class ValueType>
-class dense_multimap {
+requires std::is_integral<IndexType>::value // TODO(sw) and fit into size_t
+    class dense_multimap {
     using index_type  = IndexType;
     using value_type  = ValueType;
     using row_type    = std::vector<value_type>;
     using matrix_type = std::vector<row_type>;
 
-    static_assert(std::is_integral<index_type>::value, "IndexType must be integral."); // TODO(sw) and fit into size_t?
 public:
     void put(index_type key, const value_type& value) {
         if (key >= _data.size())
@@ -79,7 +79,7 @@ private:
 
 namespace format {
 
-template <ast::Format IndexFormat, ast::Format ValueFormat>
+template <ast::IntegralFormat IndexFormat, ast::Format ValueFormat>
 struct dense_multimap_format : generic_format::ast::base<generic_format::ast::children_list<IndexFormat, ValueFormat>> {
     using index_format       = IndexFormat;
     using value_format       = ValueFormat;
@@ -94,8 +94,6 @@ struct dense_multimap_format : generic_format::ast::base<generic_format::ast::ch
     static constexpr auto size = generic_format::ast::dynamic_size();
 
     using format = typename generic_format::ast::infer_format<matrix_format, native_matrix_type>::type;
-
-    static_assert(std::is_integral<native_index_type>::value, "index must be an integral type!");
 
     template <class RawWriter, class State>
     void write(RawWriter& raw_writer, State& state, const native_type& t) const {

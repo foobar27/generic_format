@@ -46,7 +46,7 @@ namespace ast {
  *
  * @tparam VersionFormat the format used to serialize the length.
  */
-template <Format VersionFormat, Format BaseFormat, typename VersionFormat::native_type CurrentVersion>
+template <IntegralFormat VersionFormat, Format BaseFormat, typename VersionFormat::native_type CurrentVersion>
 struct versioned : base<children_list<VersionFormat, BaseFormat>> {
     using native_type         = typename BaseFormat::native_type;
     using version_format      = VersionFormat;
@@ -54,8 +54,6 @@ struct versioned : base<children_list<VersionFormat, BaseFormat>> {
     using native_version_type = typename version_format::native_type;
 
     static constexpr auto size = version_format::size + base_format::size;
-
-    static_assert(std::is_integral<native_version_type>::value, "version type must be an integral type!");
 
     template <class RawWriter, class State>
     void write(RawWriter& raw_writer, State& state, const native_type& value) const {

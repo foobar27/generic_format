@@ -17,32 +17,16 @@ namespace generic_format::ast {
 
 struct variable_base { };
 
-template <typename Placeholder, Format ElementType>
-struct variable;
-
 template <class T>
-struct is_variable;
-
-template <class T>
-struct is_variable : std::integral_constant<bool, std::is_base_of<variable_base, T>::value> { };
+concept Variable = std::is_base_of<variable_base, T>::value;
 
 template <typename Placeholder, Format ElementType>
-struct is_variable<variable<Placeholder, ElementType>> {
-    static constexpr bool value = true;
-};
-
-template <class T>
-concept Variable = is_variable<T>::value;
+requires(!Variable<ElementType>) struct variable;
 
 namespace detail {
 template <Variable Variable1, Variable Variable2, class Operator>
 struct binary_operator;
 } // end namespace detail
-
-template <class Variable1, class Variable2, class Operator>
-struct is_variable<detail::binary_operator<Variable1, Variable2, Operator>> {
-    static constexpr bool value = true;
-};
 
 namespace detail {
 template <class T1, class T2>
@@ -84,8 +68,7 @@ template <Variable V1, Variable V2>
 struct product : public detail::binary_operator<V1, V2, detail::product_operator<typename V1::native_type, typename V2::native_type>> { };
 
 template <typename Placeholder, Format ElementType>
-struct variable : base<children_list<ElementType>>, variable_base {
-    static_assert(!is_variable<ElementType>::value, "Cannot take variables of variables!");
+requires(!Variable<ElementType>) struct variable : base<children_list<ElementType>>, variable_base {
     using placeholder          = Placeholder;
     using element_type         = ElementType;
     using native_type          = typename ElementType::native_type;
@@ -122,8 +105,7 @@ struct variable : base<children_list<ElementType>>, variable_base {
 };
 
 template <Variable V>
-struct evaluator : base<children_list<>> {
-    static_assert(is_variable<V>::value, "Can only evaluate variables or combinations of variables!");
+struct evaluator : base<children_list<>>, variable_base {
     using type        = V;
     using native_type = typename type::native_type;
 

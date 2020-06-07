@@ -16,14 +16,12 @@ namespace generic_format::ast {
  *
  * @tparam LengthFormat the format used to serialize the length.
  */
-template <Format LengthFormat>
+template <IntegralFormat LengthFormat>
 struct string : base<children_list<LengthFormat>> {
     using native_type          = std::string;
     using length_format        = LengthFormat;
     using native_length_type   = typename length_format::native_type;
     static constexpr auto size = dynamic_size();
-
-    static_assert(std::is_integral<native_length_type>::value, "string length must be an integral type!");
 
     template <class RawWriter, class State>
     void write(RawWriter& raw_writer, State& state, const std::string& s) const {

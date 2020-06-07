@@ -71,10 +71,19 @@ static void test_transform() {
     generic_list<std::tuple<int>, std::tuple<double>, std::tuple<char>> t = T();
 }
 
+template <class T>
+constexpr bool is_format() noexcept {
+    if constexpr (generic_format::ast::Format<T>) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 static void test_is_format() {
     using namespace generic_format::ast;
-    static_assert(is_format<uint8_le_t>::value, "positive is_format");
-    static_assert(!is_format<uint8_t>::value, "negaitve is_format");
+    static_assert(is_format<uint8_le_t>(), "positive is_format");
+    static_assert(!is_format<uint8_t>(), "negaitve is_format");
 }
 
 static void test_generic_list() {

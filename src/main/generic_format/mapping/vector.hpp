@@ -11,15 +11,17 @@
 #include <vector>
 #include <generic_format/accessor/accessor.hpp>
 #include <generic_format/ast/reference.hpp>
+#include <generic_format/ast/repeated.hpp>
+#include <generic_format/ast/sequence.hpp>
+#include <generic_format/ast/variable.hpp>
 
 namespace generic_format::mapping {
 
 namespace detail {
 
 // size is explicit
-template <class SizeVariable, class ValueFormat>
+template <ast::Variable SizeVariable, ast::Format ValueFormat> // TODO(sw) why can't we enforce the Variable concept here?
 struct vector_helper {
-    static_assert(ast::is_variable<SizeVariable>::value, "SizeVariable needs to be a variable, or an evaluated variable!");
     using native_element_type = typename ValueFormat::native_type;
     using vector_type         = std::vector<native_element_type>;
 
@@ -28,7 +30,7 @@ struct vector_helper {
 };
 
 // size is implicit
-template <class SizeVariable, class ValueFormat>
+template <class SizeVariable, ast::Format ValueFormat>
 struct vector_helper<ast::evaluator<SizeVariable>, ValueFormat> {
     using size_variable       = SizeVariable;
     using value_format        = ValueFormat;

@@ -19,10 +19,9 @@ namespace generic_format::ast {
  *
  * @tparam Map a placeholder_map
  */
-template <class Map> // TODO(sw) requires is_placeholder_map<Map>
-class placeholder_container {
+template <class Map>
+requires is_placeholder_map<Map>::value class placeholder_container {
 public:
-    static_assert(is_placeholder_map<Map>::value, "Map needs to be a placeholder map!");
     using tuple_type = typename placeholder_map_tuple_type<Map>::type;
 
     template <typename Placeholder>

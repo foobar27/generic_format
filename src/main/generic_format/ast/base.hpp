@@ -23,10 +23,10 @@ namespace generic_format::ast {
 struct base_base { };
 
 template <class T>
-struct is_format : public std::integral_constant<bool, std::is_base_of<base_base, T>::value> { };
+concept Format = std::is_base_of<base_base, T>::value;
 
 template <class T>
-concept Format = std::is_base_of<base_base, T>::value;
+concept IntegralFormat = Format<T>&& std::is_integral<typename T::native_type>::value;
 
 // TODO(sw) somehow inherit from generic_list?
 template <Format... Children>

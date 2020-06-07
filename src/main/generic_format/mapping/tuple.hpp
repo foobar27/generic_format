@@ -11,6 +11,7 @@
 #include "generic_format/ast/base.hpp"
 #include "generic_format/accessor/accessor.hpp"
 #include "generic_format/ast/reference.hpp"
+#include "generic_format/ast/sequence.hpp"
 
 #include <tuple>
 
