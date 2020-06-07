@@ -270,11 +270,11 @@ struct StructWithVector {
     std::vector<uint8_t> data;
 };
 
-bool operator==(const StructWithVector& a, const StructWithVector& b) {
+static bool operator==(const StructWithVector& a, const StructWithVector& b) {
     return a.data == b.data;
 }
 
-std::ostream& operator<<(std::ostream& os, const StructWithVector& p) {
+static std::ostream& operator<<(std::ostream& os, const StructWithVector& p) {
     os << "StructWithVector[data=" << p.data << "]";
     return os;
 }
@@ -315,19 +315,19 @@ struct User {
     Address     m_address;
 };
 
-bool operator==(const Person& p1, const Person& p2) {
+static bool operator==(const Person& p1, const Person& p2) {
     return p1.m_first_name == p2.m_first_name && p1.m_last_name == p2.m_last_name && p1.m_age == p2.m_age;
 }
 
-bool operator==(const Packet& p1, const Packet& p2) {
+static bool operator==(const Packet& p1, const Packet& p2) {
     return p1.m_source == p2.m_source && p1.m_target == p2.m_target && p1.m_port == p2.m_port;
 }
 
-bool operator==(const Address& p1, const Address& p2) {
+static bool operator==(const Address& p1, const Address& p2) {
     return p1.m_number == p2.m_number && p1.m_street == p2.m_street;
 }
 
-bool operator==(const User& p1, const User& p2) {
+static bool operator==(const User& p1, const User& p2) {
     return p1.m_first_name == p2.m_first_name && p1.m_last_name == p2.m_last_name && p1.m_address == p2.m_address;
 }
 
@@ -346,22 +346,22 @@ static constexpr auto User_format = adapt_struct(GENERIC_FORMAT_MEMBER(User, m_f
                                                  GENERIC_FORMAT_MEMBER(User, m_last_name, string_format(uint32_le)),
                                                  GENERIC_FORMAT_MEMBER(User, m_address, Address_format));
 
-std::ostream& operator<<(std::ostream& os, const Person& p) {
+static std::ostream& operator<<(std::ostream& os, const Person& p) {
     os << "Person[first_name=" << p.m_first_name << ", last_name=" << p.m_last_name << ", age=" << p.m_age << "]";
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Packet& p) {
+static std::ostream& operator<<(std::ostream& os, const Packet& p) {
     os << "Packet[source=" << p.m_source << ", target=" << p.m_target << ", port=" << p.m_port << "]";
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const Address& p) {
+static std::ostream& operator<<(std::ostream& os, const Address& p) {
     os << "Address[number=" << p.m_number << ", street=" << p.m_street << "]";
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const User& p) {
+static std::ostream& operator<<(std::ostream& os, const User& p) {
     os << "User[first_name=" << p.m_first_name << ", last_name=" << p.m_last_name << ", address=" << p.m_address << "]";
     return os;
 }
